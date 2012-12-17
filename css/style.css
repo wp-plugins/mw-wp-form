@@ -1,0 +1,7 @@
+@charset "utf-8";
+
+.mw_wp_form .error {
+	font-size : 93%;
+	color : #B70000;
+	display : block;
+}
