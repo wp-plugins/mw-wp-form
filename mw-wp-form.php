@@ -3,16 +3,16 @@
  * Plugin Name: MW WP Form
  * Plugin URI: http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
  * Description: Plug-in which can create mail form using short code. E-mail sending and validation can be specified at functions.php.
- * Version: 0.5
+ * Version: 0.5.5
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: September 25, 2012
- * Modified: December 14, 2012
+ * Modified: February 12, 2013
  * Text Domain: mw-wp-form
  * Domain Path: /languages/
  * License: GPL2
  *
- * Copyright 2012 Takashi Kitajima (email : inc@2inc.org)
+ * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -260,6 +260,29 @@ class mw_wp_form {
 		
 		if ( $this->viewFlg == 'input' || $this->viewFlg == 'preview' ) {
 			$this->Error = $this->Validation->Error();
+			
+			$user = wp_get_current_user();
+			$search = array(
+				'{user_id}',
+				'{user_login}',
+				'{user_email}',
+				'{user_url}',
+				'{user_registered}',
+				'{display_name}',
+			);
+			if ( !empty( $user ) ) {
+				$content = str_replace( $search, array(
+					$user->get( 'ID' ),
+					$user->get( 'user_login' ),
+					$user->get( 'user_email' ),
+					$user->get( 'user_url' ),
+					$user->get( 'user_registered' ),
+					$user->get( 'display_name' ),
+				), $content );
+			} else {
+				$content = str_replace( $search, '', $content );
+			}
+			
 			return
 				'<div id="mw_wp_form_' . $atts['key'] . '" class="mw_wp_form">' .
 				$this->Form->start() .

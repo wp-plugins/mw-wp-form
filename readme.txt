@@ -4,7 +4,7 @@ Donate link:
 Tags: plugin, form, confirm, preview
 Requires at least: 3.4
 Tested up to: 3.5
-Stable tag: 0.5
+Stable tag: 0.5.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,6 +23,10 @@ http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 1. Place `<?php add_action( 'mwform_mail_{$key}', array( $this, 'my_mail_action_name' ) ); ?>` in your functions.php
 
 == Changelog ==
+
+= 0.5.5 =
+* Added tag to show login user meta.
+{user_id}, {user_login}, {user_email}, {user_url}, {user_registered}, {display_name}
 
 = 0.5 =
 * Initial release.
