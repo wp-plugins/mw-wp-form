@@ -3,14 +3,14 @@
  * Name: MW Validation
  * URI: http://2inc.org
  * Description: バリデーションクラス
- * Version: 1.2.1
+ * Version: 1.2.2
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: July 20, 2012
- * Modified: December 14, 2012
+ * Modified: February 20, 2013
  * License: GPL2
  *
- * Copyright 2012 Takashi Kitajima (email : inc@2inc.org)
+ * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -95,7 +95,7 @@ class MW_Validation {
 				'message' => __( 'Please enter.', self::DOMAIN )
 			);
 			$options = array_merge( $defaults, $options );
-			if ( $value == array() || $value === '' || $value === null ) {
+			if ( $this->isEmpty( $value ) ) {
 				$_ret = $options['message'];
 			}
 		}
@@ -139,7 +139,7 @@ class MW_Validation {
 				'message' => __( 'Please enter with a half-width alphabetic character.', self::DOMAIN )
 			);
 			$options = array_merge( $defaults, $options );
-			if ( !preg_match( '/^[A-Za-z]+$/', $value ) ) {
+			if ( !preg_match( '/^[A-Za-z]+$/', $value ) && !$this->isEmpty( $value ) ) {
 				$_ret = $options['message'];
 			}
 		}
@@ -161,7 +161,7 @@ class MW_Validation {
 				'message' => __( 'Please enter with a half-width number.', self::DOMAIN )
 			);
 			$options = array_merge( $defaults, $options );
-			if ( !preg_match( '/^[0-9]+$/', $value ) ) {
+			if ( !preg_match( '/^[0-9]+$/', $value ) && !$this->isEmpty( $value ) ) {
 				$_ret = $options['message'];
 			}
 		}
@@ -183,7 +183,7 @@ class MW_Validation {
 				'message' => __( 'Please enter with a half-width alphanumeric character.', self::DOMAIN )
 			);
 			$options = array_merge( $defaults, $options );
-			if ( !preg_match( '/^[0-9A-Za-z]+$/', $value ) ) {
+			if ( !preg_match( '/^[0-9A-Za-z]+$/', $value ) && !$this->isEmpty( $value ) ) {
 				$_ret = $options['message'];
 			}
 		}
@@ -259,7 +259,7 @@ class MW_Validation {
 				'message' => __( 'This is not the format of a mail address.', self::DOMAIN )
 			);
 			$options = array_merge( $defaults, $options );
-			if ( !preg_match( '/^.+@.+$/', $value ) ) {
+			if ( !preg_match( '/^.+@.+$/', $value ) && !$this->isEmpty( $value ) ) {
 				$_ret = $options['message'];
 			}
 		}
@@ -281,7 +281,7 @@ class MW_Validation {
 				'message' => __( 'This is not the format of a url.', self::DOMAIN )
 			);
 			$options = array_merge( $defaults, $options );
-			if ( !preg_match( '/^https{0,1}:\/\//', $value ) ) {
+			if ( !preg_match( '/^https{0,1}:\/\//', $value ) && !$this->isEmpty( $value ) ) {
 				$_ret = $options['message'];
 			}
 		}
@@ -484,6 +484,20 @@ class MW_Validation {
 	 */
 	protected function array_clean( $array ) {
 		return array_merge( array_diff( $array, array( '' ) ) );
+	}
+	
+	/**
+	 * noempty
+	 * 値が空（0は許可）
+	 * @param	Mixed
+	 * @return	Boolean
+	 */
+	protected function isEmpty( $value ) {
+		if ( $value == array() || $value === '' || $value === null ) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
 ?>

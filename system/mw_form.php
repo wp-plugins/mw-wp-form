@@ -3,24 +3,24 @@
  * Name: MW Form
  * URI: http://2inc.org
  * Description: フォームクラス
- * Version: 1.2.6
+ * Version: 1.2.7
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: September 25, 2012
- * Modified: December 14, 2012
+ * Modified: February 20, 2013
  * License: GPL2
  *
- * Copyright 2012 Takashi Kitajima (email : inc@2inc.org)
- * 
+ * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
  * published by the Free Software Foundation.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -61,7 +61,7 @@ class MW_Form {
 			$this->data = array();
 		}
 	}
-	
+
 	/**
 	 * clearToken
 	 * トークン用のセッションを破棄
@@ -137,12 +137,12 @@ class MW_Form {
 	 * @return	Boolean
 	 */
 	protected function check() {
-		if ( isset( $_POST[$this->tokenName] ) ) $requestToken = $_POST[$this->tokenName];
+		if ( isset( $this->data[$this->tokenName] ) )
+			$requestToken = $this->data[$this->tokenName];
 		$_ret = false;
 		$s_token = $this->Session->getValue( $this->tokenName );
-		if ( isset( $requestToken ) && !empty( $s_token ) && $requestToken == $s_token ) {
+		if ( isset( $requestToken ) && !empty( $s_token ) && $requestToken == $s_token )
 			$_ret = true;
-		}
 		return $_ret;
 	}
 
@@ -221,7 +221,7 @@ class MW_Form {
 	public function getCheckedValue( $key, Array $data ) {
 		$_ret = null;
 		$separator = $this->getSeparatorValue( $key );
-		if ( is_array( $this->data[$key]['data'] ) && array_key_exists( 'data', $this->data[$key] ) && !empty( $separator ) ) {
+		if ( isset( $this->data[$key]['data'] ) && is_array( $this->data[$key]['data'] ) && array_key_exists( 'data', $this->data[$key] ) && !empty( $separator ) ) {
 			foreach ( $this->data[$key]['data'] as $val ) {
 				if ( isset( $data[$val] ) ) {
 					$_ret = implode( $separator, $this->data[$key]['data'] );
@@ -513,7 +513,7 @@ class MW_Form {
 			'value' => array()
 		);
 		$options = array_merge( $defaults, $options );
-		
+
 		$value = $options['value'];
 		if ( isset( $this->data[$name]['data'] ) ) {
 			$value = $this->data[$name]['data'];
@@ -585,7 +585,7 @@ class MW_Form {
 		',$this->e( $name ), $options['js'] );
 		return $_ret;
 	}
-	
+
 	/**
 	 * e
 	 * htmlサニタイズ

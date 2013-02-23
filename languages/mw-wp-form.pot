@@ -1,16 +1,16 @@
-# Copyright (C) 2012 MW WP Form
+# Copyright (C) 2013 MW WP Form
 # This file is distributed under the same license as the MW WP Form package.
 msgid ""
 msgstr ""
-"Project-Id-Version: MW WP Form 0.5\n"
+"Project-Id-Version: MW WP Form 0.6\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/mw-wp-form\n"
-"POT-Creation-Date: 2012-12-14 15:41+0900\n"
-"PO-Revision-Date: 2012-12-14 15:42+0900\n"
-"Last-Translator: Takashi Kitajima <inc@2inc.org>\n"
-"Language-Team: Takashi Kitajima <inc@2inc.org>\n"
+"POT-Creation-Date: 2013-02-22 16:16:54+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2013-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Takashi Kitajima <inc@2inc.org>\n"
+"Language-Team: Takashi Kitajima <inc@2inc.org>\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-Basepath: .\n"
@@ -19,6 +19,7 @@ msgstr ""
 "X-Poedit-SearchPath-0: ..\n"
 
 #: form_fields/mw_form_field_back_button.php:36
+#: system/mw_wp_form_admin_page.php:206
 msgid "Back"
 msgstr ""
 
@@ -32,7 +33,7 @@ msgstr ""
 msgid "Send"
 msgstr ""
 
-#: mw-wp-form.php:201
+#: mw-wp-form.php:279
 msgid "Validation Object is not a MW Validation Class."
 msgstr ""
 
@@ -92,6 +93,198 @@ msgstr ""
 msgid "This is not the format of a date."
 msgstr ""
 
+#: system/mw_wp_form_admin_page.php:64
+msgid "Add New Form"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:65
+msgid "Edit Form"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:66
+msgid "New Form"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:67
+msgid "View Form"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:68
+msgid "Search Forms"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:69
+msgid "No Forms found"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:70
+msgid "No Forms found in Trash"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:108
+msgid "Complete Message"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:115
+msgid "URL Options"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:122
+msgid "Validation Rule"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:129
+msgid "Form Key"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:136
+msgid "Mail Options"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:152
+msgid "Text"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:158
+msgid "Textarea"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:164
+msgid "Zip Code"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:170 system/mw_wp_form_admin_page.php:430
+msgid "Tel"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:176
+msgid "Select"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:182
+msgid "Radio"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:188
+msgid "Checkbox"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:194
+msgid "Datepicker"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:200
+msgid "Password"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:212
+msgid "Confirm &amp; Submit"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:218
+msgid "Submit"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:224
+msgid "Button"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:230
+msgid "Hidden"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:236
+msgid "Error Message"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:314
+msgid "Copy and Paste this shortcode."
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:341
+msgid "Subject"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:345
+msgid "Ccontent"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:347
+msgid "{key} is converted form data."
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:350
+msgid "Automatic reply email"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:352
+msgid "Please input the key to use as transmission to automatic reply email."
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:367
+msgid "Input Page URL"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:373
+msgid "Confirmation Page URL"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:379
+msgid "Complete Page URL"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:414
+msgid "Add Validation rule"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:420
+msgid "The key which applies validation"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:424
+msgid "No empty"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:425
+msgid "No empty( with checkbox )"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:426
+msgid "Numeric"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:427
+msgid "Alphabet"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:428
+msgid "Alphabet and Numeric"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:429
+msgid "Zip code"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:431
+msgid "E-mail"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:432
+msgid "Date"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:436
+msgid "The key at same value"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:440
+msgid "The range of the number of characters"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:448
+msgid "The number of the minimum characters"
+msgstr ""
+
 #. Plugin Name of the plugin/theme
 msgid "MW WP Form"
 msgstr ""
@@ -102,8 +295,7 @@ msgstr ""
 
 #. Description of the plugin/theme
 msgid ""
-"Plug-in which can create mail form using short code. E-mail sending and "
-"validation can be specified at functions.php."
+"MW WP Form can create mail form with a confirmation screen using shortcode."
 msgstr ""
 
 #. Author of the plugin/theme
