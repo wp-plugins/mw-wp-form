@@ -1,0 +1,109 @@
+@charset "utf-8";
+
+/**
+ * 投稿ステータス等
+ */
+#minor-publishing-actions {
+	display: none;
+}
+
+/**
+ * URL設定
+ */
+#mw-wp-form_url table {
+	width: 100%;
+}
+#mw-wp-form_url table th {
+	padding-right: 10px;
+	text-align: left;
+	width: 33%;
+}
+#mw-wp-form_url table td input {
+	width: 100%;
+}
+
+/**
+ * メール設定
+ */
+#mw-wp-form_mail textarea {
+	width: 100%;
+}
+
+/**
+ * バリデーションルール
+ */
+#mw-wp-form_validation .validation-box {
+	border: #ddd solid 1px;
+	border-radius: 5px;
+	margin: 10px 0;
+	padding: 10px;
+}
+#mw-wp-form_validation .validation-box .validation-content {
+	border-top: #ddd solid 1px;
+	margin: 10px 0 0;
+	padding: 10px 0 0;
+}
+#mw-wp-form_validation .validation-box table {
+	margin: 10px 0 0;
+}
+#mw-wp-form_validation .validation-box table td {
+	padding: 0 10px 5px 0;
+	overflow: hidden;
+	zoom: 1;
+}
+#mw-wp-form_validation .validation-box table td label {
+	margin: 0 10px 5px 0;
+	display: block;
+	float: left;
+}
+#mw-wp-form_validation .validation-box table td label input {
+	margin: 0 2px 0 0;
+}
+
+/**
+ * バリデーションルールを追加
+ */
+#mw-wp-form_validation b#add-validation-btn {
+	cursor: pointer;
+	margin: 2px 1px 4px;
+	line-height: 18px;
+	display: inline-block;
+	min-width: 26px;
+	padding: 2px 4px;
+	color: #464646;
+	border: 1px solid #c3c3c3;
+	border-radius: 3px;
+	background: #f5f5f5;
+}
+#mw-wp-form_validation b#add-validation-btn:hover {
+	background: #eee;
+}
+
+/**
+ * 開閉ボタン
+ */
+#mw-wp-form_validation .validation-box .validation-btn {
+	overflow: hidden;
+	zoom: 1;
+}
+#mw-wp-form_validation .validation-box .validation-btn span {
+	font-weight: bold;
+}
+#mw-wp-form_validation .validation-box .validation-btn b {
+	cursor: pointer;
+	display: block;
+	float: right;
+	margin: 0 0 0 10px;
+}
+
+/**
+ * 削除ボタン
+ */
+#mw-wp-form_validation .validation-box .validation-remove {
+	float: left;
+	margin: 0 5px 0 0;
+}
+#mw-wp-form_validation .validation-box .validation-remove b {
+	cursor: pointer;
+	display: block;
+}
