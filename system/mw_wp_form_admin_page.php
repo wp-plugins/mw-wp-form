@@ -3,10 +3,11 @@
  * Name: MW WP Form Admin Page
  * URI: http://2inc.org
  * Description: 管理画面クラス
- * Version: 1.0
+ * Version: 1.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: February 21, 2013
+ * Modified: February 27, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -337,6 +338,11 @@ class MW_WP_Form_Admin_Page {
 	public function add_mail_options() {
 		global $post;
 		?>
+		<p>
+			<b><?php _e( 'To ( E-mail address )', self::DOMAIN ); ?></b><br />
+			<input type="text" name="<?php echo esc_attr( self::NAME ); ?>[mail_to]" value="<?php echo esc_attr( $this->get_post_data( 'mail_to' ) ); ?>" /><br />
+			<?php _e( 'If empty: Using admin E-mail address.', self::DOMAIN ); ?>
+		</p>
 		<p>
 			<b><?php _e( 'Subject', self::DOMAIN ); ?></b><br />
 			<input type="text" name="<?php echo esc_attr( self::NAME ); ?>[mail_subject]" value="<?php echo esc_attr( $this->get_post_data( 'mail_subject' ) ); ?>" />
