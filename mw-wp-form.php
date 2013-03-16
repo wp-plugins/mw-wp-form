@@ -3,11 +3,11 @@
  * Plugin Name: MW WP Form
  * Plugin URI: http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
  * Description: MW WP Form can create mail form with a confirmation screen using shortcode.
- * Version: 0.6.2
+ * Version: 0.6.3
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: September 25, 2012
- * Modified: February 28, 2013
+ * Modified: March 15, 2013
  * Text Domain: mw-wp-form
  * Domain Path: /languages/
  * License: GPL2
@@ -234,9 +234,9 @@ class mw_wp_form {
 			if ( get_post_type() === self::NAME ) {
 				$this->options_by_formkey = get_post_meta( $post->ID, self::NAME, true );
 				$this->key = self::NAME.'-'.$atts['key'];
-				$this->input = $this->options_by_formkey['input_url'];
-				$this->preview = $this->options_by_formkey['confirmation_url'];
-				$this->complete = $this->options_by_formkey['complete_url'];
+				$this->input = $this->parse_url( $this->options_by_formkey['input_url'] );
+				$this->preview = $this->parse_url( $this->options_by_formkey['confirmation_url'] );
+				$this->complete = $this->parse_url( $this->options_by_formkey['complete_url'] );
 			}
 		}
 		wp_reset_postdata();

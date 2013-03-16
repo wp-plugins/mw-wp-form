@@ -8,6 +8,19 @@
 }
 
 /**
+ * フォーム識別子
+ */
+span#formkey_field {
+	background-color: #fff;
+	border: #dfdfdf solid 1px;
+	border-radius: 3px;
+	color: #333;
+	display: block;
+	margin: 1px;
+	padding: 3px;
+}
+
+/**
  * URL設定
  */
 #mw-wp-form_url table {

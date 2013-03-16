@@ -3,11 +3,11 @@
  * Name: MW WP Form Admin Page
  * URI: http://2inc.org
  * Description: 管理画面クラス
- * Version: 1.1
+ * Version: 1.1.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: February 21, 2013
- * Modified: February 27, 2013
+ * Modified: March 15, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -313,7 +313,7 @@ class MW_WP_Form_Admin_Page {
 		?>
 		<p>
 			<?php _e( 'Copy and Paste this shortcode.', self::DOMAIN ); ?><br />
-			<input type="text" disabled="disabled" value='[mwform_formkey key="<?php the_ID(); ?>"]' size="30" />
+			<span id="formkey_field">[mwform_formkey key="<?php the_ID(); ?>"]</span>
 		</p>
 		<?php
 	}
