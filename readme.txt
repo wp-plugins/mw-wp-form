@@ -4,7 +4,7 @@ Donate link:
 Tags: plugin, form, confirm, preview
 Requires at least: 3.4
 Tested up to: 3.5
-Stable tag: 0.6.2
+Stable tag: 0.6.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -28,6 +28,10 @@ http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 1. If you using functions.php, place `<?php add_filter( 'mwform_mail_{$key}', array( $this, 'my_mail_action_name' ) ); ?>` in your functions.php
 
 == Changelog ==
+
+= 0.6.3 =
+* Bug fix: 管理画面のURL設定で http から入れないとメールが二重送信されてしまうバグを修正
+* Bug fix: フォーム識別子部分が Firefox でコピペできないバグを修正
 
 = 0.6.2 =
 * Bug fix: Infinite loop when WordPress not root installed.
