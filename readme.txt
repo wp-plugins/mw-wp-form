@@ -1,10 +1,10 @@
 === Plugin Name ===
-Contributors: Takashi Kitajima
+Contributors: inc2734
 Donate link:
 Tags: plugin, form, confirm, preview
 Requires at least: 3.4
 Tested up to: 3.5
-Stable tag: 0.6.3
+Stable tag: 0.6.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -28,6 +28,12 @@ http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 1. If you using functions.php, place `<?php add_filter( 'mwform_mail_{$key}', array( $this, 'my_mail_action_name' ) ); ?>` in your functions.php
 
 == Changelog ==
+
+= 0.6.4 =
+* Added  : 引数を有効にする meta_box を追加
+* Bug fix: "Zip Code" が日本語化されていないバグを修正
+* Bug fix: ページリダイレクトのURL判定を変更
+* Bug fix: バリデーション mail に複数のメールアドレスを指定できないように変更
 
 = 0.6.3 =
 * Bug fix: 管理画面のURL設定で http から入れないとメールが二重送信されてしまうバグを修正

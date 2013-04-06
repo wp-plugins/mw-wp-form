@@ -3,11 +3,11 @@
  * Plugin Name: MW WP Form
  * Plugin URI: http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
  * Description: MW WP Form can create mail form with a confirmation screen using shortcode.
- * Version: 0.6.3
+ * Version: 0.6.4
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: September 25, 2012
- * Modified: March 15, 2013
+ * Modified: April 1, 2013
  * Text Domain: mw-wp-form
  * Domain Path: /languages/
  * License: GPL2
@@ -352,6 +352,12 @@ class mw_wp_form {
 		$redirect = ( empty( $url ) ) ? $_SERVER['REQUEST_URI'] : $url;
 		$redirect = $this->parse_url( $redirect );
 		$REQUEST_URI = $this->parse_url( $_SERVER['REQUEST_URI'] );
+		/*
+		var_dump( $redirect );
+		echo '<br />';
+		var_dump( $REQUEST_URI );
+		exit;
+		*/
 		if ( $redirect != $REQUEST_URI || $this->Form->isInput() && !empty( $_POST ) ) {
 			wp_redirect( $redirect );
 			exit();
@@ -368,20 +374,21 @@ class mw_wp_form {
 		if ( empty( $url ) ) {
 			return '';
 		}
-		$parse_home_url = parse_url( home_url() );
-		// ルートにインストールされているとき
-		if ( empty( $parse_home_url['path'] ) ) {
-			$home_url = home_url();
-		}
-		// 第2階層以下にインストールされているとき
-		else {
-			$home_url = str_replace( $parse_home_url['path'], '', home_url() );
+
+		preg_match( '/(\?.*)$/', $url, $reg );
+		if ( !empty( $reg[1] ) ) {
+			$url = str_replace( $reg[1], '', $url );
 		}
 		if ( !preg_match( '/^https?:\/\//', $url ) ) {
-			$url = $home_url . '/' . $url;
+			$protocol = ( is_ssl() ) ? 'https://' : 'http://';
+			$home_url = untrailingslashit( $protocol.$_SERVER['HTTP_HOST'] );
+			$url = $home_url . $url;
 		}
 		$url = preg_replace( '/([^:])\/+/', '$1/', $url );
 		$url = trailingslashit( $url );
+		if ( !empty( $this->options_by_formkey['querystring'] ) && isset( $_GET['post_id'] ) && preg_match( '/^\d+$/', $_GET['post_id'] ) ) {
+			$url = $url . '?post_id=' . $_GET['post_id'];
+		}
 		return $url;
 	}
 
@@ -428,16 +435,17 @@ class mw_wp_form {
 		if ( $this->viewFlg == 'input' || $this->viewFlg == 'preview' ) {
 			$this->Error = $this->Validation->Error();
 
+			// ユーザー情報取得
 			$user = wp_get_current_user();
-			$search = array(
-				'{user_id}',
-				'{user_login}',
-				'{user_email}',
-				'{user_url}',
-				'{user_registered}',
-				'{display_name}',
-			);
 			if ( !empty( $user ) ) {
+				$search = array(
+					'{user_id}',
+					'{user_login}',
+					'{user_email}',
+					'{user_url}',
+					'{user_registered}',
+					'{display_name}',
+				);
 				$content = str_replace( $search, array(
 					$user->get( 'ID' ),
 					$user->get( 'user_login' ),
@@ -446,9 +454,15 @@ class mw_wp_form {
 					$user->get( 'user_registered' ),
 					$user->get( 'display_name' ),
 				), $content );
-			} else {
-				$content = str_replace( $search, '', $content );
 			}
+
+			// 投稿情報取得
+			if ( isset( $this->options_by_formkey['querystring'] ) )
+				$querystring = $this->options_by_formkey['querystring'];
+			if ( !empty( $querystring ) ) {
+				$content = preg_replace_callback( '/{(.+?)}/', array( $this, 'get_post_propery' ), $content );
+			}
+			//$content = preg_replace( '/{.+?}/', '', $content );
 
 			return
 				'<div id="mw_wp_form_' . $this->key . '" class="mw_wp_form">' .
@@ -457,6 +471,31 @@ class mw_wp_form {
 				$this->Form->end() .
 				'<!-- end .mw_wp_form --></div>';
 		}
+	}
+
+	/**
+	 * get_post_propery
+	 * 引数 post_id が有効の場合、ユーザー情報を取得するために preg_replace_callback から呼び出される。
+	 * @param	Array	$matches
+	 * @return	String
+	 */
+	public function get_post_propery( $matches ) {
+		if ( isset( $this->options_by_formkey['querystring'] ) )
+			$querystring = $this->options_by_formkey['querystring'];
+		if ( !empty( $querystring ) && isset( $_GET['post_id'] ) && preg_match( '/^\d+$/', $_GET['post_id'] ) ) {
+			$_post = get_post( $_GET['post_id'] );
+			if ( empty( $_post->ID ) )
+				return $matches[0];
+			if ( isset( $_post->$matches[1] ) ) {
+				return $_post->$matches[1];
+			} else {
+				// post_meta の処理
+				$pm = get_post_meta( $_post->ID, $matches[1], true );
+				if ( !empty( $pm ) )
+					return $pm;
+			}
+		}
+		return $matches[0];
 	}
 
 	/**

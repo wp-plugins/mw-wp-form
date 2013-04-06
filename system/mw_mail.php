@@ -3,14 +3,14 @@
  * Name: MW Mail
  * URI: http://2inc.org
  * Description: メールクラス
- * Version: 1.2.1
+ * Version: 1.2.2
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: July 20, 2012
- * Modified: December 14, 2012
+ * Modified: April 6, 2013
  * License: GPL2
  *
- * Copyright 2012 Takashi Kitajima (email : inc@2inc.org)
+ * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -70,8 +70,12 @@ class MW_Mail {
 		$header .= "X-Mailer:PHP\n";
 		*/
 		$header .= "From:" . $fromHeader . "\n";
-		wp_mail( $this->to, $subject, $body, $header );
-		// mail( $this->to, $subject, $body, $header );
+		$to = explode( ',', $this->to );
+		if ( isset( $to[0] ) ) {
+			$to = trim( $to[0] );
+			wp_mail( $to, $subject, $body, $header );
+			// mail( $to, $subject, $body, $header );
+		}
 	}
 
 	/**
