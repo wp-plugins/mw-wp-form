@@ -3,11 +3,11 @@
  * Name: MW WP Form Admin Page
  * URI: http://2inc.org
  * Description: 管理画面クラス
- * Version: 1.1.1
+ * Version: 1.1.2
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: February 21, 2013
- * Modified: March 15, 2013
+ * Modified: March 25, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -129,6 +129,13 @@ class MW_WP_Form_Admin_Page {
 				self::NAME.'_formkey',
 				__( 'Form Key', self::DOMAIN ),
 				array( $this, 'display_form_key' ),
+				self::NAME, 'side'
+			);
+			// 引数有効
+			add_meta_box(
+				self::NAME.'_querystring',
+				__( 'Activate Query string of post', self::DOMAIN ),
+				array( $this, 'display_query_string' ),
 				self::NAME, 'side'
 			);
 			// メール設定
@@ -314,6 +321,21 @@ class MW_WP_Form_Admin_Page {
 		<p>
 			<?php _e( 'Copy and Paste this shortcode.', self::DOMAIN ); ?><br />
 			<span id="formkey_field">[mwform_formkey key="<?php the_ID(); ?>"]</span>
+		</p>
+		<?php
+	}
+
+	/**
+	 * display_query_string
+	 * $post を取得するための引数を有効にするフィールドを表示
+	 */
+	public function display_query_string() {
+		global $post;
+		?>
+		<p>
+			<label><input type="checkbox" name="<?php echo esc_attr( self::NAME ); ?>[querystring]" value="1" <?php checked( $this->get_post_data( 'querystring' ), 1 ); ?> /> <?php _e( 'Active', self::DOMAIN ); ?></label><br />
+			<?php _e( 'If this field is active, MW WP Form get the post as query string "post_id" and you can use $post\'s property in editor', self::DOMAIN ); ?><br />
+			<?php _e( 'Example: {ID}, {post_title}, {post_meta} etc...', self::DOMAIN ); ?>
 		</p>
 		<?php
 	}

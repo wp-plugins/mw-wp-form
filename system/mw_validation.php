@@ -3,24 +3,24 @@
  * Name: MW Validation
  * URI: http://2inc.org
  * Description: バリデーションクラス
- * Version: 1.2.2
+ * Version: 1.2.3
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: July 20, 2012
- * Modified: February 20, 2013
+ * Modified: April 6, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
  * published by the Free Software Foundation.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -42,7 +42,7 @@ class MW_Validation {
 		// エラーオブジェクトを設定
 		$this->Error = new MW_Error();
 	}
-	
+
 	private function getValue( $key ) {
 		$value = null;
 		if ( ! isset( $this->data[$key] ) ) return $value;
@@ -259,7 +259,7 @@ class MW_Validation {
 				'message' => __( 'This is not the format of a mail address.', self::DOMAIN )
 			);
 			$options = array_merge( $defaults, $options );
-			if ( !preg_match( '/^.+@.+$/', $value ) && !$this->isEmpty( $value ) ) {
+			if ( !preg_match( '/^[^@]+@[^@]+$/', $value ) && !$this->isEmpty( $value ) ) {
 				$_ret = $options['message'];
 			}
 		}
@@ -485,7 +485,7 @@ class MW_Validation {
 	protected function array_clean( $array ) {
 		return array_merge( array_diff( $array, array( '' ) ) );
 	}
-	
+
 	/**
 	 * noempty
 	 * 値が空（0は許可）
