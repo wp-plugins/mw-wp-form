@@ -1,5 +1,5 @@
 === Plugin Name ===
-Contributors: Takashi Kitajima
+Contributors: inc2734
 Donate link:
 Tags: plugin, form, confirm, preview
 Requires at least: 3.4
