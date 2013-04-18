@@ -4,7 +4,7 @@ Donate link:
 Tags: plugin, form, confirm, preview
 Requires at least: 3.4
 Tested up to: 3.5
-Stable tag: 0.6.4
+Stable tag: 0.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -28,6 +28,11 @@ http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 1. If you using functions.php, place `<?php add_filter( 'mwform_mail_{$key}', array( $this, 'my_mail_action_name' ) ); ?>` in your functions.php
 
 == Changelog ==
+
+= 0.7 =
+* Added  : 問い合わせデータをデータベースに保存する機能を追加
+* Added  : アンインストール時にデータを削除するように修正
+* Bug fix: 一覧画面で QTags の JSエラーがでていたのを修正
 
 = 0.6.4 =
 * Added  : 引数を有効にする meta_box を追加
