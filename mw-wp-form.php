@@ -3,11 +3,11 @@
  * Plugin Name: MW WP Form
  * Plugin URI: http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
  * Description: MW WP Form can create mail form with a confirmation screen.
- * Version: 0.7
+ * Version: 0.7.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: September 25, 2012
- * Modified: April 16, 2013
+ * Modified: May 13, 2013
  * Text Domain: mw-wp-form
  * Domain Path: /languages/
  * License: GPL2
@@ -340,6 +340,14 @@ class mw_wp_form {
 	protected function apply_filters_mwform_mail() {
 		$Mail = new MW_Mail();
 
+		$admin_mail_subject = $this->options_by_formkey['mail_subject'];
+		if ( !empty( $this->options_by_formkey['admin_mail_subject'] ) )
+			$admin_mail_subject = $this->options_by_formkey['admin_mail_subject'];
+
+		$admin_mail_content = $this->options_by_formkey['mail_content'];
+		if ( !empty( $this->options_by_formkey['admin_mail_content'] ) )
+			$admin_mail_content = $this->options_by_formkey['admin_mail_content'];
+
 		if ( $this->options_by_formkey ) {
 			// 送信先を指定
 			if ( $mailto = $this->options_by_formkey['mail_to'] ) {
@@ -352,13 +360,12 @@ class mw_wp_form {
 			// 送信者を指定
 			$Mail->sender = get_bloginfo( 'name' );
 			// タイトルを指定
-			$Mail->subject = $this->options_by_formkey['mail_subject'];
+			$Mail->subject = $admin_mail_subject;
 			// 本文を指定
-			$body = $this->options_by_formkey['mail_content'];
 			$Mail->body = preg_replace_callback(
 				'/{(.+?)}/',
 				array( $this, 'create_mail_body' ),
-				$body
+				$admin_mail_content
 			);
 		}
 
@@ -370,7 +377,7 @@ class mw_wp_form {
 
 			if ( !empty( $this->options_by_formkey['usedb'] ) ) {
 				$this->insert_id = wp_insert_post( array(
-					'post_title' => $this->options_by_formkey['mail_subject'],
+					'post_title' => $admin_mail_subject,
 					'post_status' => 'publish',
 					'post_type' => self::DBDATA . $this->options_by_formkey['post_id'],
 					// 'post_content' => $Mail->body,
@@ -378,12 +385,21 @@ class mw_wp_form {
 				preg_replace_callback(
 					'/{(.+?)}/',
 					array( $this, 'save_mail_body' ),
-					$body
+					$admin_mail_content
 				);
 			}
 
 			if ( isset( $this->options_by_formkey['automatic_reply_email'], $this->data[$this->options_by_formkey['automatic_reply_email']] ) && !$this->Validation->mail( $this->data[$this->options_by_formkey['automatic_reply_email']] ) ) {
+				// 送信先を指定
 				$Mail->to = $this->data[$this->options_by_formkey['automatic_reply_email']];
+				// タイトルを指定
+				$Mail->subject = $this->options_by_formkey['mail_subject'];
+				// 本文を指定
+				$Mail->body = preg_replace_callback(
+					'/{(.+?)}/',
+					array( $this, 'create_mail_body' ),
+					$this->options_by_formkey['mail_content']
+				);
 				$Mail->send();
 			}
 		}

@@ -3,11 +3,11 @@
  * Name: MW WP Form Admin Page
  * URI: http://2inc.org
  * Description: 管理画面クラス
- * Version: 1.2
+ * Version: 1.2.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: February 21, 2013
- * Modified: April 16, 2013
+ * Modified: May 13, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -160,11 +160,18 @@ class MW_WP_Form_Admin_Page {
 				array( $this, 'display_form_key' ),
 				self::NAME, 'side'
 			);
-			// メール設定
+			// 自動返信メール設定
 			add_meta_box(
 				self::NAME.'_mail',
-				__( 'Mail Options', self::DOMAIN ),
+				__( 'Automatic Reply Email Options', self::DOMAIN ),
 				array( $this, 'add_mail_options' ),
+				self::NAME, 'side'
+			);
+			// 管理者メール設定
+			add_meta_box(
+				self::NAME.'_admin_mail',
+				__( 'Admin Email Options', self::DOMAIN ),
+				array( $this, 'add_admin_mail_options' ),
 				self::NAME, 'side'
 			);
 			// 設定
@@ -424,16 +431,11 @@ class MW_WP_Form_Admin_Page {
 
 	/**
 	 * add_mail_options
-	 * メール設定フォームを表示
+	 * 自動返信メール設定フォームを表示
 	 */
 	public function add_mail_options() {
 		global $post;
 		?>
-		<p>
-			<b><?php _e( 'To ( E-mail address )', self::DOMAIN ); ?></b><br />
-			<input type="text" name="<?php echo esc_attr( self::NAME ); ?>[mail_to]" value="<?php echo esc_attr( $this->get_post_data( 'mail_to' ) ); ?>" /><br />
-			<?php _e( 'If empty: Using admin E-mail address.', self::DOMAIN ); ?>
-		</p>
 		<p>
 			<b><?php _e( 'Subject', self::DOMAIN ); ?></b><br />
 			<input type="text" name="<?php echo esc_attr( self::NAME ); ?>[mail_subject]" value="<?php echo esc_attr( $this->get_post_data( 'mail_subject' ) ); ?>" />
@@ -447,6 +449,33 @@ class MW_WP_Form_Admin_Page {
 			<b><?php _e( 'Automatic reply email', self::DOMAIN ); ?></b><br />
 			<input type="text" name="<?php echo esc_attr( self::NAME ); ?>[automatic_reply_email]" value="<?php echo esc_attr( $this->get_post_data( 'automatic_reply_email') ); ?>" /><br />
 			<?php _e( 'Please input the key to use as transmission to automatic reply email.', self::DOMAIN ); ?>
+		</p>
+		<?php
+	}
+
+	/**
+	 * add_admin_mail_options
+	 * 管理者宛メール設定フォームを表示
+	 */
+	public function add_admin_mail_options() {
+		global $post;
+		?>
+		<p>
+			<?php _e( 'If Admin Email Options is a blank, Automatic Replay Email Options is used as Admin Email Options.', self::DOMAIN ); ?>
+		</p>
+		<p>
+			<b><?php _e( 'To ( E-mail address )', self::DOMAIN ); ?></b><br />
+			<input type="text" name="<?php echo esc_attr( self::NAME ); ?>[mail_to]" value="<?php echo esc_attr( $this->get_post_data( 'mail_to' ) ); ?>" /><br />
+			<?php _e( 'If empty: Using admin E-mail address.', self::DOMAIN ); ?>
+		</p>
+		<p>
+			<b><?php _e( 'Subject', self::DOMAIN ); ?></b><br />
+			<input type="text" name="<?php echo esc_attr( self::NAME ); ?>[admin_mail_subject]" value="<?php echo esc_attr( $this->get_post_data( 'admin_mail_subject' ) ); ?>" />
+		</p>
+		<p>
+			<b><?php _e( 'Ccontent', self::DOMAIN ); ?></b><br />
+			<textarea name="<?php echo esc_attr( self::NAME ); ?>[admin_mail_content]" cols="30" rows="10"><?php echo esc_attr( $this->get_post_data( 'admin_mail_content' ) ); ?></textarea><br />
+			<?php _e( '{key} is converted form data.', self::DOMAIN ); ?>
 		</p>
 		<?php
 	}
