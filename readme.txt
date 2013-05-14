@@ -4,7 +4,7 @@ Donate link:
 Tags: plugin, form, confirm, preview
 Requires at least: 3.4
 Tested up to: 3.5
-Stable tag: 0.7
+Stable tag: 0.7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,10 +13,12 @@ MW WP Form can create mail form with a confirmation screen using shortcode.
 == Description ==
 
 MW WP Form can create mail form with a confirmation screen using shortcode.
+
 * Form created using short codes
 * Using confirmation page.
 * The page changes by the same URL or individual URL are possible.
 * Many validation rules
+
 http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 
 == Installation ==
@@ -28,6 +30,11 @@ http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 1. If you using functions.php, place `<?php add_filter( 'mwform_mail_{$key}', array( $this, 'my_mail_action_name' ) ); ?>` in your functions.php
 
 == Changelog ==
+
+= 0.7.1 =
+* Added  : メール設定を 自動返信メール設定 と 管理者宛メール設定 に分割
+* Note   : データベースには 管理者宛メール設定 のデータが保存される
+* Note   : 管理者宛メール設定 が空の場合は 自動返信メール設定 が使用される
 
 = 0.7 =
 * Added  : 問い合わせデータをデータベースに保存する機能を追加
