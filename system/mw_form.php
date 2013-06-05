@@ -3,11 +3,11 @@
  * Name: MW Form
  * URI: http://2inc.org
  * Description: フォームクラス
- * Version: 1.3
+ * Version: 1.2.7
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: September 25, 2012
- * Modified: May 29, 2013
+ * Modified: February 20, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -190,8 +190,8 @@ class MW_Form {
 		$separator = $this->getSeparatorValue( $key );
 		// すべて空のからのときはimplodeしないように（---がいってしまうため）
 		if ( is_array( $this->data[$key]['data'] ) && array_key_exists( 'data', $this->data[$key] ) && !empty( $separator ) ) {
-			foreach ( $this->data[$key]['data'] as $value ) {
-				if ( !( $value === '' || $value === null ) ) {
+			foreach ( $this->data[$key]['data'] as $val ) {
+				if ( !( $val === '' || $val === null ) ) {
 					$_ret = implode( $separator, $this->data[$key]['data'] );
 					$_ret = $this->e( $_ret );
 					break;
@@ -222,8 +222,8 @@ class MW_Form {
 		$_ret = null;
 		$separator = $this->getSeparatorValue( $key );
 		if ( isset( $this->data[$key]['data'] ) && is_array( $this->data[$key]['data'] ) && array_key_exists( 'data', $this->data[$key] ) && !empty( $separator ) ) {
-			foreach ( $this->data[$key]['data'] as $value ) {
-				if ( isset( $data[$value] ) ) {
+			foreach ( $this->data[$key]['data'] as $val ) {
+				if ( isset( $data[$val] ) ) {
 					$_ret = implode( $separator, $this->data[$key]['data'] );
 					$_ret = $this->e( $_ret );
 					break;
@@ -289,7 +289,7 @@ class MW_Form {
 	}
 
 	/**
-	 * start
+	 start
 	 * フォームタグ生成
 	 * @param	Array	( 'action' =>, 'enctype' => )
 	 * @return	String	form開始タグ
@@ -297,8 +297,7 @@ class MW_Form {
 	public function start( $options = array() ) {
 		$defaults = array(
 			'action' => '',
-			//'enctype' => 'application/x-www-form-urlencoded',
-			'enctype' => 'multipart/form-data',
+			'enctype' => 'application/x-www-form-urlencoded',
 		);
 		$options = array_merge( $defaults, $options );
 		$_ret = sprintf( '<form method="%s" action="%s" enctype="%s">',
@@ -313,8 +312,9 @@ class MW_Form {
 	 */
 	public function end() {
 		$_ret = '';
-		if ( $this->method == 'post' )
-			$_ret .= $this->hidden( $this->tokenName, $this->token );
+		if ( $this->method == 'post' ) {
+			$_ret .= sprintf( '<input type="hidden" name="%s" value="%s" />', $this->tokenName, $this->token );
+		}
 		$_ret .= '</form>';
 		return $_ret;
 	}
@@ -465,10 +465,10 @@ class MW_Form {
 		$options = array_merge( $defaults, $options );
 		$value = ( isset( $this->data[$name] ) )? $this->data[$name] : $options['value'];
 		$_ret = sprintf( '<select name="%s">', $this->e( $name ) );
-		foreach ( $children as $key => $_value ) {
+		foreach ( $children as $key => $val ) {
 			$selected = ( $key == $value )? ' selected="selected"' : '';
 			$_ret .= sprintf( '<option value="%s"%s>%s</option>',
-				$this->e( $key ), $selected, $this->e( $_value )
+				$this->e( $key ), $selected, $this->e( $val )
 			);
 		}
 		$_ret .= '</select>';
@@ -490,10 +490,10 @@ class MW_Form {
 		$options = array_merge( $defaults, $options );
 		$value = ( isset( $this->data[$name] ) )? $this->data[$name] : $options['value'];
 		$_ret = '';
-		foreach ( $children as $key => $_value ) {
+		foreach ( $children as $key => $val ) {
 			$checked = ( $key == $value )? ' checked="checked"' : '';
 			$_ret .= sprintf( '<label><input type="radio" name="%s" value="%s"%s />%s</label>',
-				$this->e( $name ), $this->e( $key ), $checked, $this->e( $_value )
+				$this->e( $name ), $this->e( $key ), $checked, $this->e( $val )
 			);
 		}
 		return $_ret;
@@ -522,10 +522,10 @@ class MW_Form {
 			$value = explode( $separator, $value );
 		}
 		$_ret = '';
-		foreach ( $children as $key => $_value ) {
+		foreach ( $children as $key => $val ) {
 			$checked = ( is_array( $value ) && in_array( $key, $value ) )? ' checked="checked"' : '';
 			$_ret .= sprintf( '<label><input type="checkbox" name="%s" value="%s"%s />%s</label>',
-				$this->e( $name.'[data][]' ), $this->e( $key ), $checked, $this->e( $_value )
+				$this->e( $name.'[data][]' ), $this->e( $key ), $checked, $this->e( $val )
 			);
 		}
 		$_ret .= $this->separator( $name, $separator );
@@ -562,7 +562,7 @@ class MW_Form {
 	 * @param	String	name属性
 	 * 			String	size属性
 	 * 			String	value属性
-	 * 			String	js	datepickerの引数
+				String	js		datepickerの引数
 	 * @return	String	ボタン
 	 */
 	public function datepicker( $name, $options = array() ) {
@@ -583,24 +583,6 @@ class MW_Form {
 			} );
 			</script>
 		',$this->e( $name ), $options['js'] );
-		return $_ret;
-	}
-
-	/**
-	 * file
-	 * input[type=file]タグ生成
-	 * @param	String	name属性
-	 * 			Array	( 'size' => )
-	 * @return	String	htmlタグ
-	 */
-	public function file( $name, $options = array() ) {
-		$defaults = array(
-			'size' => 60,
-		);
-		$options = array_merge( $defaults, $options );
-		$_ret = sprintf( '<input type="file" name="%s" size="%d" />',
-			$this->e( $name ), $this->e( $options['size'] )
-		);
 		return $_ret;
 	}
 

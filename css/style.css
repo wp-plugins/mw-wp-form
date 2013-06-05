@@ -5,8 +5,3 @@
 	color : #B70000;
 	display : block;
 }
-.ui-datepicker .ui-datepicker-title select.ui-datepicker-month,
-.ui-datepicker .ui-datepicker-title select.ui-datepicker-year {
-	width: 40%;
-	margin: 0 5px;
-}

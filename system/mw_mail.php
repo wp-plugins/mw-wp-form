@@ -3,11 +3,11 @@
  * Name: MW Mail
  * URI: http://2inc.org
  * Description: メールクラス
- * Version: 1.3
+ * Version: 1.2.2
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: July 20, 2012
- * Modified: May 29, 2013
+ * Modified: April 6, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -27,12 +27,11 @@
  */
 class MW_Mail {
 
-	public $to;				// 宛先
-	public $from;			// 送信元
-	public $sender;			// 送信者
-	public $subject;		// 題名
-	public $body;			// 本文
-	public $attachments;	// 添付
+	public $to;			// 宛先
+	public $from;		// 送信元
+	public $sender;		// 送信者
+	public $subject;	// 題名
+	public $body;		// 本文
 	// private $targetEncodeing = 'ISO-2022-JP';
 	private $ENCODE = 'utf-8';
 
@@ -74,7 +73,7 @@ class MW_Mail {
 		$to = explode( ',', $this->to );
 		if ( isset( $to[0] ) ) {
 			$to = trim( $to[0] );
-			wp_mail( $to, $subject, $body, $header, $this->attachments );
+			wp_mail( $to, $subject, $body, $header );
 			// mail( $to, $subject, $body, $header );
 		}
 	}
@@ -91,22 +90,22 @@ class MW_Mail {
 			'exclude' => array()
 		);
 		$options = array_merge( $defaults, $options );
-		foreach( $array as $key => $value ) {
+		foreach( $array as $key => $val ) {
 			if ( in_array( $key, $options['exclude'] ) ) continue;
-			if ( is_array( $value ) && array_key_exists( 'data', $value ) && array_key_exists( 'separator', $value ) ) {
-				if ( is_array( $value['data'] ) ) {
-					foreach ( $value['data'] as $_val ) {
+			if ( is_array( $val ) && array_key_exists( 'data', $val ) && array_key_exists( 'separator', $val ) ) {
+				if ( is_array( $val['data'] ) ) {
+					foreach ( $val['data'] as $_val ) {
 						if ( !( $_val === '' || $_val === null ) ) {
-							$value = implode( $value['separator'], $value['data'] );
+							$val = implode( $val['separator'], $val['data'] );
 							break;
 						}
-						$value = '';
+						$val = '';
 					}
 				} else {
-					$value = $value['data'];
+					$val = $val['data'];
 				}
 			}
-			$_ret .= sprintf( "▼%s\n%s\n\n", $this->e( $key ), $this->e( $value ) );
+			$_ret .= sprintf( "▼%s\n%s\n\n", $this->e( $key ), $this->e( $val ) );
 		}
 		return $_ret;
 	}

@@ -45,7 +45,7 @@ jQuery( function( $ ) {
 	 * 完了ページの入力エリアからオリジナルボタンを消去
 	 */
 	$( window ).on( 'load', function() {
-		$( '#mw-wp-form_complete_message_metabox input[id^="qt_mw-wp-form_complete_message_mwform_"]' ).remove();
+		$( '#mw-wp-form_complete_message_metabox input[id^="qt_mw-wp-form_complete_message_mw-wp-form_"]' ).remove();
 	} );
 
 } );
