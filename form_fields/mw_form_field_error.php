@@ -1,8 +1,8 @@
 <?php
 /**
- * Name: MW Form Field Back Button
+ * Name: MW Form Field Error
  * URI: http://2inc.org
- * Description: 戻るボタンを出力。
+ * Description: エラーを出力。
  * Version: 1.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
@@ -25,12 +25,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-class mw_form_field_back_button extends mw_form_field {
+class mw_form_field_error extends mw_form_field {
 
 	/**
 	 * String $short_code_name
 	 */
-	protected $short_code_name = 'mwform_backButton';
+	protected $short_code_name = 'mwform_error';
 
 	/**
 	 * setDefaults
@@ -39,7 +39,7 @@ class mw_form_field_back_button extends mw_form_field {
 	 */
 	protected function setDefaults() {
 		return array(
-			'value' => __( 'Back', MWF_Config::DOMAIN ),
+			'keys' => '',
 		);
 	}
 
@@ -50,6 +50,12 @@ class mw_form_field_back_button extends mw_form_field {
 	 * @return	String	HTML
 	 */
 	protected function inputPage( $atts ) {
+		$keys = explode( ',', $atts['keys'] );
+		$_ret = '';
+		foreach ( $keys as $key ) {
+			$_ret .= $this->getError( trim( $key ) );
+		}
+		return $_ret;
 	}
 
 	/**
@@ -59,7 +65,6 @@ class mw_form_field_back_button extends mw_form_field {
 	 * @return	String	HTML
 	 */
 	protected function previewPage( $atts ) {
-		return $this->Form->submit( $this->Form->getBackButtonName(), $atts['value'] );
 	}
 
 	/**
@@ -69,8 +74,8 @@ class mw_form_field_back_button extends mw_form_field {
 	protected function add_qtags() {
 		?>
 		'<?php echo $this->short_code_name; ?>',
-		'<?php _e( 'Back', MWF_Config::DOMAIN ); ?>',
-		'[<?php echo $this->short_code_name; ?>]',
+		'<?php _e( 'Error Message', MWF_Config::DOMAIN ); ?>',
+		'[<?php echo $this->short_code_name; ?> keys=""]',
 		''
 		<?php
 	}
