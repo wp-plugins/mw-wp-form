@@ -3,11 +3,11 @@
  * Name: MW Validation
  * URI: http://2inc.org
  * Description: バリデーションクラス
- * Version: 1.2.3
+ * Version: 1.3
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: July 20, 2012
- * Modified: April 6, 2013
+ * Modified: May 29, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -45,7 +45,7 @@ class MW_Validation {
 
 	private function getValue( $key ) {
 		$value = null;
-		if ( ! isset( $this->data[$key] ) ) return $value;
+		if ( !isset( $this->data[$key] ) ) return $value;
 		if ( is_array( $this->data[$key] ) ) {
 			if ( array_key_exists( 'data', $this->data[$key] ) ) {
 				if ( is_array( $this->data[$key]['data'] ) ) {
@@ -72,7 +72,7 @@ class MW_Validation {
 		$value = $this->getValue( $key );
 		if ( !isset( $value ) ) {
 			$defaults = array(
-				'message' => __( 'This is required.', self::DOMAIN )
+				'message' => __( 'This is required.', MWF_Config::DOMAIN )
 			);
 			$options = array_merge( $defaults, $options );
 			$_ret = $options['message'];
@@ -90,14 +90,12 @@ class MW_Validation {
 	public function noEmpty( $key, $options = array() ) {
 		$_ret = '';
 		$value = $this->getValue( $key );
-		if ( isset( $value ) ) {
+		if ( isset( $value ) && $this->isEmpty( $value ) ) {
 			$defaults = array(
-				'message' => __( 'Please enter.', self::DOMAIN )
+				'message' => __( 'Please enter.', MWF_Config::DOMAIN )
 			);
 			$options = array_merge( $defaults, $options );
-			if ( $this->isEmpty( $value ) ) {
-				$_ret = $options['message'];
-			}
+			$_ret = $options['message'];
 		}
 		return $_ret;
 	}
@@ -114,7 +112,7 @@ class MW_Validation {
 		$value = $this->getValue( $key );
 		if ( isset( $value ) ) {
 			$defaults = array(
-				'message' => __( 'Please enter.', self::DOMAIN )
+				'message' => __( 'Please enter.', MWF_Config::DOMAIN )
 			);
 			$options = array_merge( $defaults, $options );
 			if ( empty( $value ) ) {
@@ -134,14 +132,12 @@ class MW_Validation {
 	public function alpha( $key, $options = array() ) {
 		$_ret = '';
 		$value = $this->getValue( $key );
-		if ( isset( $value ) ) {
+		if ( isset( $value ) && !preg_match( '/^[A-Za-z]+$/', $value ) && !$this->isEmpty( $value ) ) {
 			$defaults = array(
-				'message' => __( 'Please enter with a half-width alphabetic character.', self::DOMAIN )
+				'message' => __( 'Please enter with a half-width alphabetic character.', MWF_Config::DOMAIN )
 			);
 			$options = array_merge( $defaults, $options );
-			if ( !preg_match( '/^[A-Za-z]+$/', $value ) && !$this->isEmpty( $value ) ) {
-				$_ret = $options['message'];
-			}
+			$_ret = $options['message'];
 		}
 		return $_ret;
 	}
@@ -156,14 +152,12 @@ class MW_Validation {
 	public function numeric( $key, $options = array() ) {
 		$_ret = '';
 		$value = $this->getValue( $key );
-		if ( isset( $value ) ) {
+		if ( isset( $value ) && !preg_match( '/^[0-9]+$/', $value ) && !$this->isEmpty( $value ) ) {
 			$defaults = array(
-				'message' => __( 'Please enter with a half-width number.', self::DOMAIN )
+				'message' => __( 'Please enter with a half-width number.', MWF_Config::DOMAIN )
 			);
 			$options = array_merge( $defaults, $options );
-			if ( !preg_match( '/^[0-9]+$/', $value ) && !$this->isEmpty( $value ) ) {
-				$_ret = $options['message'];
-			}
+			$_ret = $options['message'];
 		}
 		return $_ret;
 	}
@@ -178,14 +172,12 @@ class MW_Validation {
 	public function alphaNumeric( $key, $options = array() ) {
 		$_ret = '';
 		$value = $this->getValue( $key );
-		if ( isset( $value ) ) {
+		if ( isset( $value ) && !preg_match( '/^[0-9A-Za-z]+$/', $value ) && !$this->isEmpty( $value ) ) {
 			$defaults = array(
-				'message' => __( 'Please enter with a half-width alphanumeric character.', self::DOMAIN )
+				'message' => __( 'Please enter with a half-width alphanumeric character.', MWF_Config::DOMAIN )
 			);
 			$options = array_merge( $defaults, $options );
-			if ( !preg_match( '/^[0-9A-Za-z]+$/', $value ) && !$this->isEmpty( $value ) ) {
-				$_ret = $options['message'];
-			}
+			$_ret = $options['message'];
 		}
 		return $_ret;
 	}
@@ -202,7 +194,7 @@ class MW_Validation {
 		$value = $this->getValue( $key );
 		if ( isset( $value ) ) {
 			$defaults = array(
-				'message' => __( 'This is not the format of a zip code.', self::DOMAIN )
+				'message' => __( 'This is not the format of a zip code.', MWF_Config::DOMAIN )
 			);
 			$options = array_merge( $defaults, $options );
 			if ( !empty( $value ) ) {
@@ -229,7 +221,7 @@ class MW_Validation {
 		$value = $this->getValue( $key );
 		if ( isset( $value ) ) {
 			$defaults = array(
-				'message' => __( 'This is not the format of a tel number.', self::DOMAIN )
+				'message' => __( 'This is not the format of a tel number.', MWF_Config::DOMAIN )
 			);
 			$options = array_merge( $defaults, $options );
 			if ( !empty( $value ) ) {
@@ -254,14 +246,12 @@ class MW_Validation {
 	public function mail( $key, $options = array() ) {
 		$_ret = '';
 		$value = $this->getValue( $key );
-		if ( isset( $value ) ) {
+		if ( isset( $value ) && !preg_match( '/^[^@]+@[^@]+$/', $value ) && !$this->isEmpty( $value ) ) {
 			$defaults = array(
-				'message' => __( 'This is not the format of a mail address.', self::DOMAIN )
+				'message' => __( 'This is not the format of a mail address.', MWF_Config::DOMAIN )
 			);
 			$options = array_merge( $defaults, $options );
-			if ( !preg_match( '/^[^@]+@[^@]+$/', $value ) && !$this->isEmpty( $value ) ) {
-				$_ret = $options['message'];
-			}
+			$_ret = $options['message'];
 		}
 		return $_ret;
 	}
@@ -276,14 +266,12 @@ class MW_Validation {
 	public function url( $key, $options = array() ) {
 		$_ret = '';
 		$value = $this->getValue( $key );
-		if ( isset( $value ) ) {
+		if ( isset( $value ) && !preg_match( '/^https{0,1}:\/\//', $value ) && !$this->isEmpty( $value ) ) {
 			$defaults = array(
-				'message' => __( 'This is not the format of a url.', self::DOMAIN )
+				'message' => __( 'This is not the format of a url.', MWF_Config::DOMAIN )
 			);
 			$options = array_merge( $defaults, $options );
-			if ( !preg_match( '/^https{0,1}:\/\//', $value ) && !$this->isEmpty( $value ) ) {
-				$_ret = $options['message'];
-			}
+			$_ret = $options['message'];
 		}
 		return $_ret;
 	}
@@ -301,7 +289,7 @@ class MW_Validation {
 		if ( isset( $value ) ) {
 			$defaults = array(
 				'target' => null,
-				'message' => __( 'This is not in agreement.', self::DOMAIN )
+				'message' => __( 'This is not in agreement.', MWF_Config::DOMAIN )
 			);
 			$options = array_merge( $defaults, $options );
 			if ( !( isset( $this->data[$options['target']] ) && $value == $this->data[$options['target']] ) ) {
@@ -321,16 +309,28 @@ class MW_Validation {
 	public function between( $key, $options = array() ) {
 		$_ret = '';
 		$value = $this->getValue( $key );
-		if ( isset( $value ) ) {
+		if ( isset( $value ) && !$this->isEmpty( $value ) ) {
 			$defaults = array(
 				'min' => 0,
-				'max' => 0,
-				'message' => __( 'The number of characters is invalid.', self::DOMAIN )
+				// 'max' => 0,
+				'message' => __( 'The number of characters is invalid.', MWF_Config::DOMAIN )
 			);
 			$options = array_merge( $defaults, $options );
 			$length = mb_strlen( $value, $this->ENCODE );
-			if ( preg_match( '/^\d+$/', $options['min'] ) && preg_match( '/^\d+$/', $options['max'] ) && !( $options['min'] <= $length && $length <= $options['max'] ) ) {
-				$_ret = $options['message'];
+			if ( MWF_Functions::is_numeric( $options['min'] ) ) {
+				if ( MWF_Functions::is_numeric( $options['max'] ) ) {
+					if ( !( $options['min'] <= $length && $length <= $options['max'] ) ) {
+						$_ret = $options['message'];
+					}
+				} else {
+					if ( $options['min'] > $length ) {
+						$_ret = $options['message'];
+					}
+				}
+			} elseif ( MWF_Functions::is_numeric( $options['max'] ) ) {
+				if ( $options['max'] < $length ) {
+					$_ret = $options['message'];
+				}
 			}
 		}
 		return $_ret;
@@ -346,14 +346,14 @@ class MW_Validation {
 	public function minLength( $key, $options = array() ) {
 		$_ret = '';
 		$value = $this->getValue( $key );
-		if ( isset( $value ) ) {
+		if ( isset( $value ) && !$this->isEmpty( $value ) ) {
 			$defaults = array(
 				'min' => 0,
-				'message' => __( 'The number of characters is a few.', self::DOMAIN )
+				'message' => __( 'The number of characters is a few.', MWF_Config::DOMAIN )
 			);
 			$options = array_merge( $defaults, $options );
 			$length = mb_strlen( $value, $this->ENCODE );
-			if ( preg_match( '/^\d+$/', $options['min'] ) && $options['min'] > $length ) {
+			if ( MWF_Functions::is_numeric( $options['min'] ) && $options['min'] > $length ) {
 				$_ret = $options['message'];
 			}
 		}
@@ -373,7 +373,7 @@ class MW_Validation {
 		if ( isset( $value ) ) {
 			$defaults = array(
 				'options' => array(),
-				'message' => __( 'This value is invalid.', self::DOMAIN )
+				'message' => __( 'This value is invalid.', MWF_Config::DOMAIN )
 			);
 			$options = array_merge( $defaults, $options );
 			if ( !( isset( $options[ 'options' ] ) && is_array( $options[ 'options' ] ) ) ) {
@@ -395,7 +395,7 @@ class MW_Validation {
 		$value = $this->getValue( $key );
 		if ( isset( $value ) ) {
 			$defaults = array(
-				'message' => __( 'This is not the format of a date.', self::DOMAIN )
+				'message' => __( 'This is not the format of a date.', MWF_Config::DOMAIN )
 			);
 			$options = array_merge( $defaults, $options );
 			$timestamp = strtotime( $value );
@@ -405,6 +405,60 @@ class MW_Validation {
 			$checkdate = checkdate( $month, $day, $year );
 			if ( !empty( $value ) && ( !$timestamp || !$checkdate ) ) {
 				$_ret = $options['message'];
+			}
+		}
+		return $_ret;
+	}
+
+	/**
+	 * fileType
+	 * ファイル名が指定した拡張子を含む。types は , 区切り
+	 * @param	String	キー
+	 *			Array	( 'types' =>, 'message' => )
+	 * @return	String	エラーメッセージ
+	 */
+	public function fileType( $key, $options = array() ) {
+		$_ret = '';
+		$value = $this->getValue( $key );
+		if ( !empty( $value ) ) {
+			$defaults = array(
+				'types' => '',
+				'message' => __( 'This file is invalid.', MWF_Config::DOMAIN )
+			);
+			$options = array_merge( $defaults, $options );
+			$_types = explode( ',', $options['types'] );
+			foreach ( $_types as $type ) {
+				$types[] = preg_quote( trim( $type ) );
+			}
+			$types = implode( '|', $this->array_clean( $types ) );
+			$pattern = '/\.(' . $types . ')$/';
+			if ( !preg_match( $pattern, $value ) ) {
+				$_ret = $options['message'];
+			}
+		}
+		return $_ret;
+	}
+
+	/**
+	 * fileSize
+	 * ファイルが指定したサイズより小さい
+	 * @param	String	キー
+	 *			Array	( 'bytes' =>, 'message' => )
+	 * @return	String	エラーメッセージ
+	 */
+	public function fileSize( $key, $options = array() ) {
+		$_ret = '';
+		if ( isset( $_FILES[$key] ) ) {
+			$file = $_FILES[$key];
+			if ( !empty( $file['size'] ) ) {
+				$defaults = array(
+					'bytes' => '0',
+					'message' => __( 'This file size is too big.', MWF_Config::DOMAIN )
+				);
+				$options = array_merge( $defaults, $options );
+				if ( !( preg_match( '/^[\d]+$/', $options['bytes'] ) && $options['bytes'] > $file['size'] ) ) {
+					$_ret = $options['message'];
+				}
 			}
 		}
 		return $_ret;
@@ -487,7 +541,7 @@ class MW_Validation {
 	}
 
 	/**
-	 * noempty
+	 * isEmpty
 	 * 値が空（0は許可）
 	 * @param	Mixed
 	 * @return	Boolean

@@ -1,12 +1,12 @@
 <?php
 /**
- * Name: MW Form Field Back Button
+ * Name: MW Form Field File
  * URI: http://2inc.org
- * Description: 戻るボタンを出力。
+ * Description: 画像アップロードフィールドを出力。
  * Version: 1.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
- * Created: December 14, 2012
+ * Created: May 17, 2013
  * Modified: May 29, 2013
  * License: GPL2
  *
@@ -25,12 +25,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-class mw_form_field_back_button extends mw_form_field {
+class mw_form_field_file extends mw_form_field {
 
 	/**
 	 * String $short_code_name
 	 */
-	protected $short_code_name = 'mwform_backButton';
+	protected $short_code_name = 'mwform_file';
 
 	/**
 	 * setDefaults
@@ -39,7 +39,9 @@ class mw_form_field_back_button extends mw_form_field {
 	 */
 	protected function setDefaults() {
 		return array(
-			'value' => __( 'Back', MWF_Config::DOMAIN ),
+			'name' => '',
+			'size' => 60,
+			'show_error' => 'true',
 		);
 	}
 
@@ -50,6 +52,20 @@ class mw_form_field_back_button extends mw_form_field {
 	 * @return	String	HTML
 	 */
 	protected function inputPage( $atts ) {
+		$_ret = $this->Form->file( $atts['name'], array(
+			'size' => $atts['size'],
+		) );
+		$value = $this->Form->getValue( $atts['name'] );
+		$upload_file_keys = $this->Form->getValue( MWF_Config::UPLOAD_FILE_KEYS );
+		if ( !empty( $value ) && is_array( $upload_file_keys ) && in_array( $atts['name'], $upload_file_keys ) ) {
+			$_ret .= '<div class="<?php echo MWF_Config::NAME; ?>_file">';
+			$_ret .= '<a href="' . esc_attr( $value ) . '" target="_blank">' . __( 'Uploaded.', MWF_Config::DOMAIN ) . '</a>';
+			$_ret .= $this->Form->hidden( $atts['name'], $value );
+			$_ret .= '</div>';
+		}
+		if ( $atts['show_error'] !== 'false' )
+			$_ret .= $this->getError( $atts['name'] );
+		return $_ret;
 	}
 
 	/**
@@ -59,7 +75,12 @@ class mw_form_field_back_button extends mw_form_field {
 	 * @return	String	HTML
 	 */
 	protected function previewPage( $atts ) {
-		return $this->Form->submit( $this->Form->getBackButtonName(), $atts['value'] );
+		$value = $this->Form->getValue( $atts['name'] );
+		$_ret  = '<div class="<?php echo MWF_Config::NAME; ?>_file">';
+		$_ret .= '<a href="' . esc_attr( $value ) . '" target="_blank">' . __( 'Uploaded.', MWF_Config::DOMAIN ) . '</a>';
+		$_ret .= '</div>';
+		$_ret .= $this->Form->hidden( $atts['name'], $value );
+		return $_ret;
 	}
 
 	/**
@@ -69,8 +90,8 @@ class mw_form_field_back_button extends mw_form_field {
 	protected function add_qtags() {
 		?>
 		'<?php echo $this->short_code_name; ?>',
-		'<?php _e( 'Back', MWF_Config::DOMAIN ); ?>',
-		'[<?php echo $this->short_code_name; ?>]',
+		'<?php _e( 'File', MWF_Config::DOMAIN ); ?>',
+		'[<?php echo $this->short_code_name; ?> name=""]',
 		''
 		<?php
 	}
