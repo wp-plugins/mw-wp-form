@@ -749,7 +749,6 @@ class mw_wp_form_data {
 
 	/**
 	 * getValue
-	 * データを取得
 	 * @param    String    $key    データのキー
 	 * @return   String    データ
 	 */
@@ -760,7 +759,6 @@ class mw_wp_form_data {
 
 	/**
 	 * getValues
-	 * 全てのデータを取得
 	 * @return   Array   データ
 	 */
 	public function getValues() {
@@ -771,7 +769,6 @@ class mw_wp_form_data {
 
 	/**
 	 * setValue
-	 * データを追加
 	 * @param    String    $key    データのキー
 	 * @param    String    $value  値
 	 */
@@ -782,7 +779,6 @@ class mw_wp_form_data {
 
 	/**
 	 * setValue
-	 * 複数のデータを一括で追加
 	 * @param    Array    値
 	 */
 	public function setValues( Array $array ) {
@@ -793,8 +789,7 @@ class mw_wp_form_data {
 	}
 
 	/**
-	 * clearValue
-	 * データを消す
+	 * getValue
 	 * @param    String    $key    データのキー
 	 */
 	public function clearValue( $key ) {
@@ -803,8 +798,7 @@ class mw_wp_form_data {
 	}
 
 	/**
-	 * pushValue
-	 * 指定した $key をキーと配列にデータを追加
+	 * getValue
 	 * @param    String    $key    データのキー
 	 * @param    String    $value  値
 	 */
