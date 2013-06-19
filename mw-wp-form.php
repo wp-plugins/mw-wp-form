@@ -26,9 +26,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- *
- * TODO: 入力画面、確認画面でフォームにclass付与
- * TODO: 確認画面でチェックボックスの一覧が整形できるようにclass付与するかセパレータ変更可能にする
  */
 include_once( plugin_dir_path( __FILE__ ) . 'system/mwf_functions.php' );
 include_once( plugin_dir_path( __FILE__ ) . 'system/mwf_config.php' );
