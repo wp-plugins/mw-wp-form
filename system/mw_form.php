@@ -3,11 +3,11 @@
  * Name: MW Form
  * URI: http://2inc.org
  * Description: フォームクラス
- * Version: 1.3
+ * Version: 1.3.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: September 25, 2012
- * Modified: May 29, 2013
+ * Modified: June 18, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -189,7 +189,7 @@ class MW_Form {
 		$_ret = null;
 		$separator = $this->getSeparatorValue( $key );
 		// すべて空のからのときはimplodeしないように（---がいってしまうため）
-		if ( is_array( $this->data[$key]['data'] ) && array_key_exists( 'data', $this->data[$key] ) && !empty( $separator ) ) {
+		if ( array_key_exists( 'data', $this->data[$key] ) && is_array( $this->data[$key]['data'] ) && !empty( $separator ) ) {
 			foreach ( $this->data[$key]['data'] as $value ) {
 				if ( !( $value === '' || $value === null ) ) {
 					$_ret = implode( $separator, $this->data[$key]['data'] );
@@ -221,7 +221,7 @@ class MW_Form {
 	public function getCheckedValue( $key, Array $data ) {
 		$_ret = null;
 		$separator = $this->getSeparatorValue( $key );
-		if ( isset( $this->data[$key]['data'] ) && is_array( $this->data[$key]['data'] ) && array_key_exists( 'data', $this->data[$key] ) && !empty( $separator ) ) {
+		if ( array_key_exists( 'data', $this->data[$key] ) && is_array( $this->data[$key]['data'] ) && !empty( $separator ) ) {
 			foreach ( $this->data[$key]['data'] as $value ) {
 				if ( isset( $data[$value] ) ) {
 					$_ret = implode( $separator, $this->data[$key]['data'] );
@@ -505,10 +505,10 @@ class MW_Form {
 	 * @param	String	name属性
 	 * 			Array	( キー => 値, … )
 	 * 			Array	( 'value' => Mixed )
+	 * 			String	区切り文字
 	 * @return	String	htmlタグ
 	 */
-	public function checkbox( $name, $children = array(), $options = array() ) {
-		$separator = ',';
+	public function checkbox( $name, $children = array(), $options = array(), $separator = ',' ) {
 		$defaults = array(
 			'value' => array()
 		);

@@ -4,7 +4,7 @@ Donate link:
 Tags: plugin, form, confirm, preview
 Requires at least: 3.4
 Tested up to: 3.5
-Stable tag: 0.8
+Stable tag: 0.8.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,11 +32,14 @@ http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 
 1. Upload `MW WP Form` to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
-1. You can create a form by settings page or using functions.php.
-1. If you using functions.php, place `<?php add_filter( 'mwform_validation_{$key}', array( $this, 'my_validation_filter_name' ) ); ?>` in your functions.php
-1. If you using functions.php, place `<?php add_filter( 'mwform_mail_{$key}', array( $this, 'my_mail_action_name' ) ); ?>` in your functions.php
+1. You can create a form by settings page.
 
 == Changelog ==
+
+= 0.8.1 =
+* Cahged : functions.php を用いたフォーム作成は非推奨・サポート、メンテナンス停止
+* Added  : チェックボックスで区切り文字の設定機能を追加
+           [mwform_checkbox name="checkbox" children="A,B,C" separator="、"]
 
 = 0.8 =
 * Added  : 画像アップロードフィールドを追加

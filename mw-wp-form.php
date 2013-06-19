@@ -3,7 +3,7 @@
  * Plugin Name: MW WP Form
  * Plugin URI: http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
  * Description: MW WP Form can create mail form with a confirmation screen.
- * Version: 0.8
+ * Version: 0.8.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: September 25, 2012
@@ -26,6 +26,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ * TODO: 入力画面、確認画面でフォームにclass付与
+ * TODO: 確認画面でチェックボックスの一覧が整形できるようにclass付与するかセパレータ変更可能にする
  */
 include_once( plugin_dir_path( __FILE__ ) . 'system/mwf_functions.php' );
 include_once( plugin_dir_path( __FILE__ ) . 'system/mwf_config.php' );
@@ -632,7 +635,7 @@ class mw_wp_form {
 				}
 			}
 			return
-				'<div id="mw_wp_form_' . $this->key . '" class="mw_wp_form">' .
+				'<div id="mw_wp_form_' . $this->key . '" class="mw_wp_form mw_wp_form_' . $this->viewFlg . '">' .
 				$this->Form->start() .
 				do_shortcode( $content ) .
 				$upload_file_hidden .
@@ -749,6 +752,7 @@ class mw_wp_form_data {
 
 	/**
 	 * getValue
+	 * データを取得
 	 * @param    String    $key    データのキー
 	 * @return   String    データ
 	 */
@@ -759,6 +763,7 @@ class mw_wp_form_data {
 
 	/**
 	 * getValues
+	 * 全てのデータを取得
 	 * @return   Array   データ
 	 */
 	public function getValues() {
@@ -769,6 +774,7 @@ class mw_wp_form_data {
 
 	/**
 	 * setValue
+	 * データを追加
 	 * @param    String    $key    データのキー
 	 * @param    String    $value  値
 	 */
@@ -779,6 +785,7 @@ class mw_wp_form_data {
 
 	/**
 	 * setValue
+	 * 複数のデータを一括で追加
 	 * @param    Array    値
 	 */
 	public function setValues( Array $array ) {
@@ -789,7 +796,8 @@ class mw_wp_form_data {
 	}
 
 	/**
-	 * getValue
+	 * clearValue
+	 * データを消す
 	 * @param    String    $key    データのキー
 	 */
 	public function clearValue( $key ) {
@@ -798,7 +806,8 @@ class mw_wp_form_data {
 	}
 
 	/**
-	 * getValue
+	 * pushValue
+	 * 指定した $key をキーと配列にデータを追加
 	 * @param    String    $key    データのキー
 	 * @param    String    $value  値
 	 */
