@@ -4,7 +4,7 @@ Donate link:
 Tags: plugin, form, confirm, preview
 Requires at least: 3.4
 Tested up to: 3.5
-Stable tag: 0.8.1
+Stable tag: 0.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,10 +21,10 @@ MW WP Form can create mail form with a confirmation screen using shortcode.
 
 MW WP Form はショートコードを使って確認画面付きのメールフォームを作成することができるプラグインです。
 
-・ショートコードを使用したフォーム生成
-・確認画面が表示可能
-・同一URL・個別URLでの画面変遷が可能
-・豊富なバリデーションルール
+* ショートコードを使用したフォーム生成
+* 確認画面が表示可能
+* 同一URL・個別URLでの画面変遷が可能
+* 豊富なバリデーションルール
 
 http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 
@@ -35,6 +35,9 @@ http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 1. You can create a form by settings page.
 
 == Changelog ==
+
+= 0.9 =
+* Added  : Akismet設定を追加
 
 = 0.8.1 =
 * Cahged : functions.php を用いたフォーム作成は非推奨・サポート、メンテナンス停止
