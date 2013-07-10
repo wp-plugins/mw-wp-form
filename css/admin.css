@@ -96,6 +96,28 @@ span#formkey_field {
 }
 
 /**
+ * 設定
+ */
+#mw-wp-form_settings p {
+	border-bottom: #dfdfdf solid 1px;
+	margin: 0 0 15px;
+	padding: 0 0 15px;
+}
+#mw-wp-form_settings table td {
+	padding: 0 5px 0 0;
+	text-align: left;
+	vertical-align: middle;
+}
+#mw-wp-form_settings table td input {
+	width: 100%;
+}
+#mw-wp-form_settings table.akismet th {
+	font-weight: normal;
+	padding: 0 0 5px;
+	text-align: left;
+}
+
+/**
  * バリデーションルールを追加
  */
 #mw-wp-form_validation b#add-validation-btn {

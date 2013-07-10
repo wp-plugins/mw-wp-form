@@ -3,11 +3,11 @@
  * Name: MW Form Field Image
  * URI: http://2inc.org
  * Description: 画像アップロードフィールドを出力。
- * Version: 1.1
+ * Version: 1.1.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: May 17, 2013
- * Modified: May 29, 2013
+ * Modified: July 10, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -58,7 +58,7 @@ class mw_form_field_image extends mw_form_field {
 		$value = $this->Form->getValue( $atts['name'] );
 		$upload_file_keys = $this->Form->getValue( MWF_Config::UPLOAD_FILE_KEYS );
 		if ( !empty( $value ) && is_array( $upload_file_keys ) && in_array( $atts['name'], $upload_file_keys ) ) {
-			$_ret .= '<div class="<?php echo MWF_Config::NAME; ?>_image">';
+			$_ret .= '<div class="' . MWF_Config::NAME . '_image">';
 			$_ret .= '<img src="' . esc_attr( $value ) . '" alt="" />';
 			$_ret .= $this->Form->hidden( $atts['name'], $value );
 			$_ret .= '</div>';
@@ -76,11 +76,13 @@ class mw_form_field_image extends mw_form_field {
 	 */
 	protected function previewPage( $atts ) {
 		$value = $this->Form->getValue( $atts['name'] );
-		$_ret  = '<div class="<?php echo MWF_Config::NAME; ?>_image">';
-		$_ret .= '<img src="' . esc_attr( $value ) . '" alt="" />';
-		$_ret .= $this->Form->hidden( $atts['name'], $value );
-		$_ret .= '</div>';
-		return $_ret;
+		if ( $value ) {
+			$_ret  = '<div class="' . MWF_Config::NAME . '_image">';
+			$_ret .= '<img src="' . esc_attr( $value ) . '" alt="" />';
+			$_ret .= $this->Form->hidden( $atts['name'], $value );
+			$_ret .= '</div>';
+			return $_ret;
+		}
 	}
 
 	/**
