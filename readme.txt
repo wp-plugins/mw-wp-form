@@ -4,7 +4,7 @@ Donate link:
 Tags: plugin, form, confirm, preview
 Requires at least: 3.4
 Tested up to: 3.5
-Stable tag: 0.9.1
+Stable tag: 0.9.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -35,6 +35,9 @@ http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 1. You can create a form by settings page.
 
 == Changelog ==
+
+= 0.9.1 =
+* Bug fix: ファイルの読み込みタイミング等を変更
 
 = 0.9.1 =
 * Bug fix: 画像・ファイルアップロードフィールドのクラス名が正しく設定されていないのを修正

@@ -3,7 +3,7 @@
  * Plugin Name: MW WP Form
  * Plugin URI: http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
  * Description: MW WP Form can create mail form with a confirmation screen.
- * Version: 0.9.1
+ * Version: 0.9.2
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: September 25, 2012
@@ -49,11 +49,19 @@ class mw_wp_form {
 	 * __construct
 	 */
 	public function __construct() {
-		add_action( 'plugins_loaded', array( $this, 'load_plugin_textdomain' ) );
+		add_action( 'plugins_loaded', array( $this, 'init' ) );
 		// 有効化した時の処理
 		register_activation_hook( __FILE__, array( __CLASS__, 'activation' ) );
 		// アンインストールした時の処理
 		register_uninstall_hook( __FILE__, array( __CLASS__, 'uninstall' ) );
+	}
+
+	/**
+	 * init
+	 * ファイルの読み込み等
+	 */
+	public function init() {
+		load_plugin_textdomain( MWF_Config::DOMAIN, false, basename( dirname( __FILE__ ) ) . '/languages' );
 
 		// 管理画面の実行
 		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_wp_form_admin_page.php' );
@@ -76,7 +84,7 @@ class mw_wp_form {
 		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_mail.php' );
 		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_session.php' );
 		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_validation.php' );
-		add_action( 'wp', array( $this, 'init' ) );
+		add_action( 'wp', array( $this, 'main' ) );
 		add_action( 'wp_print_styles', array( $this, 'original_style' ) );
 	}
 
@@ -135,10 +143,10 @@ class mw_wp_form {
 	}
 
 	/**
-	 * init
-	 * 表示画面でのプラグインの初期化処理等。
+	 * main
+	 * 表示画面でのプラグインの処理等。
 	 */
-	public function init() {
+	public function main() {
 		global $post;
 		if ( empty( $post->ID ) ) return;
 
@@ -220,14 +228,6 @@ class mw_wp_form {
 		add_shortcode( 'mwform_formkey', array( $this, '_mwform_formkey' ) );
 		add_shortcode( 'mwform', array( $this, '_mwform' ) );
 		add_shortcode( 'mwform_complete_message', array( $this, '_mwform_complete_message' ) );
-	}
-
-	/**
-	 * load_plugin_textdomain
-	 * 言語ファイルの読み込み
-	 */
-	public function load_plugin_textdomain() {
-		load_plugin_textdomain( MWF_Config::DOMAIN, false, basename( dirname( __FILE__ ) ) . '/languages' );
 	}
 
 	/**
