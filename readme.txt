@@ -37,6 +37,9 @@ http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 
 == Changelog ==
 
+= 0.9.4 =
+* Bug fix: 管理画面での 確認ボタン の表記間違いを修正
+
 = 0.9.3 =
 * Added  : readme.txt にマニュアルのURLを追記
 * Bug fix: 確認ボタン 挿入ボタンが表示されていなかったのを修正

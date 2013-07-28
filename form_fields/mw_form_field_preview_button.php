@@ -3,11 +3,11 @@
  * Name: MW Form Field Preview Button
  * URI: http://2inc.org
  * Description: 確認ボタンを出力。
- * Version: 1.1.1
+ * Version: 1.1.2
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: December 14, 2012
- * Modified: July 22, 2013
+ * Modified: July 28, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -69,7 +69,7 @@ class mw_form_field_preview_button extends mw_form_field {
 	protected function add_qtags() {
 		?>
 		'<?php echo $this->short_code_name; ?>',
-		'<?php _e( 'mwform_previewButton', MWF_Config::DOMAIN ); ?>',
+		'<?php _e( 'Confirm Button', MWF_Config::DOMAIN ); ?>',
 		'[<?php echo $this->short_code_name; ?> name=""]',
 		''
 		<?php
