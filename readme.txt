@@ -26,6 +26,7 @@ MW WP Form はショートコードを使って確認画面付きのメールフ
 * 同一URL・個別URLでの画面変遷が可能
 * 豊富なバリデーションルール
 
+http://2inc.org/manual-mw-wp-form/
 http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 
 == Installation ==
@@ -36,7 +37,12 @@ http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 
 == Changelog ==
 
-= 0.9.1 =
+= 0.9.3 =
+* Added  : readme.txt にマニュアルのURLを追記
+* Bug fix: 確認ボタン 挿入ボタンが表示されていなかったのを修正
+* Bug fix: 末尾に / のつかない URL の場合に画面変遷が正しく行われないバグを修正
+
+= 0.9.2 =
 * Bug fix: ファイルの読み込みタイミング等を変更
 
 = 0.9.1 =
