@@ -1,13 +1,13 @@
 <?php
 /**
- * Name: MW Form Field Preview Button
+ * Name: MW Form Field Akismet Error
  * URI: http://2inc.org
- * Description: 確認ボタンを出力。
- * Version: 1.1.1
+ * Description: Akismetのエラーを出力。
+ * Version: 1.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
- * Created: December 14, 2012
- * Modified: July 22, 2013
+ * Created: June 21, 2013
+ * Modified:
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -25,12 +25,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-class mw_form_field_preview_button extends mw_form_field {
+class mw_form_field_akismet_error extends mw_form_field {
 
 	/**
 	 * String $short_code_name
 	 */
-	protected $short_code_name = 'mwform_previewButton';
+	protected $short_code_name = 'mwform_akismet_error';
 
 	/**
 	 * setDefaults
@@ -38,9 +38,7 @@ class mw_form_field_preview_button extends mw_form_field {
 	 * @return	Array	defaults
 	 */
 	protected function setDefaults() {
-		return array(
-			'value' => __( 'Confirm', MWF_Config::DOMAIN ),
-		);
+		return array();
 	}
 
 	/**
@@ -50,7 +48,7 @@ class mw_form_field_preview_button extends mw_form_field {
 	 * @return	String	HTML
 	 */
 	protected function inputPage( $atts ) {
-		return $this->Form->submit( $this->Form->getPreviewButtonName(), $atts['value'] );
+		return '<div class="akismet_error">' . $this->getError( MWF_Config::AKISMET ) . '</div>';
 	}
 
 	/**
@@ -69,8 +67,8 @@ class mw_form_field_preview_button extends mw_form_field {
 	protected function add_qtags() {
 		?>
 		'<?php echo $this->short_code_name; ?>',
-		'<?php _e( 'mwform_previewButton', MWF_Config::DOMAIN ); ?>',
-		'[<?php echo $this->short_code_name; ?> name=""]',
+		'<?php _e( 'Akismet Error', MWF_Config::DOMAIN ); ?>',
+		'[<?php echo $this->short_code_name; ?>]',
 		''
 		<?php
 	}
