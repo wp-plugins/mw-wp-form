@@ -3,11 +3,11 @@
  * Plugin Name: MW WP Form
  * Plugin URI: http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
  * Description: MW WP Form can create mail form with a confirmation screen.
- * Version: 0.8.1
+ * Version: 0.9.4
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: September 25, 2012
- * Modified: May 29, 2013
+ * Modified: July 28, 2013
  * Text Domain: mw-wp-form
  * Domain Path: /languages/
  * License: GPL2
@@ -49,12 +49,19 @@ class mw_wp_form {
 	 * __construct
 	 */
 	public function __construct() {
-		load_plugin_textdomain( MWF_Config::DOMAIN, false, basename( dirname( __FILE__ ) ) . '/languages' );
-
+		add_action( 'plugins_loaded', array( $this, 'init' ) );
 		// 有効化した時の処理
 		register_activation_hook( __FILE__, array( __CLASS__, 'activation' ) );
 		// アンインストールした時の処理
 		register_uninstall_hook( __FILE__, array( __CLASS__, 'uninstall' ) );
+	}
+
+	/**
+	 * init
+	 * ファイルの読み込み等
+	 */
+	public function init() {
+		load_plugin_textdomain( MWF_Config::DOMAIN, false, basename( dirname( __FILE__ ) ) . '/languages' );
 
 		// 管理画面の実行
 		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_wp_form_admin_page.php' );
@@ -77,7 +84,7 @@ class mw_wp_form {
 		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_mail.php' );
 		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_session.php' );
 		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_validation.php' );
-		add_action( 'wp', array( $this, 'init' ) );
+		add_action( 'wp', array( $this, 'main' ) );
 		add_action( 'wp_print_styles', array( $this, 'original_style' ) );
 	}
 
@@ -136,10 +143,10 @@ class mw_wp_form {
 	}
 
 	/**
-	 * init
-	 * 表示画面でのプラグインの初期化処理等。
+	 * main
+	 * 表示画面でのプラグインの処理等。
 	 */
-	public function init() {
+	public function main() {
 		global $post;
 		if ( empty( $post->ID ) ) return;
 
@@ -306,9 +313,66 @@ class mw_wp_form {
 			}
 		}
 
+		if ( $this->akismet_check() ) {
+			$this->Validation->setRule( MWF_Config::AKISMET, 'akismet_check' );
+		}
+
 		$this->Validation = apply_filters( $filterName, $this->Validation );
 		if ( !is_a( $this->Validation, 'MW_Validation' ) ) {
 			exit( __( 'Validation Object is not a MW Validation Class.', MWF_Config::DOMAIN ) );
+		}
+	}
+
+	protected function akismet_check() {
+		global $akismet_api_host, $akismet_api_port;
+		if ( ! function_exists( 'akismet_get_key' ) || ! akismet_get_key() )
+			return false;
+		$doAkismet = false;
+		$author = '';
+		$author_email = '';
+		$author_url = '';
+		$content = '';
+		if ( isset( $this->options_by_formkey['akismet_author'] ) ) {
+			if ( $author = $this->Data->getValue( $this->options_by_formkey['akismet_author'] ) )
+				$doAkismet = true;
+		}
+		if ( isset( $this->options_by_formkey['akismet_author_email'] ) ) {
+			if ( $author_email = $this->Data->getValue( $this->options_by_formkey['akismet_author_email'] ) )
+				$doAkismet = true;
+		}
+		if ( isset( $this->options_by_formkey['akismet_author_url'] ) ) {
+			if ( $author_url = $this->Data->getValue( $this->options_by_formkey['akismet_author_url'] ) )
+				$doAkismet = true;
+		}
+		if ( $doAkismet ) {
+			foreach ( $this->Data->getValues() as $value ) {
+				$content .= $value . "\n\n";
+			}
+			$permalink = get_permalink();
+			$akismet = array();
+			$akismet['blog']         = get_option( 'home' );
+			$akismet['blog_lang']    = get_locale();
+			$akismet['blog_charset'] = get_option( 'blog_charset' );
+			$akismet['user_ip']      = preg_replace( '/[^0-9., ]/', '', $_SERVER['REMOTE_ADDR'] );
+			$akismet['user_agent']   = $_SERVER['HTTP_USER_AGENT'];
+			$akismet['referrer']     = $_SERVER['HTTP_REFERER'];
+			$akismet['comment_type'] = MWF_Config::NAME;
+			if ( $permalink )    $akismet['permalink']            = $permalink;
+			if ( $author )       $akismet['comment_author']       = $author;
+			if ( $author_email ) $akismet['comment_author_email'] = $author_email;
+			if ( $author_url )   $akismet['comment_author_url']   = $author_url;
+			if ( $content )      $akismet['comment_content']      = $content;
+
+			foreach ( $_SERVER as $key => $value ) {
+				if ( !in_array( $key, array( 'HTTP_COOKIE', 'HTTP_COOKIE2', 'PHP_AUTH_PW' ) ) )
+					$akismet["$key"] = $value;
+			}
+
+			$query_string = http_build_query( $akismet, null, '&' );
+			$response = akismet_http_post( $query_string, $akismet_api_host, '/1.1/comment-check', $akismet_api_port );
+			$response = apply_filters( 'mwform_akismet_responce', $response );
+
+			return ( $response[1] == 'true' ) ? true : false;
 		}
 	}
 
@@ -541,11 +605,11 @@ class mw_wp_form {
 		}
 		if ( !preg_match( '/^https?:\/\//', $url ) ) {
 			$protocol = ( is_ssl() ) ? 'https://' : 'http://';
-			$home_url = untrailingslashit( $protocol.$_SERVER['HTTP_HOST'] );
+			$home_url = untrailingslashit( $protocol . $_SERVER['HTTP_HOST'] );
 			$url = $home_url . $url;
 		}
 		$url = preg_replace( '/([^:])\/+/', '$1/', $url );
-		$url = trailingslashit( $url );
+		// $url = trailingslashit( $url );
 		if ( !empty( $this->options_by_formkey['querystring'] ) && MWF_Functions::is_numeric( $_GET['post_id'] ) ) {
 			$url = $url . '?post_id=' . $_GET['post_id'];
 		}
