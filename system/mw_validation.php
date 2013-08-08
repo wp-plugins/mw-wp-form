@@ -3,11 +3,11 @@
  * Name: MW Validation
  * URI: http://2inc.org
  * Description: バリデーションクラス
- * Version: 1.3
+ * Version: 1.4
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: July 20, 2012
- * Modified: May 29, 2013
+ * Modified: June 21, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -462,6 +462,21 @@ class MW_Validation {
 			}
 		}
 		return $_ret;
+	}
+
+	/**
+	 * akismet_check
+	 * Akismetのエラー。常にtrue。
+	 * @param	String	キー
+	 *			Array	( 'message' => )
+	 * @return	String	エラーメッセージ
+	 */
+	public function akismet_check( $key, $options = array() ) {
+		$defaults = array(
+			'message' => __( 'The contents which you input were judged with spam.', MWF_Config::DOMAIN )
+		);
+		$options = array_merge( $defaults, $options );
+		return $options['message'];
 	}
 
 	/**

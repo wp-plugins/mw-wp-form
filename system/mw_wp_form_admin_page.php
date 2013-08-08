@@ -3,11 +3,11 @@
  * Name: MW WP Form Admin Page
  * URI: http://2inc.org
  * Description: 管理画面クラス
- * Version: 1.3
+ * Version: 1.5
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: February 21, 2013
- * Modified: May 29, 2013
+ * Modified: August 6, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -359,12 +359,30 @@ class MW_WP_Form_Admin_Page {
 		?>
 		<p>
 			<label><input type="checkbox" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[querystring]" value="1" <?php checked( $this->get_post_data( 'querystring' ), 1 ); ?> /> <?php _e( 'Activate Query string of post', MWF_Config::DOMAIN ); ?></label><br />
-			<span class="mwf_note"><?php _e( 'If this field is active, MW WP Form get the post as query string "post_id" and you can use $post\'s property in editor', MWF_Config::DOMAIN ); ?></span><br />
-			<?php _e( 'Example: {ID}, {post_title}, {post_meta} etc...', MWF_Config::DOMAIN ); ?>
+			<span class="mwf_note"><?php _e( 'If this field is active, MW WP Form get the post as query string "post_id" and you can use $post\'s property in editor', MWF_Config::DOMAIN ); ?><br />
+			<?php _e( 'Example: {ID}, {post_title}, {post_meta} etc...', MWF_Config::DOMAIN ); ?></span>
 		</p>
 		<p>
-			<input type="checkbox" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[usedb]" value="1" <?php checked( $this->get_post_data( 'usedb' ), 1 ); ?> /> <?php _e( 'Saving contact data in database', MWF_Config::DOMAIN ); ?></label>
+			<label><input type="checkbox" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[usedb]" value="1" <?php checked( $this->get_post_data( 'usedb' ), 1 ); ?> /> <?php _e( 'Saving contact data in database', MWF_Config::DOMAIN ); ?></label>
 		</p>
+		<table border="0" cellpadding="0" cellspacing="0" class="akismet">
+			<tr>
+				<th colspan="2"><?php _e( 'Akismet Setting', MWF_Config::DOMAIN ); ?></th>
+			</tr>
+			<tr>
+				<td>author</td>
+				<td><input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[akismet_author]" value="<?php echo esc_attr( $this->get_post_data( 'akismet_author' ) ); ?>" /></td>
+			</tr>
+			<tr>
+				<td>email</td>
+				<td><input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[author_email]" value="<?php echo esc_attr( $this->get_post_data( 'akismet_author_email' ) ); ?>" /></td>
+			</tr>
+			<tr>
+				<td>url</td>
+				<td><input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[author_url]" value="<?php echo esc_attr( $this->get_post_data( 'akismet_author_url' ) ); ?>" /></td>
+			</tr>
+		</table>
+		<span class="mwf_note"><?php _e( 'Input the key to use Akismet.', MWF_Config::DOMAIN ); ?></span>
 		<?php
 	}
 
@@ -400,7 +418,7 @@ class MW_WP_Form_Admin_Page {
 		<p>
 			<b><?php _e( 'Automatic reply email', MWF_Config::DOMAIN ); ?></b><br />
 			<input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[automatic_reply_email]" value="<?php echo esc_attr( $this->get_post_data( 'automatic_reply_email') ); ?>" /><br />
-			<span class="mwf_note"><?php _e( 'Please input the key to use as transmission to automatic reply email.', MWF_Config::DOMAIN ); ?></span>
+			<span class="mwf_note"><?php _e( 'Input the key to use as transmission to automatic reply email.', MWF_Config::DOMAIN ); ?></span>
 		</p>
 		<?php
 	}
@@ -457,6 +475,12 @@ class MW_WP_Form_Admin_Page {
 				<th><?php _e( 'Complete Page URL', MWF_Config::DOMAIN ); ?></th>
 				<td>
 					<input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[complete_url]" value="<?php echo esc_attr( $this->get_post_data( 'complete_url' ) ); ?>" />
+				</td>
+			</tr>
+			<tr>
+				<th><?php _e( 'Validation Error Page URL', MWF_Config::DOMAIN ); ?></th>
+				<td>
+					<input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[validation_error_url]" value="<?php echo esc_attr( $this->get_post_data( 'validation_error_url' ) ); ?>" />
 				</td>
 			</tr>
 		</table>
