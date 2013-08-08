@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the MW WP Form package.
 msgid ""
 msgstr ""
-"Project-Id-Version: MW WP Form 0.9.4\n"
+"Project-Id-Version: MW WP Form 0.9.5\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/mw-wp-form\n"
-"POT-Creation-Date: 2013-07-28 03:40:04+00:00\n"
+"POT-Creation-Date: 2013-08-06 02:52:29+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -93,7 +93,7 @@ msgstr ""
 msgid "Confirm &amp; Submit"
 msgstr ""
 
-#: form_fields/mw_form_field_tel.php:81 system/mw_wp_form_admin_page.php:528
+#: form_fields/mw_form_field_tel.php:81 system/mw_wp_form_admin_page.php:534
 msgid "Tel"
 msgstr ""
 
@@ -109,11 +109,11 @@ msgstr ""
 msgid "Zip Code"
 msgstr ""
 
-#: mw-wp-form.php:322
+#: mw-wp-form.php:335
 msgid "Validation Object is not a MW Validation Class."
 msgstr ""
 
-#: mw-wp-form.php:507
+#: mw-wp-form.php:520
 msgid "Uploaded from "
 msgstr ""
 
@@ -341,75 +341,79 @@ msgstr ""
 msgid "Complete Page URL"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:512
-msgid "Add Validation rule"
+#: system/mw_wp_form_admin_page.php:481
+msgid "Validation Error Page URL"
 msgstr ""
 
 #: system/mw_wp_form_admin_page.php:518
-msgid "The key which applies validation"
-msgstr ""
-
-#: system/mw_wp_form_admin_page.php:522
-msgid "No empty"
-msgstr ""
-
-#: system/mw_wp_form_admin_page.php:523
-msgid "No empty( with checkbox )"
+msgid "Add Validation rule"
 msgstr ""
 
 #: system/mw_wp_form_admin_page.php:524
-msgid "Numeric"
+msgid "The key which applies validation"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:525
-msgid "Alphabet"
-msgstr ""
-
-#: system/mw_wp_form_admin_page.php:526
-msgid "Alphabet and Numeric"
-msgstr ""
-
-#: system/mw_wp_form_admin_page.php:527
-msgid "Zip code"
+#: system/mw_wp_form_admin_page.php:528
+msgid "No empty"
 msgstr ""
 
 #: system/mw_wp_form_admin_page.php:529
-msgid "E-mail"
+msgid "No empty( with checkbox )"
 msgstr ""
 
 #: system/mw_wp_form_admin_page.php:530
+msgid "Numeric"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:531
+msgid "Alphabet"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:532
+msgid "Alphabet and Numeric"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:533
+msgid "Zip code"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:535
+msgid "E-mail"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:536
 msgid "Date"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:534
+#: system/mw_wp_form_admin_page.php:540
 msgid "The key at same value"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:538
+#: system/mw_wp_form_admin_page.php:544
 msgid "The range of the number of characters"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:546
+#: system/mw_wp_form_admin_page.php:552
 msgid "The number of the minimum characters"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:550
+#: system/mw_wp_form_admin_page.php:556
 msgid "Permitted Extension"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:551
+#: system/mw_wp_form_admin_page.php:557
 msgid "Example:jpg or jpg,txt,…"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:554
+#: system/mw_wp_form_admin_page.php:560
 msgid "Permitted file size"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:555
+#: system/mw_wp_form_admin_page.php:561
 msgid "bytes"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:592
+#: system/mw_wp_form_admin_page.php:598
 msgid "Registed Date"
 msgstr ""
 

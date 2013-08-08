@@ -3,11 +3,11 @@
  * Name: MW WP Form Admin Page
  * URI: http://2inc.org
  * Description: 管理画面クラス
- * Version: 1.4
+ * Version: 1.5
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: February 21, 2013
- * Modified: June 21, 2013
+ * Modified: August 6, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -475,6 +475,12 @@ class MW_WP_Form_Admin_Page {
 				<th><?php _e( 'Complete Page URL', MWF_Config::DOMAIN ); ?></th>
 				<td>
 					<input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[complete_url]" value="<?php echo esc_attr( $this->get_post_data( 'complete_url' ) ); ?>" />
+				</td>
+			</tr>
+			<tr>
+				<th><?php _e( 'Validation Error Page URL', MWF_Config::DOMAIN ); ?></th>
+				<td>
+					<input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[validation_error_url]" value="<?php echo esc_attr( $this->get_post_data( 'validation_error_url' ) ); ?>" />
 				</td>
 			</tr>
 		</table>

@@ -4,7 +4,7 @@ Donate link:
 Tags: plugin, form, confirm, preview
 Requires at least: 3.4
 Tested up to: 3.5
-Stable tag: 0.9.4
+Stable tag: 0.9.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,6 +36,14 @@ http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 1. You can create a form by settings page.
 
 == Changelog ==
+
+= 0.9.5 =
+* Added  : バリデーションエラー時に遷移するURLを設定可能に
+* Cahged : 送信メールの Return-Path に「管理者宛メール設定の送信先」が利用されるように変更
+* Cahged : {投稿情報}、{ユーザー情報}の値がない場合は空値が返るように変更
+* Cahged : 設定済みのバリデーションルールは閉じた状態で表示されるように変更
+* Cahged : Mail::createBody の挙動を変更（送信された値がnullの場合はキーも値も出力しない）
+* Bug fix: Mail::createBody で Checkbox が未チェックで送信されたときに Array と出力されてしまうバグを修正
 
 = 0.9.4 =
 * Bug fix: 管理画面での 確認ボタン の表記間違いを修正

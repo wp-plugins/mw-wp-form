@@ -2,10 +2,10 @@
 # This file is distributed under the same license as the MW WP Form package.
 msgid ""
 msgstr ""
-"Project-Id-Version: MW WP Form 0.9.4\n"
+"Project-Id-Version: MW WP Form 0.9.5\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/mw-wp-form\n"
-"POT-Creation-Date: 2013-07-28 03:40:04+00:00\n"
-"PO-Revision-Date: 2013-07-28 12:42+0900\n"
+"POT-Creation-Date: 2013-08-06 02:52:29+00:00\n"
+"PO-Revision-Date: 2013-08-06 11:55+0900\n"
 "Last-Translator: Takashi Kitajima <inc@2inc.org>\n"
 "Language-Team: Takashi Kitajima <inc@2inc.org>\n"
 "MIME-Version: 1.0\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-Basepath: .\n"
-"X-Generator: Poedit 1.5.7\n"
+"X-Generator: Poedit 1.5.5\n"
 "X-Poedit-KeywordsList: __;_e;_x\n"
 "X-Poedit-SearchPath-0: ..\n"
 
@@ -93,7 +93,7 @@ msgstr "送信ボタン"
 msgid "Confirm &amp; Submit"
 msgstr "確認・送信"
 
-#: form_fields/mw_form_field_tel.php:81 system/mw_wp_form_admin_page.php:528
+#: form_fields/mw_form_field_tel.php:81 system/mw_wp_form_admin_page.php:534
 msgid "Tel"
 msgstr "電話番号"
 
@@ -109,11 +109,11 @@ msgstr "テキストエリア"
 msgid "Zip Code"
 msgstr "郵便番号"
 
-#: mw-wp-form.php:322
+#: mw-wp-form.php:335
 msgid "Validation Object is not a MW Validation Class."
 msgstr ""
 
-#: mw-wp-form.php:507
+#: mw-wp-form.php:520
 msgid "Uploaded from "
 msgstr ""
 
@@ -345,75 +345,79 @@ msgstr "確認画面URL"
 msgid "Complete Page URL"
 msgstr "完了画面URL"
 
-#: system/mw_wp_form_admin_page.php:512
+#: system/mw_wp_form_admin_page.php:481
+msgid "Validation Error Page URL"
+msgstr "エラー画面URL"
+
+#: system/mw_wp_form_admin_page.php:518
 msgid "Add Validation rule"
 msgstr "バリデーションルールを追加"
 
-#: system/mw_wp_form_admin_page.php:518
+#: system/mw_wp_form_admin_page.php:524
 msgid "The key which applies validation"
 msgstr "バリデーションを適用する項目"
 
-#: system/mw_wp_form_admin_page.php:522
+#: system/mw_wp_form_admin_page.php:528
 msgid "No empty"
 msgstr "必須項目"
 
-#: system/mw_wp_form_admin_page.php:523
+#: system/mw_wp_form_admin_page.php:529
 msgid "No empty( with checkbox )"
 msgstr "必須項目（チェックボックス）"
 
-#: system/mw_wp_form_admin_page.php:524
+#: system/mw_wp_form_admin_page.php:530
 msgid "Numeric"
 msgstr "半角数字"
 
-#: system/mw_wp_form_admin_page.php:525
+#: system/mw_wp_form_admin_page.php:531
 msgid "Alphabet"
 msgstr "半角英字"
 
-#: system/mw_wp_form_admin_page.php:526
+#: system/mw_wp_form_admin_page.php:532
 msgid "Alphabet and Numeric"
 msgstr "半角英数字"
 
-#: system/mw_wp_form_admin_page.php:527
+#: system/mw_wp_form_admin_page.php:533
 msgid "Zip code"
 msgstr "郵便番号"
 
-#: system/mw_wp_form_admin_page.php:529
+#: system/mw_wp_form_admin_page.php:535
 msgid "E-mail"
 msgstr "メールアドレス"
 
-#: system/mw_wp_form_admin_page.php:530
+#: system/mw_wp_form_admin_page.php:536
 msgid "Date"
 msgstr "日付"
 
-#: system/mw_wp_form_admin_page.php:534
+#: system/mw_wp_form_admin_page.php:540
 msgid "The key at same value"
 msgstr "一致する項目"
 
-#: system/mw_wp_form_admin_page.php:538
+#: system/mw_wp_form_admin_page.php:544
 msgid "The range of the number of characters"
 msgstr "文字数の範囲"
 
-#: system/mw_wp_form_admin_page.php:546
+#: system/mw_wp_form_admin_page.php:552
 msgid "The number of the minimum characters"
 msgstr "最小文字数"
 
-#: system/mw_wp_form_admin_page.php:550
+#: system/mw_wp_form_admin_page.php:556
 msgid "Permitted Extension"
 msgstr "拡張子制限"
 
-#: system/mw_wp_form_admin_page.php:551
+#: system/mw_wp_form_admin_page.php:557
 msgid "Example:jpg or jpg,txt,…"
 msgstr "例：jpg もしくは jpg,txt…"
 
-#: system/mw_wp_form_admin_page.php:554
+#: system/mw_wp_form_admin_page.php:560
 msgid "Permitted file size"
 msgstr "サイズ制限"
 
-#: system/mw_wp_form_admin_page.php:555
+#: system/mw_wp_form_admin_page.php:561
 msgid "bytes"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:592
+#: system/mw_wp_form_admin_page.php:598
 msgid "Registed Date"
 msgstr "登録日時"
 
