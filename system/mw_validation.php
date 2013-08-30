@@ -3,11 +3,11 @@
  * Name: MW Validation
  * URI: http://2inc.org
  * Description: バリデーションクラス
- * Version: 1.4
+ * Version: 1.4.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: July 20, 2012
- * Modified: June 21, 2013
+ * Modified: August 28, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -228,7 +228,12 @@ class MW_Validation {
 				if ( is_array( $value ) ) {
 					$value = implode( '-', $value );
 				}
-				if ( !preg_match( '/^\d{2,4}-\d{2,4}-\d{4}$/', $value ) ) {
+				if ( ! (
+					preg_match( '/^\d{2}-\d{4}-\d{4}$/', $value ) ||
+					preg_match( '/^\d{3}-\d{3,4}-\d{4}$/', $value ) ||
+					preg_match( '/^\d{4}-\d{2}-\d{4}$/', $value ) ||
+					preg_match( '/^\d{5}-\d{1}-\d{4}$/', $value )
+				) ) {
 					$_ret = $options['message'];
 				}
 			}

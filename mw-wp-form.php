@@ -3,11 +3,11 @@
  * Plugin Name: MW WP Form
  * Plugin URI: http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
  * Description: MW WP Form can create mail form with a confirmation screen.
- * Version: 0.9.5
+ * Version: 0.9.6
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: September 25, 2012
- * Modified: August 6, 2013
+ * Modified: August 31, 2013
  * Text Domain: mw-wp-form
  * Domain Path: /languages/
  * License: GPL2
@@ -45,6 +45,25 @@ class mw_wp_form {
 	protected $MW_WP_Form_Admin_Page;
 	protected $options_by_formkey;
 	protected $insert_id;
+	private $defaults = array(
+		'mail_subject' => '',
+		'mail_content' => '',
+		'automatic_reply_email' => '',
+		'mail_to' => '',
+		'admin_mail_subject' => '',
+		'admin_mail_content' => '',
+		'querystring' => null,
+		'usedb' => null,
+		'akismet_author' => '',
+		'author_email' => '',
+		'author_url' => '',
+		'complete_message' => '',
+		'input_url' => '',
+		'confirmation_url' => '',
+		'complete_url' => '',
+		'validation_error_url' => '',
+		'validation' => array(),
+	);
 
 	/**
 	 * __construct
@@ -286,7 +305,10 @@ class mw_wp_form {
 		if ( !empty( $post ) ) {
 			setup_postdata( $post );
 			if ( get_post_type() === MWF_Config::NAME ) {
-				$this->options_by_formkey = get_post_meta( $post->ID, MWF_Config::NAME, true );
+				$this->options_by_formkey = array_merge(
+					$this->defaults,
+					get_post_meta( $post->ID, MWF_Config::NAME, true )
+				);
 				$this->options_by_formkey['post_id'] = $post->ID;
 				$this->key = MWF_Config::NAME.'-'.$atts['key'];
 				$this->input = $this->parse_url( $this->options_by_formkey['input_url'] );
@@ -448,9 +470,13 @@ class mw_wp_form {
 				$Mail->to = get_bloginfo( 'admin_email' );
 			}
 			// 送信元を指定
-			$Mail->from = get_bloginfo( 'admin_email' );
+			$filter_admin_mail_from = 'mwform_admin_mail_from_' . $this->key;
+			$from = get_bloginfo( 'admin_email' );
+			$Mail->from = apply_filters( $filter_admin_mail_from, $from );
 			// 送信者を指定
-			$Mail->sender = get_bloginfo( 'name' );
+			$sender = get_bloginfo( 'name' );
+			$filter_admin_mail_sender = 'mwform_admin_mail_sender_' . $this->key;
+			$Mail->sender = apply_filters( $filter_admin_mail_sender, $sender );
 			// タイトルを指定
 			$Mail->subject = $admin_mail_subject;
 			// 本文を指定
@@ -461,8 +487,8 @@ class mw_wp_form {
 			);
 		}
 
-		$actionName = 'mwform_mail_'.$this->key;
-		$Mail = apply_filters( $actionName, $Mail, $this->Data->getValues() );
+		$filter_name = 'mwform_mail_'.$this->key;
+		$Mail = apply_filters( $filter_name, $Mail, $this->Data->getValues() );
 
 		if ( $this->options_by_formkey && !empty( $Mail ) ) {
 			$Mail->send();
@@ -472,6 +498,12 @@ class mw_wp_form {
 				if ( $automatic_reply_email && !$this->Validation->mail( $automatic_reply_email ) ) {
 					// 送信先を指定
 					$Mail->to = $this->Data->getValue( $this->options_by_formkey['automatic_reply_email'] );
+					// 送信元を指定
+					$filter_auto_mail_from = 'mwform_auto_mail_from_' . $this->key;
+					$Mail->from = apply_filters( $filter_auto_mail_from, $from );
+					// 送信者を指定
+					$filter_auto_mail_sender = 'mwform_auto_mail_sender_' . $this->key;
+					$Mail->sender = apply_filters( $filter_auto_mail_sender, $sender );
 					// タイトルを指定
 					$Mail->subject = $this->options_by_formkey['mail_subject'];
 					// 本文を指定

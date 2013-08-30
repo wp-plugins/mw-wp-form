@@ -196,3 +196,17 @@ span#formkey_field {
 	font-size: 93%;
 }
 
+/**
+ * CSVダウンロードボタン
+ */
+#wpbody-content {
+	padding-bottom: 85px; /* default: 65px */;
+}
+#mw-wp-form_csv {
+	position: absolute;
+	left: 0;
+	top: -34px;
+}
+#mw-wp-form_csv .button-primary {
+}
+

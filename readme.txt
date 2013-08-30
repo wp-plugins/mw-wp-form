@@ -4,7 +4,7 @@ Donate link:
 Tags: plugin, form, confirm, preview
 Requires at least: 3.4
 Tested up to: 3.5
-Stable tag: 0.9.5
+Stable tag: 0.9.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,6 +36,14 @@ http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 1. You can create a form by settings page.
 
 == Changelog ==
+
+= 0.9.6 =
+* Bug fix: 電話番号のバリデーションチェックを修正
+* Added  : CSVダウンロード機能追加
+* Added  : mwform_admin_mail_from_識別子 フック追加
+* Added  : mwform_admin_mail_sender_識別子 フック追加
+* Added  : mwform_auto_mail_from_識別子 フック追加
+* Added  : mwform_auto_mail_sender_識別子 フック追加
 
 = 0.9.5 =
 * Added  : バリデーションエラー時に遷移するURLを設定可能に
