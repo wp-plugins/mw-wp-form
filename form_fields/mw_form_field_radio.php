@@ -3,11 +3,11 @@
  * Name: MW Form Field Radio
  * URI: http://2inc.org
  * Description: ラジオボタンを出力。
- * Version: 1.1
+ * Version: 1.1.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: December 14, 2012
- * Modified: May 29, 2013
+ * Modified: August 6, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -54,6 +54,7 @@ class mw_form_field_radio extends mw_form_field {
 	 */
 	protected function inputPage( $atts ) {
 		$children = $this->getChildren( $atts['children'] );
+		// $_ret  = $this->Form->hidden( $atts['name'], '' );
 		$_ret = $this->Form->radio( $atts['name'], $children, array(
 			'value' => $atts['value'],
 		) );

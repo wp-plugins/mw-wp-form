@@ -28,7 +28,7 @@ jQuery( function( $ ) {
 		clone.find( 'input' ).each( function() {
 			$( this ).attr( 'name', $( this ).attr( 'name' ).replace( /\[\d+\]/, '[' + cnt + ']' ) );
 		} );
-		clone.hide();
+		clone.hide().find( '.validation-content' ).show();
 		$( this ).siblings( '.validation-box:first' ).after( clone.fadeIn() );
 	} );
 
