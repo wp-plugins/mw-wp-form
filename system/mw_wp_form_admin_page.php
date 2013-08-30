@@ -3,11 +3,11 @@
  * Name: MW WP Form Admin Page
  * URI: http://2inc.org
  * Description: 管理画面クラス
- * Version: 1.5
+ * Version: 1.5.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: February 21, 2013
- * Modified: August 26, 2013
+ * Modified: August 31, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -94,7 +94,7 @@ class MW_WP_Form_Admin_Page {
 							foreach ( $post_custom_keys as $key ) {
 								if ( preg_match( '/^_/', $key ) )
 									continue;
-								$columns[] = $key;
+								$columns[$key] = $key;
 							}
 						}
 					}
@@ -121,8 +121,9 @@ class MW_WP_Form_Admin_Page {
 				// エンコード
 				foreach ( $rows as $row ) {
 					$csv .= implode( ',', $row ) . "\r\n";
-					$csv = mb_convert_encoding( $csv, 'SJIS-win', get_option( 'blog_charset' ) );
+					//$csv = mb_convert_encoding( $csv, 'SJIS-win', get_option( 'blog_charset' ) );
 				}
+				$csv = mb_convert_encoding( $csv, 'sjis-win', get_option( 'blog_charset' ) );
 
 				$file_name = 'mw_wp_form_' . date( 'YmdHis' ) . '.csv';
 				header( 'Content-Type: application/octet-stream' );
