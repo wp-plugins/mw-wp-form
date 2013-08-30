@@ -4,7 +4,7 @@ Donate link:
 Tags: plugin, form, confirm, preview
 Requires at least: 3.4
 Tested up to: 3.5
-Stable tag: 0.8.1
+Stable tag: 0.9.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,11 +21,12 @@ MW WP Form can create mail form with a confirmation screen using shortcode.
 
 MW WP Form はショートコードを使って確認画面付きのメールフォームを作成することができるプラグインです。
 
-・ショートコードを使用したフォーム生成
-・確認画面が表示可能
-・同一URL・個別URLでの画面変遷が可能
-・豊富なバリデーションルール
+* ショートコードを使用したフォーム生成
+* 確認画面が表示可能
+* 同一URL・個別URLでの画面変遷が可能
+* 豊富なバリデーションルール
 
+http://2inc.org/manual-mw-wp-form/
 http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 
 == Installation ==
@@ -35,6 +36,44 @@ http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 1. You can create a form by settings page.
 
 == Changelog ==
+
+= 0.9.6 =
+* Bug fix: CSVダウンロードのバグ修正
+
+= 0.9.6 =
+* Bug fix: 電話番号のバリデーションチェックを修正
+* Added  : CSVダウンロード機能追加
+* Added  : mwform_admin_mail_from_識別子 フック追加
+* Added  : mwform_admin_mail_sender_識別子 フック追加
+* Added  : mwform_auto_mail_from_識別子 フック追加
+* Added  : mwform_auto_mail_sender_識別子 フック追加
+
+= 0.9.5 =
+* Added  : バリデーションエラー時に遷移するURLを設定可能に
+* Cahged : 送信メールの Return-Path に「管理者宛メール設定の送信先」が利用されるように変更
+* Cahged : {投稿情報}、{ユーザー情報}の値がない場合は空値が返るように変更
+* Cahged : 設定済みのバリデーションルールは閉じた状態で表示されるように変更
+* Cahged : Mail::createBody の挙動を変更（送信された値がnullの場合はキーも値も出力しない）
+* Bug fix: Mail::createBody で Checkbox が未チェックで送信されたときに Array と出力されてしまうバグを修正
+
+= 0.9.4 =
+* Bug fix: 管理画面での 確認ボタン の表記間違いを修正
+
+= 0.9.3 =
+* Added  : readme.txt にマニュアルのURLを追記
+* Bug fix: 確認ボタン 挿入ボタンが表示されていなかったのを修正
+* Bug fix: 末尾に / のつかない URL の場合に画面変遷が正しく行われないバグを修正
+
+= 0.9.2 =
+* Bug fix: ファイルの読み込みタイミング等を変更
+
+= 0.9.1 =
+* Bug fix: 画像・ファイルアップロードフィールドのクラス名が正しく設定されていないのを修正
+* Bug fix: 画像・ファイルアップロードフィールドで未アップロード時でも確認画面に項目が表示されてしまうのを修正
+* Cahged : 言語ファイルの読み込みタイミングを変更
+
+= 0.9 =
+* Added  : Akismet設定を追加
 
 = 0.8.1 =
 * Cahged : functions.php を用いたフォーム作成は非推奨・サポート、メンテナンス停止

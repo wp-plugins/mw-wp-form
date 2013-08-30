@@ -3,11 +3,11 @@
  * Name: MW Mail
  * URI: http://2inc.org
  * Description: メールクラス
- * Version: 1.3
+ * Version: 1.3.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: July 20, 2012
- * Modified: May 29, 2013
+ * Modified: August 6, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -33,7 +33,6 @@ class MW_Mail {
 	public $subject;		// 題名
 	public $body;			// 本文
 	public $attachments;	// 添付
-	// private $targetEncodeing = 'ISO-2022-JP';
 	private $ENCODE = 'utf-8';
 
 	/**
@@ -42,41 +41,29 @@ class MW_Mail {
 	 */
 	public function send() {
 		if ( !$this->to ) return;
-		/*
-		mb_language( 'ja' );
-		mb_internal_encoding( $this->ENCODE );
-		$subject = mb_encode_mimeheader( $this->subject );
-		$body = base64_encode( $this->body );
-		$body = mb_convert_encoding( $this->body, $this->targetEncodeing, $this->ENCODE );
-		*/
 		$subject = $this->subject;
 		$body = $this->body;
 
-		$fromHeader = '';
-		if ( !empty( $this->from ) ) {
-			if ( empty( $this->sender ) ) {
-				$fromHeader = $this->from;
-			} else if ( !empty( $this->sender ) ) {
-				// $sender = mb_encode_mimeheader( $this->sender );
-				$sender = $this->sender;
-				$fromHeader = $sender.' <'.$this->from.'>';
-			}
-		}
-
-		$header = '';
-		/*
-		$header .= "Content-Type: text/plain;charset=".$this->targetEncodeing."\n";
-		$header .= "Content-Transfer-Encoding: 7bit\n";
-		$header .= "MIME-Version: 1.0\n";
-		$header .= "X-Mailer:PHP\n";
-		*/
-		$header .= "From:" . $fromHeader . "\n";
+		add_action( 'phpmailer_init', array( $this, 'set_return_path' ) );
+		add_filter( 'wp_mail_from', array( $this, 'set_mail_from' ) );
+		add_filter( 'wp_mail_from_name', array( $this, 'set_mail_from_name' ) );
 		$to = explode( ',', $this->to );
 		if ( isset( $to[0] ) ) {
 			$to = trim( $to[0] );
-			wp_mail( $to, $subject, $body, $header, $this->attachments );
-			// mail( $to, $subject, $body, $header );
+			wp_mail( $to, $subject, $body, $this->attachments );
+			remove_action( 'phpmailer_init', array( $this, 'set_return_path' ) );
+			remove_filter( 'wp_mail_from', array( $this, 'set_mail_from' ) );
+			remove_filter( 'wp_mail_from_name', array( $this, 'set_mail_from_name' ) );
 		}
+	}
+	public function set_mail_from( $email ) {
+		return $this->from;
+	}
+	public function set_mail_from_name( $email_from ) {
+		return $this->sender;
+	}
+	public function set_return_path( $phpmailer ) {
+		$phpmailer->Sender = $this->from;
 	}
 
 	/**
@@ -93,8 +80,8 @@ class MW_Mail {
 		$options = array_merge( $defaults, $options );
 		foreach( $array as $key => $value ) {
 			if ( in_array( $key, $options['exclude'] ) ) continue;
-			if ( is_array( $value ) && array_key_exists( 'data', $value ) && array_key_exists( 'separator', $value ) ) {
-				if ( is_array( $value['data'] ) ) {
+			if ( isset( $value['separator'] ) && is_array( $value ) ) {
+				if ( isset( $value['data'] ) && is_array( $value['data'] ) ) {
 					foreach ( $value['data'] as $_val ) {
 						if ( !( $_val === '' || $_val === null ) ) {
 							$value = implode( $value['separator'], $value['data'] );
@@ -103,27 +90,13 @@ class MW_Mail {
 						$value = '';
 					}
 				} else {
-					$value = $value['data'];
+					continue;
 				}
 			}
-			$_ret .= sprintf( "▼%s\n%s\n\n", $this->e( $key ), $this->e( $value ) );
+			if ( $value )
+				$_ret .= sprintf( "▼%s\n%s\n\n", esc_html( $key ), esc_html( $value ) );
 		}
 		return $_ret;
-	}
-
-	/**
-	 * e
-	 * htmlサニタイズ
-	 * @param	Mixed
-	 * @return	Mixed
-	 */
-	public function e( $str ){
-		if ( is_array( $str ) ) {
-			return array_map( array( $this, 'e' ), $str );
-		} else {
-			$str = stripslashes( $str );
-			return htmlspecialchars( $str, ENT_QUOTES, $this->ENCODE );
-		}
 	}
 }
 ?>
