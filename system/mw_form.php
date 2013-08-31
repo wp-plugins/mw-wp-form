@@ -3,11 +3,11 @@
  * Name: MW Form
  * URI: http://2inc.org
  * Description: フォームクラス
- * Version: 1.3.2
+ * Version: 1.3.3
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: September 25, 2012
- * Modified: June 18, 2013
+ * Modified: August 28, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -421,7 +421,7 @@ class MW_Form {
 		$value1 = ( isset( $value[1] ) )? $value[1] : '';
 		$value2 = ( isset( $value[2] ) )? $value[2] : '';
 		$_ret = '';
-		$_ret .= $this->text( $name.'[data][0]', array( 'size' => 5, 'maxlength' => 4, 'value' => $value0 ) );
+		$_ret .= $this->text( $name.'[data][0]', array( 'size' => 6, 'maxlength' => 5, 'value' => $value0 ) );
 		$_ret .= ' '.$separator.' ';
 		$_ret .= $this->text( $name.'[data][1]', array( 'size' => 5, 'maxlength' => 4, 'value' => $value1 ) );
 		$_ret .= ' '.$separator.' ';

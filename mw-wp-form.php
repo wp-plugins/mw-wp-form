@@ -3,11 +3,11 @@
  * Plugin Name: MW WP Form
  * Plugin URI: http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
  * Description: MW WP Form can create mail form with a confirmation screen.
- * Version: 0.8.1
+ * Version: 0.9.8
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: September 25, 2012
- * Modified: May 29, 2013
+ * Modified: August 31, 2013
  * Text Domain: mw-wp-form
  * Domain Path: /languages/
  * License: GPL2
@@ -36,6 +36,7 @@ class mw_wp_form {
 	protected $input;
 	protected $preview;
 	protected $complete;
+	protected $validation_error;
 	protected $Data;
 	protected $Form;
 	protected $Validation;
@@ -44,17 +45,47 @@ class mw_wp_form {
 	protected $MW_WP_Form_Admin_Page;
 	protected $options_by_formkey;
 	protected $insert_id;
+	private $defaults = array(
+		'mail_subject' => '',
+		'mail_from' => '',
+		'mail_sender' => '',
+		'mail_content' => '',
+		'automatic_reply_email' => '',
+		'mail_to' => '',
+		'admin_mail_subject' => '',
+		'admin_mail_from' => '',
+		'admin_mail_sender' => '',
+		'admin_mail_content' => '',
+		'querystring' => null,
+		'usedb' => null,
+		'akismet_author' => '',
+		'author_email' => '',
+		'author_url' => '',
+		'complete_message' => '',
+		'input_url' => '',
+		'confirmation_url' => '',
+		'complete_url' => '',
+		'validation_error_url' => '',
+		'validation' => array(),
+	);
 
 	/**
 	 * __construct
 	 */
 	public function __construct() {
-		load_plugin_textdomain( MWF_Config::DOMAIN, false, basename( dirname( __FILE__ ) ) . '/languages' );
-
+		add_action( 'plugins_loaded', array( $this, 'init' ) );
 		// 有効化した時の処理
 		register_activation_hook( __FILE__, array( __CLASS__, 'activation' ) );
 		// アンインストールした時の処理
 		register_uninstall_hook( __FILE__, array( __CLASS__, 'uninstall' ) );
+	}
+
+	/**
+	 * init
+	 * ファイルの読み込み等
+	 */
+	public function init() {
+		load_plugin_textdomain( MWF_Config::DOMAIN, false, basename( dirname( __FILE__ ) ) . '/languages' );
 
 		// 管理画面の実行
 		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_wp_form_admin_page.php' );
@@ -77,7 +108,7 @@ class mw_wp_form {
 		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_mail.php' );
 		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_session.php' );
 		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_validation.php' );
-		add_action( 'wp', array( $this, 'init' ) );
+		add_action( 'wp', array( $this, 'main' ) );
 		add_action( 'wp_print_styles', array( $this, 'original_style' ) );
 	}
 
@@ -136,10 +167,10 @@ class mw_wp_form {
 	}
 
 	/**
-	 * init
-	 * 表示画面でのプラグインの初期化処理等。
+	 * main
+	 * 表示画面でのプラグインの処理等。
 	 */
-	public function init() {
+	public function main() {
 		global $post;
 		if ( empty( $post->ID ) ) return;
 
@@ -157,7 +188,8 @@ class mw_wp_form {
 		if ( is_null( $this->key ) ||
 			 is_null( $this->input ) ||
 			 is_null( $this->preview ) ||
-			 is_null( $this->complete ) )
+			 is_null( $this->complete ) ||
+			 is_null( $this->validation_error ) )
 			return;
 
 		// セッション初期化
@@ -192,7 +224,11 @@ class mw_wp_form {
 				$this->fileUpload();
 				$this->redirect( $this->preview );
 			} else {
-				$this->redirect( $this->input );
+				if ( !empty( $this->validation_error ) ) {
+					$this->redirect( $this->validation_error );
+				} else {
+					$this->redirect( $this->input );
+				}
 			}
 		}
 		// 完了画面のとき
@@ -213,7 +249,11 @@ class mw_wp_form {
 				$this->redirect( $this->complete );
 				$this->Form->clearToken();
 			} else {
-				$this->redirect( $this->input );
+				if ( !empty( $this->validation_error ) ) {
+					$this->redirect( $this->validation_error );
+				} else {
+					$this->redirect( $this->input );
+				}
 			}
 		}
 		$this->Session->clearValues();
@@ -246,12 +286,14 @@ class mw_wp_form {
 			'input' => '',
 			'preview' => '',
 			'complete' => '',
+			'validation_error' => '',
 			'key' => 'mwform'
 		), $atts );
 		$this->key = $atts['key'];
 		$this->input = $this->parse_url( $atts['input'] );
 		$this->preview = $this->parse_url( $atts['preview'] );
 		$this->complete = $this->parse_url( $atts['complete'] );
+		$this->validation_error = $this->parse_url( $atts['validation_error'] );
 	}
 
 	/**
@@ -267,12 +309,16 @@ class mw_wp_form {
 		if ( !empty( $post ) ) {
 			setup_postdata( $post );
 			if ( get_post_type() === MWF_Config::NAME ) {
-				$this->options_by_formkey = get_post_meta( $post->ID, MWF_Config::NAME, true );
+				$this->options_by_formkey = array_merge(
+					$this->defaults,
+					get_post_meta( $post->ID, MWF_Config::NAME, true )
+				);
 				$this->options_by_formkey['post_id'] = $post->ID;
 				$this->key = MWF_Config::NAME.'-'.$atts['key'];
 				$this->input = $this->parse_url( $this->options_by_formkey['input_url'] );
 				$this->preview = $this->parse_url( $this->options_by_formkey['confirmation_url'] );
 				$this->complete = $this->parse_url( $this->options_by_formkey['complete_url'] );
+				$this->validation_error = $this->parse_url( $this->options_by_formkey['validation_error_url'] );
 			}
 		}
 		wp_reset_postdata();
@@ -306,9 +352,66 @@ class mw_wp_form {
 			}
 		}
 
+		if ( $this->akismet_check() ) {
+			$this->Validation->setRule( MWF_Config::AKISMET, 'akismet_check' );
+		}
+
 		$this->Validation = apply_filters( $filterName, $this->Validation );
 		if ( !is_a( $this->Validation, 'MW_Validation' ) ) {
 			exit( __( 'Validation Object is not a MW Validation Class.', MWF_Config::DOMAIN ) );
+		}
+	}
+
+	protected function akismet_check() {
+		global $akismet_api_host, $akismet_api_port;
+		if ( ! function_exists( 'akismet_get_key' ) || ! akismet_get_key() )
+			return false;
+		$doAkismet = false;
+		$author = '';
+		$author_email = '';
+		$author_url = '';
+		$content = '';
+		if ( isset( $this->options_by_formkey['akismet_author'] ) ) {
+			if ( $author = $this->Data->getValue( $this->options_by_formkey['akismet_author'] ) )
+				$doAkismet = true;
+		}
+		if ( isset( $this->options_by_formkey['akismet_author_email'] ) ) {
+			if ( $author_email = $this->Data->getValue( $this->options_by_formkey['akismet_author_email'] ) )
+				$doAkismet = true;
+		}
+		if ( isset( $this->options_by_formkey['akismet_author_url'] ) ) {
+			if ( $author_url = $this->Data->getValue( $this->options_by_formkey['akismet_author_url'] ) )
+				$doAkismet = true;
+		}
+		if ( $doAkismet ) {
+			foreach ( $this->Data->getValues() as $value ) {
+				$content .= $value . "\n\n";
+			}
+			$permalink = get_permalink();
+			$akismet = array();
+			$akismet['blog']         = get_option( 'home' );
+			$akismet['blog_lang']    = get_locale();
+			$akismet['blog_charset'] = get_option( 'blog_charset' );
+			$akismet['user_ip']      = preg_replace( '/[^0-9., ]/', '', $_SERVER['REMOTE_ADDR'] );
+			$akismet['user_agent']   = $_SERVER['HTTP_USER_AGENT'];
+			$akismet['referrer']     = $_SERVER['HTTP_REFERER'];
+			$akismet['comment_type'] = MWF_Config::NAME;
+			if ( $permalink )    $akismet['permalink']            = $permalink;
+			if ( $author )       $akismet['comment_author']       = $author;
+			if ( $author_email ) $akismet['comment_author_email'] = $author_email;
+			if ( $author_url )   $akismet['comment_author_url']   = $author_url;
+			if ( $content )      $akismet['comment_content']      = $content;
+
+			foreach ( $_SERVER as $key => $value ) {
+				if ( !in_array( $key, array( 'HTTP_COOKIE', 'HTTP_COOKIE2', 'PHP_AUTH_PW' ) ) )
+					$akismet["$key"] = $value;
+			}
+
+			$query_string = http_build_query( $akismet, null, '&' );
+			$response = akismet_http_post( $query_string, $akismet_api_host, '/1.1/comment-check', $akismet_api_port );
+			$response = apply_filters( 'mwform_akismet_responce', $response );
+
+			return ( $response[1] == 'true' ) ? true : false;
 		}
 	}
 
@@ -365,15 +468,19 @@ class mw_wp_form {
 
 		if ( $this->options_by_formkey ) {
 			// 送信先を指定
-			if ( $mailto = $this->options_by_formkey['mail_to'] ) {
+			$Mail->to = get_bloginfo( 'admin_email' );
+			if ( $mailto = $this->options_by_formkey['mail_to'] )
 				$Mail->to = $mailto;
-			} else {
-				$Mail->to = get_bloginfo( 'admin_email' );
-			}
 			// 送信元を指定
-			$Mail->from = get_bloginfo( 'admin_email' );
+			$from = get_bloginfo( 'admin_email' );
+			if ( !empty( $this->options_by_formkey['admin_mail_from'] ) )
+				$from = $this->options_by_formkey['admin_mail_from'];
+			$Mail->from = $from;
 			// 送信者を指定
-			$Mail->sender = get_bloginfo( 'name' );
+			$sender = get_bloginfo( 'name' );
+			if ( !empty( $this->options_by_formkey['admin_mail_sender'] ) )
+				$sender = $this->options_by_formkey['admin_mail_sender'];
+			$Mail->sender = $sender;
 			// タイトルを指定
 			$Mail->subject = $admin_mail_subject;
 			// 本文を指定
@@ -384,10 +491,12 @@ class mw_wp_form {
 			);
 		}
 
-		$actionName = 'mwform_mail_'.$this->key;
-		$Mail = apply_filters( $actionName, $Mail, $this->Data->getValues() );
+		$filter_name = 'mwform_mail_'.$this->key;
+		$Mail = apply_filters( $filter_name, $Mail, $this->Data->getValues() );
 
 		if ( $this->options_by_formkey && !empty( $Mail ) ) {
+			$filter_name = 'mwform_auto_mail_'.$this->key;
+			$Mail = apply_filters( $filter_name, $Mail, $this->Data->getValues() );
 			$Mail->send();
 
 			if ( isset( $this->options_by_formkey['automatic_reply_email'] ) ) {
@@ -395,6 +504,16 @@ class mw_wp_form {
 				if ( $automatic_reply_email && !$this->Validation->mail( $automatic_reply_email ) ) {
 					// 送信先を指定
 					$Mail->to = $this->Data->getValue( $this->options_by_formkey['automatic_reply_email'] );
+					// 送信元を指定
+					$from = get_bloginfo( 'admin_email' );
+					if ( !empty( $this->options_by_formkey['mail_from'] ) )
+						$from = $this->options_by_formkey['mail_from'];
+					$Mail->from = $from;
+					// 送信者を指定
+					$sender = get_bloginfo( 'name' );
+					if ( !empty( $this->options_by_formkey['mail_sender'] ) )
+						$sender = $this->options_by_formkey['mail_sender'];
+					$Mail->sender = $sender;
 					// タイトルを指定
 					$Mail->subject = $this->options_by_formkey['mail_subject'];
 					// 本文を指定
@@ -405,6 +524,9 @@ class mw_wp_form {
 					);
 					// 自動返信メールからは添付ファイルを削除
 					$Mail->attachments = array();
+
+					$filter_name = 'mwform_admin_mail_'.$this->key;
+					$Mail = apply_filters( $filter_name, $Mail, $this->Data->getValues() );
 					$Mail->send();
 				}
 			}
@@ -468,7 +590,7 @@ class mw_wp_form {
 
 	/**
 	 * create_mail_body
-	 * メール本文用に {$postのプロパティ} を置換
+	 * メール本文用に {name属性} を置換
 	 */
 	public function create_mail_body( $matches ) {
 		return $this->parse_mail_body( $matches, false );
@@ -476,7 +598,7 @@ class mw_wp_form {
 
 	/**
 	 * save_mail_body
-	 * DB保存用に {$postのプロパティ} を置換、保存
+	 * DB保存用に {name属性} を置換、保存
 	 */
 	public function save_mail_body( $matches ) {
 		return $this->parse_mail_body( $matches, true );
@@ -535,20 +657,27 @@ class mw_wp_form {
 		if ( empty( $url ) )
 			return '';
 
-		preg_match( '/(\?.*)$/', $url, $reg );
+		$query_string = array();
+		preg_match( '/\?(.*)$/', $url, $reg );
 		if ( !empty( $reg[1] ) ) {
+			$url = str_replace( '?', '', $url );
 			$url = str_replace( $reg[1], '', $url );
+			parse_str( $reg[1], $query_string );
 		}
 		if ( !preg_match( '/^https?:\/\//', $url ) ) {
 			$protocol = ( is_ssl() ) ? 'https://' : 'http://';
-			$home_url = untrailingslashit( $protocol.$_SERVER['HTTP_HOST'] );
+			$home_url = untrailingslashit( $protocol . $_SERVER['HTTP_HOST'] );
 			$url = $home_url . $url;
 		}
 		$url = preg_replace( '/([^:])\/+/', '$1/', $url );
-		$url = trailingslashit( $url );
+
+		// url引数が無効の場合、URL設定 で ?post_id が使われている場合はそれが使用される
+		// url引数が有効の場合は URL設定 で ?post_id が使われていても $_GET['post_id'] で上書きされる
 		if ( !empty( $this->options_by_formkey['querystring'] ) && MWF_Functions::is_numeric( $_GET['post_id'] ) ) {
-			$url = $url . '?post_id=' . $_GET['post_id'];
+			$query_string['post_id'] = $_GET['post_id'];
 		}
+		if ( !empty( $query_string ) )
+			$url = $url . '?' . http_build_query( $query_string, null, '&' );
 		return $url;
 	}
 
@@ -597,31 +726,15 @@ class mw_wp_form {
 			do_action( 'mwform_add_shortcode', $this->Form, $this->viewFlg, $this->Error );
 
 			// ユーザー情報取得
-			$user = wp_get_current_user();
-			if ( !empty( $user ) ) {
-				$search = array(
-					'{user_id}',
-					'{user_login}',
-					'{user_email}',
-					'{user_url}',
-					'{user_registered}',
-					'{display_name}',
-				);
-				$content = str_replace( $search, array(
-					$user->get( 'ID' ),
-					$user->get( 'user_login' ),
-					$user->get( 'user_email' ),
-					$user->get( 'user_url' ),
-					$user->get( 'user_registered' ),
-					$user->get( 'display_name' ),
-				), $content );
-			}
+			$content = $this->replace_user_property( $content );
 
 			// 投稿情報取得
 			if ( isset( $this->options_by_formkey['querystring'] ) )
 				$querystring = $this->options_by_formkey['querystring'];
 			if ( !empty( $querystring ) ) {
-				$content = preg_replace_callback( '/{(.+?)}/', array( $this, 'get_post_propery' ), $content );
+				$content = preg_replace_callback( '/{(.+?)}/', array( $this, 'get_post_property' ), $content );
+			} else {
+				$content = preg_replace( '/{(.+?)}/', '', $content );
 			}
 
 			$upload_file_keys = $this->Form->getValue( MWF_Config::UPLOAD_FILE_KEYS );
@@ -642,12 +755,43 @@ class mw_wp_form {
 	}
 
 	/**
-	 * get_post_propery
-	 * 引数 post_id が有効の場合、ユーザー情報を取得するために preg_replace_callback から呼び出される。
+	 * replace_user_property
+	 * ユーザーがログイン中の場合、{ユーザー情報のプロパティ}を置換する。
+	 * @param	String	フォーム内容
+	 * @return	String	フォーム内容
+	 */
+	protected function replace_user_property( $content ) {
+		$user = wp_get_current_user();
+		$search = array(
+			'{user_id}',
+			'{user_login}',
+			'{user_email}',
+			'{user_url}',
+			'{user_registered}',
+			'{display_name}',
+		);
+		if ( !empty( $user ) ) {
+			$content = str_replace( $search, array(
+				$user->get( 'ID' ),
+				$user->get( 'user_login' ),
+				$user->get( 'user_email' ),
+				$user->get( 'user_url' ),
+				$user->get( 'user_registered' ),
+				$user->get( 'display_name' ),
+			), $content );
+		} else {
+			$content = str_replace( $search, '', $content );
+		}
+		return $content;
+	}
+
+	/**
+	 * get_post_property
+	 * 引数 post_id が有効の場合、投稿情報を取得するために preg_replace_callback から呼び出される。
 	 * @param	Array	$matches
 	 * @return	String
 	 */
-	public function get_post_propery( $matches ) {
+	public function get_post_property( $matches ) {
 		if ( isset( $this->options_by_formkey['querystring'] ) )
 			$querystring = $this->options_by_formkey['querystring'];
 		if ( !empty( $querystring ) && MWF_Functions::is_numeric( $_GET['post_id'] ) ) {
@@ -663,7 +807,7 @@ class mw_wp_form {
 					return $pm;
 			}
 		}
-		return $matches[0];
+		return;
 	}
 
 	/**

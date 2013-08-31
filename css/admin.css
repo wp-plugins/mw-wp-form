@@ -77,6 +77,7 @@ span#formkey_field {
 	border-top: #ddd solid 1px;
 	margin: 10px 0 0;
 	padding: 10px 0 0;
+	display: none;
 }
 #mw-wp-form_validation .validation-box table {
 	margin: 10px 0 0;
@@ -93,6 +94,28 @@ span#formkey_field {
 }
 #mw-wp-form_validation .validation-box table td label input {
 	margin: 0 2px 0 0;
+}
+
+/**
+ * 設定
+ */
+#mw-wp-form_settings p {
+	border-bottom: #dfdfdf solid 1px;
+	margin: 0 0 15px;
+	padding: 0 0 15px;
+}
+#mw-wp-form_settings table td {
+	padding: 0 5px 0 0;
+	text-align: left;
+	vertical-align: middle;
+}
+#mw-wp-form_settings table td input {
+	width: 100%;
+}
+#mw-wp-form_settings table.akismet th {
+	font-weight: normal;
+	padding: 0 0 5px;
+	text-align: left;
 }
 
 /**
@@ -171,5 +194,19 @@ span#formkey_field {
 .mwf_note {
 	color: #666;
 	font-size: 93%;
+}
+
+/**
+ * CSVダウンロードボタン
+ */
+#wpbody-content {
+	padding-bottom: 85px; /* default: 65px */;
+}
+#mw-wp-form_csv {
+	position: absolute;
+	left: 0;
+	top: -34px;
+}
+#mw-wp-form_csv .button-primary {
 }
 
