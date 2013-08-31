@@ -3,7 +3,7 @@
  * Plugin Name: MW WP Form
  * Plugin URI: http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
  * Description: MW WP Form can create mail form with a confirmation screen.
- * Version: 0.9.7
+ * Version: 0.9.8
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: September 25, 2012
@@ -47,10 +47,14 @@ class mw_wp_form {
 	protected $insert_id;
 	private $defaults = array(
 		'mail_subject' => '',
+		'mail_from' => '',
+		'mail_sender' => '',
 		'mail_content' => '',
 		'automatic_reply_email' => '',
 		'mail_to' => '',
 		'admin_mail_subject' => '',
+		'admin_mail_from' => '',
+		'admin_mail_sender' => '',
 		'admin_mail_content' => '',
 		'querystring' => null,
 		'usedb' => null,
@@ -464,19 +468,19 @@ class mw_wp_form {
 
 		if ( $this->options_by_formkey ) {
 			// 送信先を指定
-			if ( $mailto = $this->options_by_formkey['mail_to'] ) {
+			$Mail->to = get_bloginfo( 'admin_email' );
+			if ( $mailto = $this->options_by_formkey['mail_to'] )
 				$Mail->to = $mailto;
-			} else {
-				$Mail->to = get_bloginfo( 'admin_email' );
-			}
 			// 送信元を指定
-			$filter_admin_mail_from = 'mwform_admin_mail_from_' . $this->key;
 			$from = get_bloginfo( 'admin_email' );
-			$Mail->from = apply_filters( $filter_admin_mail_from, $from );
+			if ( !empty( $this->options_by_formkey['admin_mail_from'] ) )
+				$from = $this->options_by_formkey['admin_mail_from'];
+			$Mail->from = $from;
 			// 送信者を指定
 			$sender = get_bloginfo( 'name' );
-			$filter_admin_mail_sender = 'mwform_admin_mail_sender_' . $this->key;
-			$Mail->sender = apply_filters( $filter_admin_mail_sender, $sender );
+			if ( !empty( $this->options_by_formkey['admin_mail_sender'] ) )
+				$sender = $this->options_by_formkey['admin_mail_sender'];
+			$Mail->sender = $sender;
 			// タイトルを指定
 			$Mail->subject = $admin_mail_subject;
 			// 本文を指定
@@ -491,6 +495,8 @@ class mw_wp_form {
 		$Mail = apply_filters( $filter_name, $Mail, $this->Data->getValues() );
 
 		if ( $this->options_by_formkey && !empty( $Mail ) ) {
+			$filter_name = 'mwform_auto_mail_'.$this->key;
+			$Mail = apply_filters( $filter_name, $Mail, $this->Data->getValues() );
 			$Mail->send();
 
 			if ( isset( $this->options_by_formkey['automatic_reply_email'] ) ) {
@@ -499,11 +505,15 @@ class mw_wp_form {
 					// 送信先を指定
 					$Mail->to = $this->Data->getValue( $this->options_by_formkey['automatic_reply_email'] );
 					// 送信元を指定
-					$filter_auto_mail_from = 'mwform_auto_mail_from_' . $this->key;
-					$Mail->from = apply_filters( $filter_auto_mail_from, $from );
+					$from = get_bloginfo( 'admin_email' );
+					if ( !empty( $this->options_by_formkey['mail_from'] ) )
+						$from = $this->options_by_formkey['mail_from'];
+					$Mail->from = $from;
 					// 送信者を指定
-					$filter_auto_mail_sender = 'mwform_auto_mail_sender_' . $this->key;
-					$Mail->sender = apply_filters( $filter_auto_mail_sender, $sender );
+					$sender = get_bloginfo( 'name' );
+					if ( !empty( $this->options_by_formkey['mail_sender'] ) )
+						$sender = $this->options_by_formkey['mail_sender'];
+					$Mail->sender = $sender;
 					// タイトルを指定
 					$Mail->subject = $this->options_by_formkey['mail_subject'];
 					// 本文を指定
@@ -514,6 +524,9 @@ class mw_wp_form {
 					);
 					// 自動返信メールからは添付ファイルを削除
 					$Mail->attachments = array();
+
+					$filter_name = 'mwform_admin_mail_'.$this->key;
+					$Mail = apply_filters( $filter_name, $Mail, $this->Data->getValues() );
 					$Mail->send();
 				}
 			}

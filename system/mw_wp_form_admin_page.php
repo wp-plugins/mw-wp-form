@@ -3,7 +3,7 @@
  * Name: MW WP Form Admin Page
  * URI: http://2inc.org
  * Description: 管理画面クラス
- * Version: 1.5.1
+ * Version: 1.5.2
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: February 21, 2013
@@ -121,7 +121,6 @@ class MW_WP_Form_Admin_Page {
 				// エンコード
 				foreach ( $rows as $row ) {
 					$csv .= implode( ',', $row ) . "\r\n";
-					//$csv = mb_convert_encoding( $csv, 'SJIS-win', get_option( 'blog_charset' ) );
 				}
 				$csv = mb_convert_encoding( $csv, 'sjis-win', get_option( 'blog_charset' ) );
 
@@ -508,6 +507,16 @@ class MW_WP_Form_Admin_Page {
 			<input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[mail_subject]" value="<?php echo esc_attr( $this->get_post_data( 'mail_subject' ) ); ?>" />
 		</p>
 		<p>
+			<b><?php _e( 'Sender', MWF_Config::DOMAIN ); ?></b><br />
+			<input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[mail_sender]" value="<?php echo esc_attr( $this->get_post_data( 'mail_sender' ) ); ?>" /><br />
+			<span class="mwf_note"><?php _e( 'If empty:', MWF_Config::DOMAIN ); ?> <?php bloginfo( 'name' ); ?></span>
+		</p>
+		<p>
+			<b><?php _e( 'From ( E-mail address )', MWF_Config::DOMAIN ); ?></b><br />
+			<input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[mail_from]" value="<?php echo esc_attr( $this->get_post_data( 'mail_from' ) ); ?>" /><br />
+			<span class="mwf_note"><?php _e( 'If empty:', MWF_Config::DOMAIN ); ?> <?php bloginfo( 'admin_email' ); ?></span>
+		</p>
+		<p>
 			<b><?php _e( 'Ccontent', MWF_Config::DOMAIN ); ?></b><br />
 			<textarea name="<?php echo esc_attr( MWF_Config::NAME ); ?>[mail_content]" cols="30" rows="10"><?php echo esc_attr( $this->get_post_data( 'mail_content' ) ); ?></textarea><br />
 			<span class="mwf_note"><?php _e( '{key} is converted form data.', MWF_Config::DOMAIN ); ?></span>
@@ -533,11 +542,21 @@ class MW_WP_Form_Admin_Page {
 		<p>
 			<b><?php _e( 'To ( E-mail address )', MWF_Config::DOMAIN ); ?></b><br />
 			<input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[mail_to]" value="<?php echo esc_attr( $this->get_post_data( 'mail_to' ) ); ?>" /><br />
-			<span class="mwf_note"><?php _e( 'If empty: Using admin E-mail address.', MWF_Config::DOMAIN ); ?></span>
+			<span class="mwf_note"><?php _e( 'If empty:', MWF_Config::DOMAIN ); ?> <?php bloginfo( 'admin_email' ); ?></span>
 		</p>
 		<p>
 			<b><?php _e( 'Subject', MWF_Config::DOMAIN ); ?></b><br />
 			<input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[admin_mail_subject]" value="<?php echo esc_attr( $this->get_post_data( 'admin_mail_subject' ) ); ?>" />
+		</p>
+		<p>
+			<b><?php _e( 'Sender', MWF_Config::DOMAIN ); ?></b><br />
+			<input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[admin_mail_sender]" value="<?php echo esc_attr( $this->get_post_data( 'admin_mail_sender' ) ); ?>" /><br />
+			<span class="mwf_note"><?php _e( 'If empty:', MWF_Config::DOMAIN ); ?> <?php bloginfo( 'name' ); ?></span>
+		</p>
+		<p>
+			<b><?php _e( 'From ( E-mail address )', MWF_Config::DOMAIN ); ?></b><br />
+			<input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[admin_mail_from]" value="<?php echo esc_attr( $this->get_post_data( 'admin_mail_from' ) ); ?>" /><br />
+			<span class="mwf_note"><?php _e( 'If empty:', MWF_Config::DOMAIN ); ?> <?php bloginfo( 'admin_email' ); ?></span>
 		</p>
 		<p>
 			<b><?php _e( 'Ccontent', MWF_Config::DOMAIN ); ?></b><br />
