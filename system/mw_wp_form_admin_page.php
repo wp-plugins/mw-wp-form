@@ -3,11 +3,11 @@
  * Name: MW WP Form Admin Page
  * URI: http://2inc.org
  * Description: 管理画面クラス
- * Version: 1.5.2
+ * Version: 1.5.3
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: February 21, 2013
- * Modified: August 31, 2013
+ * Modified: September 5, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -53,6 +53,8 @@ class MW_WP_Form_Admin_Page {
 	 */
 	public function add_csv_download_button() {
 		$post_type = get_post_type();
+		if ( true !== apply_filters( 'mwform_csv_button_' . $post_type, true ) )
+			return;
 		$page = ( basename( $_SERVER['PHP_SELF'] ) );
 		if ( in_array( $post_type, $this->form_post_type ) && $page == 'edit.php' ) {
 			$action = $_SERVER['REQUEST_URI'];
@@ -224,56 +226,56 @@ class MW_WP_Form_Admin_Page {
 			$this->postdata = get_post_meta( $post->ID, MWF_Config::NAME, true );
 			// 完了画面内容
 			add_meta_box(
-				MWF_Config::NAME.'_complete_message_metabox',
+				MWF_Config::NAME . '_complete_message_metabox',
 				__( 'Complete Message', MWF_Config::DOMAIN ),
 				array( $this, 'add_complete_message' ),
 				MWF_Config::NAME, 'normal'
 			);
 			// 入力画面URL
 			add_meta_box(
-				MWF_Config::NAME.'_url',
+				MWF_Config::NAME . '_url',
 				__( 'URL Options', MWF_Config::DOMAIN ),
 				array( $this, 'add_url' ),
 				MWF_Config::NAME, 'normal'
 			);
 			// バリデーション
 			add_meta_box(
-				MWF_Config::NAME.'_validation',
+				MWF_Config::NAME . '_validation',
 				__( 'Validation Rule', MWF_Config::DOMAIN ),
 				array( $this, 'add_validation_rule' ),
 				MWF_Config::NAME, 'normal'
 			);
 			// フォーム識別子
 			add_meta_box(
-				MWF_Config::NAME.'_formkey',
+				MWF_Config::NAME . '_formkey',
 				__( 'Form Key', MWF_Config::DOMAIN ),
 				array( $this, 'display_form_key' ),
 				MWF_Config::NAME, 'side'
 			);
 			// 自動返信メール設定
 			add_meta_box(
-				MWF_Config::NAME.'_mail',
+				MWF_Config::NAME . '_mail',
 				__( 'Automatic Reply Email Options', MWF_Config::DOMAIN ),
 				array( $this, 'add_mail_options' ),
 				MWF_Config::NAME, 'side'
 			);
 			// 管理者メール設定
 			add_meta_box(
-				MWF_Config::NAME.'_admin_mail',
+				MWF_Config::NAME . '_admin_mail',
 				__( 'Admin Email Options', MWF_Config::DOMAIN ),
 				array( $this, 'add_admin_mail_options' ),
 				MWF_Config::NAME, 'side'
 			);
 			// 設定
 			add_meta_box(
-				MWF_Config::NAME.'_settings',
+				MWF_Config::NAME . '_settings',
 				__( 'settings', MWF_Config::DOMAIN ),
 				array( $this, 'settings' ),
 				MWF_Config::NAME, 'side'
 			);
 		} elseif ( in_array( $post_type, $this->form_post_type ) ) {
 			add_meta_box(
-				MWF_Config::NAME.'_custom_fields',
+				MWF_Config::NAME . '_custom_fields',
 				__( 'Custom Fields', MWF_Config::DOMAIN ),
 				array( $this, 'custom_fields' ),
 				$post_type
@@ -374,11 +376,11 @@ class MW_WP_Form_Admin_Page {
 	 * @param	$post_ID
 	 */
 	public function save_post( $post_ID ) {
-		if ( ! isset( $_POST[MWF_Config::NAME.'_nonce'] ) )
+		if ( ! isset( $_POST[MWF_Config::NAME . '_nonce'] ) )
 			return $post_ID;
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
 			return $post_ID;
-		if ( !wp_verify_nonce( $_POST[MWF_Config::NAME.'_nonce'], MWF_Config::NAME ) )
+		if ( !wp_verify_nonce( $_POST[MWF_Config::NAME . '_nonce'], MWF_Config::NAME ) )
 			return $post_ID;
 		if ( !current_user_can( 'manage_options', $post_ID ) )
 			return $post_ID;
@@ -439,7 +441,7 @@ class MW_WP_Form_Admin_Page {
 		<p>
 			<span id="formkey_field">[mwform_formkey key="<?php the_ID(); ?>"]</span>
 			<span class="mwf_note">
-				<?php _e( 'Copy and Paste this shortcode.', MWF_Config::DOMAIN ); ?><br />
+				<?php _e( 'Copy and Paste this shortcodE . ', MWF_Config::DOMAIN ); ?><br />
 				<?php _e( 'The key to use with hook is ', MWF_Config::DOMAIN ); ?><?php echo MWF_Config::NAME; ?>-<?php echo $post->ID; ?>
 			</span>
 		</p>
@@ -489,8 +491,8 @@ class MW_WP_Form_Admin_Page {
 	public function add_complete_message() {
 		global $post;
 		$content = $this->get_post_data( 'complete_message' );
-		wp_editor( $content, MWF_Config::NAME.'_complete_message', array(
-			'textarea_name' => MWF_Config::NAME.'[complete_message]',
+		wp_editor( $content, MWF_Config::NAME . '_complete_message', array(
+			'textarea_name' => MWF_Config::NAME . '[complete_message]',
 			'textarea_rows' => 7,
 		) );
 	}

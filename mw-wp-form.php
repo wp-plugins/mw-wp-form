@@ -3,11 +3,11 @@
  * Plugin Name: MW WP Form
  * Plugin URI: http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
  * Description: MW WP Form can create mail form with a confirmation screen.
- * Version: 0.9.8
+ * Version: 0.9.9
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: September 25, 2012
- * Modified: August 31, 2013
+ * Modified: September 5, 2013
  * Text Domain: mw-wp-form
  * Domain Path: /languages/
  * License: GPL2
@@ -311,7 +311,7 @@ class mw_wp_form {
 			if ( get_post_type() === MWF_Config::NAME ) {
 				$this->options_by_formkey = array_merge(
 					$this->defaults,
-					get_post_meta( $post->ID, MWF_Config::NAME, true )
+					( array )get_post_meta( $post->ID, MWF_Config::NAME, true )
 				);
 				$this->options_by_formkey['post_id'] = $post->ID;
 				$this->key = MWF_Config::NAME.'-'.$atts['key'];
@@ -337,7 +337,7 @@ class mw_wp_form {
 	 * 		}
 	 */
 	protected function apply_filters_mwform_validation() {
-		$filterName = 'mwform_validation_'.$this->key;
+		$filterName = 'mwform_validation_' . $this->key;
 
 		if ( $this->options_by_formkey ) {
 			foreach ( $this->options_by_formkey['validation'] as $validation ) {
@@ -491,11 +491,11 @@ class mw_wp_form {
 			);
 		}
 
-		$filter_name = 'mwform_mail_'.$this->key;
+		$filter_name = 'mwform_mail_' . $this->key;
 		$Mail = apply_filters( $filter_name, $Mail, $this->Data->getValues() );
 
 		if ( $this->options_by_formkey && !empty( $Mail ) ) {
-			$filter_name = 'mwform_auto_mail_'.$this->key;
+			$filter_name = 'mwform_auto_mail_' . $this->key;
 			$Mail = apply_filters( $filter_name, $Mail, $this->Data->getValues() );
 			$Mail->send();
 
@@ -525,7 +525,7 @@ class mw_wp_form {
 					// 自動返信メールからは添付ファイルを削除
 					$Mail->attachments = array();
 
-					$filter_name = 'mwform_admin_mail_'.$this->key;
+					$filter_name = 'mwform_admin_mail_' . $this->key;
 					$Mail = apply_filters( $filter_name, $Mail, $this->Data->getValues() );
 					$Mail->send();
 				}

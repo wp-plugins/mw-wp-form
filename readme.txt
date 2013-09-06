@@ -1,10 +1,10 @@
-=== Plugin Name ===
+=== MW WP Form ===
 Contributors: inc2734
 Donate link:
 Tags: plugin, form, confirm, preview
 Requires at least: 3.4
 Tested up to: 3.5
-Stable tag: 0.9.8
+Stable tag: 0.9.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,17 +37,21 @@ http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 
 == Changelog ==
 
+= 0.9.9 =
+* Added  : mwform_csv_button_識別子 フィルターフック
+* Bug fix: name属性が未指定のとき、MW_Form::getZipValue, MW_Form::getCheckedValue でエラーがでるバグ修正
+
 = 0.9.8 =
 * Added  : 管理者用・自動返信用メール設定それぞれに 送信元メールアドレス・送信者名の設定を追加
-
-= 0.9.7 =
-* Bug fix: CSVダウンロードのバグ修正
 * Added  : mwform_admin_mail_識別子 フィルターフック追加
 * Added  : mwform_auto_mail_識別子 フィルターフック追加
 * Deleted: mwform_admin_mail_from_識別子 フィルターフック
 * Deleted: mwform_admin_mail_sender_識別子 フィルターフック
 * Deleted: mwform_auto_mail_from_識別子 フィルターフック
 * Deleted: mwform_auto_mail_sender_識別子 フィルターフック
+
+= 0.9.7 =
+* Bug fix: CSVダウンロードのバグ修正
 
 = 0.9.6 =
 * Bug fix: 電話番号のバリデーションチェックを修正
