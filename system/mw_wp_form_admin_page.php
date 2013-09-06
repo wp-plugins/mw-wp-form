@@ -3,11 +3,11 @@
  * Name: MW WP Form Admin Page
  * URI: http://2inc.org
  * Description: 管理画面クラス
- * Version: 1.3
+ * Version: 1.5.3
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: February 21, 2013
- * Modified: May 29, 2013
+ * Modified: September 5, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -42,6 +42,101 @@ class MW_WP_Form_Admin_Page {
 		add_action( 'save_post', array( $this, 'save_post' ) );
 		// add_filter( 'user_can_richedit', array( $this, 'disable_visual_editor' ) );
 		add_action( 'admin_print_footer_scripts', array( $this, 'add_quicktag' ) );
+
+		add_action( 'in_admin_footer', array( $this, 'add_csv_download_button' ) );
+		add_action( 'wp_loaded', array( $this, 'csv_download' ) );
+	}
+
+	/**
+	 * add_csv_download_button
+	 * CSVダウンロードボタンを表示
+	 */
+	public function add_csv_download_button() {
+		$post_type = get_post_type();
+		if ( true !== apply_filters( 'mwform_csv_button_' . $post_type, true ) )
+			return;
+		$page = ( basename( $_SERVER['PHP_SELF'] ) );
+		if ( in_array( $post_type, $this->form_post_type ) && $page == 'edit.php' ) {
+			$action = $_SERVER['REQUEST_URI'];
+			?>
+			<form id="mw-wp-form_csv" method="post" action="<?php echo esc_url( $action ); ?>">
+				<input type="hidden" name="test" value="hoge" />
+				<input type="submit" value="<?php _e( 'CSV Download', MWF_Config::DOMAIN ); ?>" class="button-primary" />
+				<?php wp_nonce_field( MWF_Config::NAME ); ?>
+			</form>
+			<?php
+		}
+	}
+
+	/**
+	 * csv_download
+	 * CSVを生成、出力
+	 */
+	public function csv_download() {
+		if ( isset( $_GET['post_type'] ) ) {
+			$post_type = $_GET['post_type'];
+			if ( in_array( $post_type, $this->form_post_type ) && !empty( $_POST ) ) {
+				check_admin_referer( MWF_Config::NAME );
+
+				$posts_mwf = get_posts( array(
+					'post_type' => $post_type,
+					'pre_get_posts' => -1,
+					'post_status' => 'any',
+				) );
+				$csv = '';
+
+				// 見出しを追加
+				$rows[] = array( 'ID', 'post_date', 'post_modified', 'post_title' );
+				foreach ( $posts_mwf as $post ) {
+					setup_postdata( $post );
+					$columns = array();
+					foreach ( $posts_mwf as $post ) {
+						$post_custom_keys = get_post_custom_keys( $post->ID );
+						if ( ! empty( $post_custom_keys ) && is_array( $post_custom_keys ) ) {
+							foreach ( $post_custom_keys as $key ) {
+								if ( preg_match( '/^_/', $key ) )
+									continue;
+								$columns[$key] = $key;
+							}
+						}
+					}
+					$rows[0] = array_merge( $rows[0], $columns );
+				}
+				wp_reset_postdata();
+
+				// 各データを追加
+				foreach ( $posts_mwf as $post ) {
+					setup_postdata( $post );
+					$column = array();
+					foreach ( $rows[0] as $key => $value ) {
+						if ( isset( $post->$value ) ) {
+							$column[$key] = $this->escape_double_quote( $post->$value );
+						} else {
+							$post_meta = get_post_meta( $post->ID, $value, true );
+							$column[$key] = ( $post_meta ) ? $this->escape_double_quote( $post_meta ) : '';
+						}
+					}
+					$rows[] = $column;
+				}
+				wp_reset_postdata();
+
+				// エンコード
+				foreach ( $rows as $row ) {
+					$csv .= implode( ',', $row ) . "\r\n";
+				}
+				$csv = mb_convert_encoding( $csv, 'sjis-win', get_option( 'blog_charset' ) );
+
+				$file_name = 'mw_wp_form_' . date( 'YmdHis' ) . '.csv';
+				header( 'Content-Type: application/octet-stream' );
+				header( 'Content-Disposition: attachment; filename=' . $file_name );
+				echo $csv;
+				exit;
+			}
+		}
+	}
+	private function escape_double_quote( $value ) {
+		$value = str_replace( '"', '""', $value );
+		return '"' . $value . '"';
 	}
 
 	/**
@@ -131,56 +226,56 @@ class MW_WP_Form_Admin_Page {
 			$this->postdata = get_post_meta( $post->ID, MWF_Config::NAME, true );
 			// 完了画面内容
 			add_meta_box(
-				MWF_Config::NAME.'_complete_message_metabox',
+				MWF_Config::NAME . '_complete_message_metabox',
 				__( 'Complete Message', MWF_Config::DOMAIN ),
 				array( $this, 'add_complete_message' ),
 				MWF_Config::NAME, 'normal'
 			);
 			// 入力画面URL
 			add_meta_box(
-				MWF_Config::NAME.'_url',
+				MWF_Config::NAME . '_url',
 				__( 'URL Options', MWF_Config::DOMAIN ),
 				array( $this, 'add_url' ),
 				MWF_Config::NAME, 'normal'
 			);
 			// バリデーション
 			add_meta_box(
-				MWF_Config::NAME.'_validation',
+				MWF_Config::NAME . '_validation',
 				__( 'Validation Rule', MWF_Config::DOMAIN ),
 				array( $this, 'add_validation_rule' ),
 				MWF_Config::NAME, 'normal'
 			);
 			// フォーム識別子
 			add_meta_box(
-				MWF_Config::NAME.'_formkey',
+				MWF_Config::NAME . '_formkey',
 				__( 'Form Key', MWF_Config::DOMAIN ),
 				array( $this, 'display_form_key' ),
 				MWF_Config::NAME, 'side'
 			);
 			// 自動返信メール設定
 			add_meta_box(
-				MWF_Config::NAME.'_mail',
+				MWF_Config::NAME . '_mail',
 				__( 'Automatic Reply Email Options', MWF_Config::DOMAIN ),
 				array( $this, 'add_mail_options' ),
 				MWF_Config::NAME, 'side'
 			);
 			// 管理者メール設定
 			add_meta_box(
-				MWF_Config::NAME.'_admin_mail',
+				MWF_Config::NAME . '_admin_mail',
 				__( 'Admin Email Options', MWF_Config::DOMAIN ),
 				array( $this, 'add_admin_mail_options' ),
 				MWF_Config::NAME, 'side'
 			);
 			// 設定
 			add_meta_box(
-				MWF_Config::NAME.'_settings',
+				MWF_Config::NAME . '_settings',
 				__( 'settings', MWF_Config::DOMAIN ),
 				array( $this, 'settings' ),
 				MWF_Config::NAME, 'side'
 			);
 		} elseif ( in_array( $post_type, $this->form_post_type ) ) {
 			add_meta_box(
-				MWF_Config::NAME.'_custom_fields',
+				MWF_Config::NAME . '_custom_fields',
 				__( 'Custom Fields', MWF_Config::DOMAIN ),
 				array( $this, 'custom_fields' ),
 				$post_type
@@ -281,11 +376,11 @@ class MW_WP_Form_Admin_Page {
 	 * @param	$post_ID
 	 */
 	public function save_post( $post_ID ) {
-		if ( ! isset( $_POST[MWF_Config::NAME.'_nonce'] ) )
+		if ( ! isset( $_POST[MWF_Config::NAME . '_nonce'] ) )
 			return $post_ID;
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
 			return $post_ID;
-		if ( !wp_verify_nonce( $_POST[MWF_Config::NAME.'_nonce'], MWF_Config::NAME ) )
+		if ( !wp_verify_nonce( $_POST[MWF_Config::NAME . '_nonce'], MWF_Config::NAME ) )
 			return $post_ID;
 		if ( !current_user_can( 'manage_options', $post_ID ) )
 			return $post_ID;
@@ -344,8 +439,11 @@ class MW_WP_Form_Admin_Page {
 		global $post;
 		?>
 		<p>
-			<?php _e( 'Copy and Paste this shortcode.', MWF_Config::DOMAIN ); ?><br />
 			<span id="formkey_field">[mwform_formkey key="<?php the_ID(); ?>"]</span>
+			<span class="mwf_note">
+				<?php _e( 'Copy and Paste this shortcodE . ', MWF_Config::DOMAIN ); ?><br />
+				<?php _e( 'The key to use with hook is ', MWF_Config::DOMAIN ); ?><?php echo MWF_Config::NAME; ?>-<?php echo $post->ID; ?>
+			</span>
 		</p>
 		<?php
 	}
@@ -359,12 +457,30 @@ class MW_WP_Form_Admin_Page {
 		?>
 		<p>
 			<label><input type="checkbox" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[querystring]" value="1" <?php checked( $this->get_post_data( 'querystring' ), 1 ); ?> /> <?php _e( 'Activate Query string of post', MWF_Config::DOMAIN ); ?></label><br />
-			<span class="mwf_note"><?php _e( 'If this field is active, MW WP Form get the post as query string "post_id" and you can use $post\'s property in editor', MWF_Config::DOMAIN ); ?></span><br />
-			<?php _e( 'Example: {ID}, {post_title}, {post_meta} etc...', MWF_Config::DOMAIN ); ?>
+			<span class="mwf_note"><?php _e( 'If this field is active, MW WP Form get the post as query string "post_id" and you can use $post\'s property in editor', MWF_Config::DOMAIN ); ?><br />
+			<?php _e( 'Example: {ID}, {post_title}, {post_meta} etc...', MWF_Config::DOMAIN ); ?></span>
 		</p>
 		<p>
-			<input type="checkbox" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[usedb]" value="1" <?php checked( $this->get_post_data( 'usedb' ), 1 ); ?> /> <?php _e( 'Saving contact data in database', MWF_Config::DOMAIN ); ?></label>
+			<label><input type="checkbox" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[usedb]" value="1" <?php checked( $this->get_post_data( 'usedb' ), 1 ); ?> /> <?php _e( 'Saving contact data in database', MWF_Config::DOMAIN ); ?></label>
 		</p>
+		<table border="0" cellpadding="0" cellspacing="0" class="akismet">
+			<tr>
+				<th colspan="2"><?php _e( 'Akismet Setting', MWF_Config::DOMAIN ); ?></th>
+			</tr>
+			<tr>
+				<td>author</td>
+				<td><input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[akismet_author]" value="<?php echo esc_attr( $this->get_post_data( 'akismet_author' ) ); ?>" /></td>
+			</tr>
+			<tr>
+				<td>email</td>
+				<td><input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[author_email]" value="<?php echo esc_attr( $this->get_post_data( 'akismet_author_email' ) ); ?>" /></td>
+			</tr>
+			<tr>
+				<td>url</td>
+				<td><input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[author_url]" value="<?php echo esc_attr( $this->get_post_data( 'akismet_author_url' ) ); ?>" /></td>
+			</tr>
+		</table>
+		<span class="mwf_note"><?php _e( 'Input the key to use Akismet.', MWF_Config::DOMAIN ); ?></span>
 		<?php
 	}
 
@@ -375,8 +491,8 @@ class MW_WP_Form_Admin_Page {
 	public function add_complete_message() {
 		global $post;
 		$content = $this->get_post_data( 'complete_message' );
-		wp_editor( $content, MWF_Config::NAME.'_complete_message', array(
-			'textarea_name' => MWF_Config::NAME.'[complete_message]',
+		wp_editor( $content, MWF_Config::NAME . '_complete_message', array(
+			'textarea_name' => MWF_Config::NAME . '[complete_message]',
 			'textarea_rows' => 7,
 		) );
 	}
@@ -393,6 +509,16 @@ class MW_WP_Form_Admin_Page {
 			<input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[mail_subject]" value="<?php echo esc_attr( $this->get_post_data( 'mail_subject' ) ); ?>" />
 		</p>
 		<p>
+			<b><?php _e( 'Sender', MWF_Config::DOMAIN ); ?></b><br />
+			<input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[mail_sender]" value="<?php echo esc_attr( $this->get_post_data( 'mail_sender' ) ); ?>" /><br />
+			<span class="mwf_note"><?php _e( 'If empty:', MWF_Config::DOMAIN ); ?> <?php bloginfo( 'name' ); ?></span>
+		</p>
+		<p>
+			<b><?php _e( 'From ( E-mail address )', MWF_Config::DOMAIN ); ?></b><br />
+			<input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[mail_from]" value="<?php echo esc_attr( $this->get_post_data( 'mail_from' ) ); ?>" /><br />
+			<span class="mwf_note"><?php _e( 'If empty:', MWF_Config::DOMAIN ); ?> <?php bloginfo( 'admin_email' ); ?></span>
+		</p>
+		<p>
 			<b><?php _e( 'Ccontent', MWF_Config::DOMAIN ); ?></b><br />
 			<textarea name="<?php echo esc_attr( MWF_Config::NAME ); ?>[mail_content]" cols="30" rows="10"><?php echo esc_attr( $this->get_post_data( 'mail_content' ) ); ?></textarea><br />
 			<span class="mwf_note"><?php _e( '{key} is converted form data.', MWF_Config::DOMAIN ); ?></span>
@@ -400,7 +526,7 @@ class MW_WP_Form_Admin_Page {
 		<p>
 			<b><?php _e( 'Automatic reply email', MWF_Config::DOMAIN ); ?></b><br />
 			<input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[automatic_reply_email]" value="<?php echo esc_attr( $this->get_post_data( 'automatic_reply_email') ); ?>" /><br />
-			<span class="mwf_note"><?php _e( 'Please input the key to use as transmission to automatic reply email.', MWF_Config::DOMAIN ); ?></span>
+			<span class="mwf_note"><?php _e( 'Input the key to use as transmission to automatic reply email.', MWF_Config::DOMAIN ); ?></span>
 		</p>
 		<?php
 	}
@@ -418,11 +544,21 @@ class MW_WP_Form_Admin_Page {
 		<p>
 			<b><?php _e( 'To ( E-mail address )', MWF_Config::DOMAIN ); ?></b><br />
 			<input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[mail_to]" value="<?php echo esc_attr( $this->get_post_data( 'mail_to' ) ); ?>" /><br />
-			<span class="mwf_note"><?php _e( 'If empty: Using admin E-mail address.', MWF_Config::DOMAIN ); ?></span>
+			<span class="mwf_note"><?php _e( 'If empty:', MWF_Config::DOMAIN ); ?> <?php bloginfo( 'admin_email' ); ?></span>
 		</p>
 		<p>
 			<b><?php _e( 'Subject', MWF_Config::DOMAIN ); ?></b><br />
 			<input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[admin_mail_subject]" value="<?php echo esc_attr( $this->get_post_data( 'admin_mail_subject' ) ); ?>" />
+		</p>
+		<p>
+			<b><?php _e( 'Sender', MWF_Config::DOMAIN ); ?></b><br />
+			<input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[admin_mail_sender]" value="<?php echo esc_attr( $this->get_post_data( 'admin_mail_sender' ) ); ?>" /><br />
+			<span class="mwf_note"><?php _e( 'If empty:', MWF_Config::DOMAIN ); ?> <?php bloginfo( 'name' ); ?></span>
+		</p>
+		<p>
+			<b><?php _e( 'From ( E-mail address )', MWF_Config::DOMAIN ); ?></b><br />
+			<input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[admin_mail_from]" value="<?php echo esc_attr( $this->get_post_data( 'admin_mail_from' ) ); ?>" /><br />
+			<span class="mwf_note"><?php _e( 'If empty:', MWF_Config::DOMAIN ); ?> <?php bloginfo( 'admin_email' ); ?></span>
 		</p>
 		<p>
 			<b><?php _e( 'Ccontent', MWF_Config::DOMAIN ); ?></b><br />
@@ -457,6 +593,12 @@ class MW_WP_Form_Admin_Page {
 				<th><?php _e( 'Complete Page URL', MWF_Config::DOMAIN ); ?></th>
 				<td>
 					<input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[complete_url]" value="<?php echo esc_attr( $this->get_post_data( 'complete_url' ) ); ?>" />
+				</td>
+			</tr>
+			<tr>
+				<th><?php _e( 'Validation Error Page URL', MWF_Config::DOMAIN ); ?></th>
+				<td>
+					<input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[validation_error_url]" value="<?php echo esc_attr( $this->get_post_data( 'validation_error_url' ) ); ?>" />
 				</td>
 			</tr>
 		</table>
@@ -506,7 +648,7 @@ class MW_WP_Form_Admin_Page {
 							<label><input type="checkbox" <?php checked( $value['numeric'], 1 ); ?> name="<?php echo MWF_Config::NAME; ?>[validation][<?php echo $key; ?>][numeric]" value="1" /><?php _e( 'Numeric', MWF_Config::DOMAIN ); ?></label>
 							<label><input type="checkbox" <?php checked( $value['alpha'], 1 ); ?> name="<?php echo MWF_Config::NAME; ?>[validation][<?php echo $key; ?>][alpha]" value="1" /><?php _e( 'Alphabet', MWF_Config::DOMAIN ); ?></label>
 							<label><input type="checkbox" <?php checked( $value['alphanumeric'], 1 ); ?> name="<?php echo MWF_Config::NAME; ?>[validation][<?php echo $key; ?>][alphanumeric]" value="1" /><?php _e( 'Alphabet and Numeric', MWF_Config::DOMAIN ); ?></label>
-							<label><input type="checkbox" <?php checked( $value['zip'], 1 ); ?> name="<?php echo MWF_Config::NAME; ?>[validation][<?php echo $key; ?>][zip]" value="1" /><?php _e( 'Zip code', MWF_Config::DOMAIN ); ?></label>
+							<label><input type="checkbox" <?php checked( $value['zip'], 1 ); ?> name="<?php echo MWF_Config::NAME; ?>[validation][<?php echo $key; ?>][zip]" value="1" /><?php _e( 'Zip Code', MWF_Config::DOMAIN ); ?></label>
 							<label><input type="checkbox" <?php checked( $value['tel'], 1 ); ?> name="<?php echo MWF_Config::NAME; ?>[validation][<?php echo $key; ?>][tel]" value="1" /><?php _e( 'Tel', MWF_Config::DOMAIN ); ?></label>
 							<label><input type="checkbox" <?php checked( $value['mail'], 1 ); ?> name="<?php echo MWF_Config::NAME; ?>[validation][<?php echo $key; ?>][mail]" value="1" /><?php _e( 'E-mail', MWF_Config::DOMAIN ); ?></label>
 							<label><input type="checkbox" <?php checked( $value['date'], 1 ); ?> name="<?php echo MWF_Config::NAME; ?>[validation][<?php echo $key; ?>][date]" value="1" /><?php _e( 'Date', MWF_Config::DOMAIN ); ?></label>

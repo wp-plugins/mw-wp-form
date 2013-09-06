@@ -3,11 +3,11 @@
  * Name: MW Form
  * URI: http://2inc.org
  * Description: フォームクラス
- * Version: 1.3.2
+ * Version: 1.3.4
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: September 25, 2012
- * Modified: June 18, 2013
+ * Modified: September 5, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -189,12 +189,14 @@ class MW_Form {
 		$_ret = null;
 		$separator = $this->getSeparatorValue( $key );
 		// すべて空のからのときはimplodeしないように（---がいってしまうため）
-		if ( array_key_exists( 'data', $this->data[$key] ) && is_array( $this->data[$key]['data'] ) && !empty( $separator ) ) {
-			foreach ( $this->data[$key]['data'] as $value ) {
-				if ( !( $value === '' || $value === null ) ) {
-					$_ret = implode( $separator, $this->data[$key]['data'] );
-					$_ret = $this->e( $_ret );
-					break;
+		if ( isset( $this->data[$key] ) && is_array( $this->data[$key] ) ) {
+			if ( isset( $this->data[$key]['data'] ) && is_array( $this->data[$key]['data'] ) && !empty( $separator ) ) {
+				foreach ( $this->data[$key]['data'] as $value ) {
+					if ( !( $value === '' || $value === null ) ) {
+						$_ret = implode( $separator, $this->data[$key]['data'] );
+						$_ret = $this->e( $_ret );
+						break;
+					}
 				}
 			}
 		}
@@ -221,15 +223,17 @@ class MW_Form {
 	public function getCheckedValue( $key, Array $data ) {
 		$_ret = null;
 		$separator = $this->getSeparatorValue( $key );
-		if ( array_key_exists( 'data', $this->data[$key] ) && is_array( $this->data[$key]['data'] ) && !empty( $separator ) ) {
-			$rightData = array();
-			foreach ( $this->data[$key]['data'] as $value ) {
-				if ( isset( $data[$value] ) && !in_array( $data[$value], $rightData ) ) {
-					$rightData[] = $data[$value];
+		if ( isset( $this->data[$key] ) && is_array( $this->data[$key] ) ) {
+			if ( isset( $this->data[$key]['data'] ) && is_array( $this->data[$key]['data'] ) && !empty( $separator ) ) {
+				$rightData = array();
+				foreach ( $this->data[$key]['data'] as $value ) {
+					if ( isset( $data[$value] ) && !in_array( $data[$value], $rightData ) ) {
+						$rightData[] = $data[$value];
+					}
 				}
+				$_ret = implode( $separator, $rightData );
+				$_ret = $this->e( $_ret );
 			}
-			$_ret = implode( $separator, $rightData );
-			$_ret = $this->e( $_ret );
 		}
 		return $_ret;
 	}
@@ -421,7 +425,7 @@ class MW_Form {
 		$value1 = ( isset( $value[1] ) )? $value[1] : '';
 		$value2 = ( isset( $value[2] ) )? $value[2] : '';
 		$_ret = '';
-		$_ret .= $this->text( $name.'[data][0]', array( 'size' => 5, 'maxlength' => 4, 'value' => $value0 ) );
+		$_ret .= $this->text( $name.'[data][0]', array( 'size' => 6, 'maxlength' => 5, 'value' => $value0 ) );
 		$_ret .= ' '.$separator.' ';
 		$_ret .= $this->text( $name.'[data][1]', array( 'size' => 5, 'maxlength' => 4, 'value' => $value1 ) );
 		$_ret .= ' '.$separator.' ';

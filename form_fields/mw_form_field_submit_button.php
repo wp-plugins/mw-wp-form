@@ -3,11 +3,12 @@
  * Name: MW Form Field Submit
  * URI: http://2inc.org
  * Description: サブミットボタンを出力。
- * Version: 1.1
+ * Description: 確認ボタンと送信ボタンを自動出力。
+ * Version: 1.1.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: December 14, 2012
- * Modified: May 29, 2013
+ * Modified: July 28, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
