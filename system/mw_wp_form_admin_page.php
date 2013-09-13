@@ -473,11 +473,11 @@ class MW_WP_Form_Admin_Page {
 			</tr>
 			<tr>
 				<td>email</td>
-				<td><input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[author_email]" value="<?php echo esc_attr( $this->get_post_data( 'akismet_author_email' ) ); ?>" /></td>
+				<td><input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[akismet_author_email]" value="<?php echo esc_attr( $this->get_post_data( 'akismet_author_email' ) ); ?>" /></td>
 			</tr>
 			<tr>
 				<td>url</td>
-				<td><input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[author_url]" value="<?php echo esc_attr( $this->get_post_data( 'akismet_author_url' ) ); ?>" /></td>
+				<td><input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[akismet_author_url]" value="<?php echo esc_attr( $this->get_post_data( 'akismet_author_url' ) ); ?>" /></td>
 			</tr>
 		</table>
 		<span class="mwf_note"><?php _e( 'Input the key to use Akismet.', MWF_Config::DOMAIN ); ?></span>
