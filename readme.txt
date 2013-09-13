@@ -4,7 +4,7 @@ Donate link:
 Tags: plugin, form, confirm, preview
 Requires at least: 3.4
 Tested up to: 3.5
-Stable tag: 0.9.9
+Stable tag: 0.9.10
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,6 +36,12 @@ http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 1. You can create a form by settings page.
 
 == Changelog ==
+
+= 0.9.10 =
+* Bug fix: mwform_admin_mail_識別子、mwform_auto_mail_識別子フィルターフックの定義位置が逆だったのを修正
+* Bug fix: 添付ファイルが添付されないバグを修正（From Ver0.9.4）
+* Bug fix: Akismet Email、Akismet URL の設定が正しく行えなかったのを修正
+* Cahged : フォーム送信時は $_POST を WP Query に含めない
 
 = 0.9.9 =
 * Added  : mwform_csv_button_識別子 フィルターフック
