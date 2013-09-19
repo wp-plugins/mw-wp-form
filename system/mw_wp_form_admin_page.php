@@ -3,11 +3,11 @@
  * Name: MW WP Form Admin Page
  * URI: http://2inc.org
  * Description: 管理画面クラス
- * Version: 1.5.3
+ * Version: 1.5.4
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: February 21, 2013
- * Modified: September 5, 2013
+ * Modified: September 17, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -290,7 +290,13 @@ class MW_WP_Form_Admin_Page {
 	public function custom_fields() {
 		global $post;
 		$post_custom = get_post_custom( $post->ID );
-		$upload_file_keys = get_post_custom_values( '_' . MWF_Config::UPLOAD_FILE_KEYS, $post->ID );
+		// 前のバージョンでは MWF_Config::UPLOAD_FILE_KEYS を配列で保持していなかったので分岐させる
+		$_upload_file_keys = get_post_meta( $post->ID, '_' . MWF_Config::UPLOAD_FILE_KEYS, true );
+		if ( is_array( $_upload_file_keys ) ) {
+			$upload_file_keys = $_upload_file_keys;
+		} else {
+			$upload_file_keys = get_post_custom_values( '_' . MWF_Config::UPLOAD_FILE_KEYS, $post->ID );
+		}
 		if ( ! empty( $post_custom ) && is_array( $post_custom ) ) {
 			?>
 			<table border="0" cellpadding="0" cellspacing="0">
@@ -307,7 +313,7 @@ class MW_WP_Form_Admin_Page {
 							if ( $mimetype ) {
 								// 画像だったら
 								if ( preg_match( '/^image\/.+?$/', $mimetype ) ) {
-									$src = wp_get_attachment_image_src( $value[0], 'midium' );
+									$src = wp_get_attachment_image_src( $value[0], 'medium' );
 									echo '<img src="' . esc_url( $src[0] ) .'" alt="" />';
 								}
 								// 画像以外
@@ -473,11 +479,11 @@ class MW_WP_Form_Admin_Page {
 			</tr>
 			<tr>
 				<td>email</td>
-				<td><input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[author_email]" value="<?php echo esc_attr( $this->get_post_data( 'akismet_author_email' ) ); ?>" /></td>
+				<td><input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[akismet_author_email]" value="<?php echo esc_attr( $this->get_post_data( 'akismet_author_email' ) ); ?>" /></td>
 			</tr>
 			<tr>
 				<td>url</td>
-				<td><input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[author_url]" value="<?php echo esc_attr( $this->get_post_data( 'akismet_author_url' ) ); ?>" /></td>
+				<td><input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[akismet_author_url]" value="<?php echo esc_attr( $this->get_post_data( 'akismet_author_url' ) ); ?>" /></td>
 			</tr>
 		</table>
 		<span class="mwf_note"><?php _e( 'Input the key to use Akismet.', MWF_Config::DOMAIN ); ?></span>

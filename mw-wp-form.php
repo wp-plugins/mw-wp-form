@@ -3,11 +3,11 @@
  * Plugin Name: MW WP Form
  * Plugin URI: http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
  * Description: MW WP Form can create mail form with a confirmation screen.
- * Version: 0.9.9
+ * Version: 0.9.11
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: September 25, 2012
- * Modified: September 5, 2013
+ * Modified: September 19, 2013
  * Text Domain: mw-wp-form
  * Domain Path: /languages/
  * License: GPL2
@@ -59,8 +59,8 @@ class mw_wp_form {
 		'querystring' => null,
 		'usedb' => null,
 		'akismet_author' => '',
-		'author_email' => '',
-		'author_url' => '',
+		'akismet_author_email' => '',
+		'akismet_author_url' => '',
 		'complete_message' => '',
 		'input_url' => '',
 		'confirmation_url' => '',
@@ -110,6 +110,23 @@ class mw_wp_form {
 		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_validation.php' );
 		add_action( 'wp', array( $this, 'main' ) );
 		add_action( 'wp_print_styles', array( $this, 'original_style' ) );
+		add_action( 'parse_request', array( $this, 'remote_query_vars_from_post' ) );
+	}
+
+	/**
+	 * remote_query_vars_from_post
+	 * WordPressへのリクエストに含まれている、$_POSTの値を削除
+	 */
+	public function remote_query_vars_from_post( $query ) {
+		if ( strtolower( $_SERVER['REQUEST_METHOD'] ) === 'post' && isset( $_POST['token'] ) ) {
+			foreach ( $_POST as $key => $value ) {
+				if ( $key == 'token' )
+					continue;
+				if ( isset( $query->query_vars[$key] ) && $query->query_vars[$key] === $value && !empty( $value ) ) {
+					$query->query_vars[$key] = '';
+				}
+			}
+		}
 	}
 
 	/**
@@ -495,7 +512,7 @@ class mw_wp_form {
 		$Mail = apply_filters( $filter_name, $Mail, $this->Data->getValues() );
 
 		if ( $this->options_by_formkey && !empty( $Mail ) ) {
-			$filter_name = 'mwform_auto_mail_' . $this->key;
+			$filter_name = 'mwform_admin_mail_' . $this->key;
 			$Mail = apply_filters( $filter_name, $Mail, $this->Data->getValues() );
 			$Mail->send();
 
@@ -525,7 +542,7 @@ class mw_wp_form {
 					// 自動返信メールからは添付ファイルを削除
 					$Mail->attachments = array();
 
-					$filter_name = 'mwform_admin_mail_' . $this->key;
+					$filter_name = 'mwform_auto_mail_' . $this->key;
 					$Mail = apply_filters( $filter_name, $Mail, $this->Data->getValues() );
 					$Mail->send();
 				}
@@ -553,6 +570,7 @@ class mw_wp_form {
 
 				// 添付ファイルをメディアに保存
 				if ( !empty( $this->insert_id ) ) {
+					$save_attached_key = array();
 					foreach ( $attachments as $key => $filepath ) {
 						// WordPress( get_allowed_mime_types ) で許可されたファイルタイプ限定
 						$wp_check_filetype = wp_check_filetype( $filepath );
@@ -572,10 +590,13 @@ class mw_wp_form {
 								// 代わりにここで attachment_id を保存
 								update_post_meta( $this->insert_id, $key, $attach_id );
 								// $key が 添付ファイルのキーであるとわかるように隠し設定を保存
-								update_post_meta( $this->insert_id, '_' . MWF_Config::UPLOAD_FILE_KEYS, $key );
+								//add_post_meta( $this->insert_id, '_' . MWF_Config::UPLOAD_FILE_KEYS, $key );
+								$save_attached_key[] = $key;
 							}
 						}
 					}
+					if ( $save_attached_key )
+						update_post_meta( $this->insert_id, '_' . MWF_Config::UPLOAD_FILE_KEYS, $save_attached_key );
 				}
 			}
 			// DB非保存時
@@ -723,7 +744,7 @@ class mw_wp_form {
 	public function _mwform( $atts, $content = '' ) {
 		if ( $this->viewFlg == 'input' || $this->viewFlg == 'preview' ) {
 			$this->Error = $this->Validation->Error();
-			do_action( 'mwform_add_shortcode', $this->Form, $this->viewFlg, $this->Error );
+			do_action( 'mwform_add_shortcode', $this->Form, $this->viewFlg, $this->Error, $this->key );
 
 			// ユーザー情報取得
 			$content = $this->replace_user_property( $content );
