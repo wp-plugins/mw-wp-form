@@ -3,11 +3,11 @@
  * Name: MW WP Form Admin Page
  * URI: http://2inc.org
  * Description: 管理画面クラス
- * Version: 1.5.3
+ * Version: 1.5.4
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: February 21, 2013
- * Modified: September 5, 2013
+ * Modified: September 17, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -290,7 +290,13 @@ class MW_WP_Form_Admin_Page {
 	public function custom_fields() {
 		global $post;
 		$post_custom = get_post_custom( $post->ID );
-		$upload_file_keys = get_post_custom_values( '_' . MWF_Config::UPLOAD_FILE_KEYS, $post->ID );
+		// 前のバージョンでは MWF_Config::UPLOAD_FILE_KEYS を配列で保持していなかったので分岐させる
+		$_upload_file_keys = get_post_meta( $post->ID, '_' . MWF_Config::UPLOAD_FILE_KEYS, true );
+		if ( is_array( $_upload_file_keys ) ) {
+			$upload_file_keys = $_upload_file_keys;
+		} else {
+			$upload_file_keys = get_post_custom_values( '_' . MWF_Config::UPLOAD_FILE_KEYS, $post->ID );
+		}
 		if ( ! empty( $post_custom ) && is_array( $post_custom ) ) {
 			?>
 			<table border="0" cellpadding="0" cellspacing="0">
@@ -307,7 +313,7 @@ class MW_WP_Form_Admin_Page {
 							if ( $mimetype ) {
 								// 画像だったら
 								if ( preg_match( '/^image\/.+?$/', $mimetype ) ) {
-									$src = wp_get_attachment_image_src( $value[0], 'midium' );
+									$src = wp_get_attachment_image_src( $value[0], 'medium' );
 									echo '<img src="' . esc_url( $src[0] ) .'" alt="" />';
 								}
 								// 画像以外

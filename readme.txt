@@ -4,7 +4,7 @@ Donate link:
 Tags: plugin, form, confirm, preview
 Requires at least: 3.4
 Tested up to: 3.5
-Stable tag: 0.9.10
+Stable tag: 0.9.11
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,6 +36,11 @@ http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 1. You can create a form by settings page.
 
 == Changelog ==
+
+= 0.9.11 =
+* Bug fix: 添付ファイルが複数あり、かつDB保存の場合、管理画面で最後の画像しか表示されないバグを修正
+* Cahged : どのフィールドが画像かを示すメタデータの保存形式を配列に変更
+* Cahged : mw_form_field::inputPage、mw_form_field::previewPage の引数削除
 
 = 0.9.10 =
 * Bug fix: mwform_admin_mail_識別子、mwform_auto_mail_識別子フィルターフックの定義位置が逆だったのを修正

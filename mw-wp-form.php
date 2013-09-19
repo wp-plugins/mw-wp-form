@@ -3,11 +3,11 @@
  * Plugin Name: MW WP Form
  * Plugin URI: http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
  * Description: MW WP Form can create mail form with a confirmation screen.
- * Version: 0.9.10
+ * Version: 0.9.11
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: September 25, 2012
- * Modified: September 13, 2013
+ * Modified: September 19, 2013
  * Text Domain: mw-wp-form
  * Domain Path: /languages/
  * License: GPL2
@@ -570,6 +570,7 @@ class mw_wp_form {
 
 				// 添付ファイルをメディアに保存
 				if ( !empty( $this->insert_id ) ) {
+					$save_attached_key = array();
 					foreach ( $attachments as $key => $filepath ) {
 						// WordPress( get_allowed_mime_types ) で許可されたファイルタイプ限定
 						$wp_check_filetype = wp_check_filetype( $filepath );
@@ -589,10 +590,13 @@ class mw_wp_form {
 								// 代わりにここで attachment_id を保存
 								update_post_meta( $this->insert_id, $key, $attach_id );
 								// $key が 添付ファイルのキーであるとわかるように隠し設定を保存
-								update_post_meta( $this->insert_id, '_' . MWF_Config::UPLOAD_FILE_KEYS, $key );
+								//add_post_meta( $this->insert_id, '_' . MWF_Config::UPLOAD_FILE_KEYS, $key );
+								$save_attached_key[] = $key;
 							}
 						}
 					}
+					if ( $save_attached_key )
+						update_post_meta( $this->insert_id, '_' . MWF_Config::UPLOAD_FILE_KEYS, $save_attached_key );
 				}
 			}
 			// DB非保存時
@@ -740,7 +744,7 @@ class mw_wp_form {
 	public function _mwform( $atts, $content = '' ) {
 		if ( $this->viewFlg == 'input' || $this->viewFlg == 'preview' ) {
 			$this->Error = $this->Validation->Error();
-			do_action( 'mwform_add_shortcode', $this->Form, $this->viewFlg, $this->Error );
+			do_action( 'mwform_add_shortcode', $this->Form, $this->viewFlg, $this->Error, $this->key );
 
 			// ユーザー情報取得
 			$content = $this->replace_user_property( $content );
