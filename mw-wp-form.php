@@ -3,11 +3,11 @@
  * Plugin Name: MW WP Form
  * Plugin URI: http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
  * Description: MW WP Form can create mail form with a confirmation screen.
- * Version: 0.9.11
+ * Version: 1.0.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: September 25, 2012
- * Modified: September 19, 2013
+ * Modified: October 11, 2013
  * Text Domain: mw-wp-form
  * Domain Path: /languages/
  * License: GPL2
@@ -41,8 +41,10 @@ class mw_wp_form {
 	protected $Form;
 	protected $Validation;
 	protected $Error;
+	protected $File;
 	protected $viewFlg = 'input';
 	protected $MW_WP_Form_Admin_Page;
+	protected $MW_WP_Form_Contact_Data_Page;
 	protected $options_by_formkey;
 	protected $insert_id;
 	private $defaults = array(
@@ -90,7 +92,10 @@ class mw_wp_form {
 		// 管理画面の実行
 		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_wp_form_admin_page.php' );
 		$this->MW_WP_Form_Admin_Page = new MW_WP_Form_Admin_Page();
+		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_wp_form_contact_data_page.php' );
+		$this->MW_WP_Form_Contact_Data_Page = new MW_WP_Form_Contact_Data_Page();
 		add_action( 'init', array( $this, 'register_post_type' ) );
+
 		// フォームフィールドの読み込み、インスタンス化
 		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_form_field.php' );
 		foreach ( glob( plugin_dir_path( __FILE__ ) . 'form_fields/*.php' ) as $form_field ) {
@@ -108,6 +113,8 @@ class mw_wp_form {
 		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_mail.php' );
 		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_session.php' );
 		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_validation.php' );
+		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_wp_form_data.php' );
+		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_wp_form_file.php' );
 		add_action( 'wp', array( $this, 'main' ) );
 		add_action( 'wp_print_styles', array( $this, 'original_style' ) );
 		add_action( 'parse_request', array( $this, 'remote_query_vars_from_post' ) );
@@ -163,6 +170,10 @@ class mw_wp_form {
 				wp_delete_post( $data_post->ID, true );
 			}
 		}
+
+		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_wp_form_file.php' );
+		$File = new MW_WP_Form_File();
+		$File->removeTempDir();
 	}
 
 	/**
@@ -229,6 +240,9 @@ class mw_wp_form {
 		$this->Validation = new MW_Validation( $this->Data->getValues() );
 		// バリデーション実行（Validation->dataに値がないと$Errorは返さない（true））
 		$this->apply_filters_mwform_validation();
+
+		// ファイル操作オブジェクト生成
+		$this->File = new MW_WP_Form_File();
 
 		// 入力画面（戻る）のとき
 		if ( $this->Form->isInput() ) {
@@ -297,6 +311,15 @@ class mw_wp_form {
 	 * _meta_mwform
 	 * [mwform〜]を解析し、プロパティを設定
 	 * @param	Array	( input, preview, complete, key )
+	 * @example
+	 * 		同一画面変遷の場合
+	 * 			[mwform key="hoge"]〜[/mwform]
+	 * 		別ページ画面変遷の場合
+	 * 			確認画面ありの場合
+	 * 				入力画面 : [mwform preview="/form_preview/" key="hoge"]〜[/mwform]
+	 * 				確認画面 : [mwform input="/form_input/" complete="/form_complete/" key="hoge"]〜[/mwform]
+	 * 			確認画面なしの場合
+	 * 				入力画面 : [mwform complete="/form_complete/" key="hoge"]〜[/mwform]
 	 */
 	public function _meta_mwform( $atts ) {
 		$atts = shortcode_atts( array(
@@ -331,7 +354,7 @@ class mw_wp_form {
 					( array )get_post_meta( $post->ID, MWF_Config::NAME, true )
 				);
 				$this->options_by_formkey['post_id'] = $post->ID;
-				$this->key = MWF_Config::NAME.'-'.$atts['key'];
+				$this->key = MWF_Config::NAME . '-' . $atts['key'];
 				$this->input = $this->parse_url( $this->options_by_formkey['input_url'] );
 				$this->preview = $this->parse_url( $this->options_by_formkey['confirmation_url'] );
 				$this->complete = $this->parse_url( $this->options_by_formkey['complete_url'] );
@@ -379,6 +402,11 @@ class mw_wp_form {
 		}
 	}
 
+	/**
+	 * akismet_check
+	 * Akismetチェックを実行
+	 * @return  Boolean
+	 */
 	protected function akismet_check() {
 		global $akismet_api_host, $akismet_api_port;
 		if ( ! function_exists( 'akismet_get_key' ) || ! akismet_get_key() )
@@ -466,17 +494,26 @@ class mw_wp_form {
 		$upload_file_keys = $this->Data->getValue( MWF_Config::UPLOAD_FILE_KEYS );
 		if ( $upload_file_keys !== null ) {
 			if ( is_array( $upload_file_keys ) ) {
+				$wp_upload_dir = wp_upload_dir();
 				foreach ( $upload_file_keys as $key ) {
 					$upload_file_url = $this->Data->getValue( $key );
-					if ( !$upload_file_url ) continue;
-					$wp_upload_dir = wp_upload_dir();
+					if ( !$upload_file_url )
+						continue;
 					$filepath = str_replace(
-						$wp_upload_dir['url'],
-						$wp_upload_dir['path'],
+						$wp_upload_dir['baseurl'],
+						realpath( $wp_upload_dir['basedir'] ),
 						$upload_file_url
 					);
 					if ( file_exists( $filepath ) ) {
+						$filepath = $this->File->moveTempFileToUploadDir( $filepath );
+						$new_upload_file_url = str_replace(
+							realpath( $wp_upload_dir['basedir'] ),
+							$wp_upload_dir['baseurl'],
+							$filepath
+						);
 						$attachments[$key] = $filepath;
+						$this->Data->setValue( $key, $new_upload_file_url );
+						$this->Form = new MW_Form( $this->Data->getValues(), $this->key );
 					}
 				}
 				$Mail->attachments = $attachments;
@@ -510,10 +547,50 @@ class mw_wp_form {
 
 		$filter_name = 'mwform_mail_' . $this->key;
 		$Mail = apply_filters( $filter_name, $Mail, $this->Data->getValues() );
+		if ( $this->options_by_formkey && is_a( $Mail, 'MW_Mail' ) ) {
 
-		if ( $this->options_by_formkey && !empty( $Mail ) ) {
+			// DB保存時
+			// メール送信前にファイルのリネームをしないと、tempファイル名をメールで送信してしまう。
+			if ( !empty( $this->options_by_formkey['usedb'] ) ) {
+				// save_mail_body で登録されないように
+				foreach ( $attachments as $key => $filepath ) {
+					$this->Data->clearValue( $key );
+				}
+
+				// $this->insert_id を設定 ( save_mail_body で 使用 )
+				$this->insert_id = wp_insert_post( array(
+					'post_title' => $admin_mail_subject,
+					'post_status' => 'publish',
+					'post_type' => MWF_Config::DBDATA . $this->options_by_formkey['post_id'],
+				) );
+				// 保存
+				preg_replace_callback(
+					'/{(.+?)}/',
+					array( $this, 'save_mail_body' ),
+					$admin_mail_content
+				);
+
+				// 添付ファイルをメディアに保存
+				if ( !empty( $this->insert_id ) ) {
+					$this->File->saveAttachmentsInMedia(
+						$this->insert_id,
+						$attachments,
+						$this->options_by_formkey['post_id']
+					);
+				}
+			}
+			// DB非保存時
+			else {
+				foreach ( $attachments as $filepath ) {
+					if ( file_exists( $filepath ) )
+						unlink( $filepath );
+				}
+			}
+
 			$filter_name = 'mwform_admin_mail_' . $this->key;
 			$Mail = apply_filters( $filter_name, $Mail, $this->Data->getValues() );
+			if ( !is_a( $Mail, 'MW_Mail' ) )
+				return;
 			$Mail->send();
 
 			if ( isset( $this->options_by_formkey['automatic_reply_email'] ) ) {
@@ -544,66 +621,9 @@ class mw_wp_form {
 
 					$filter_name = 'mwform_auto_mail_' . $this->key;
 					$Mail = apply_filters( $filter_name, $Mail, $this->Data->getValues() );
+					if ( !is_a( $Mail, 'MW_Mail' ) )
+						return;
 					$Mail->send();
-				}
-			}
-
-			// DB保存時
-			if ( !empty( $this->options_by_formkey['usedb'] ) ) {
-				// save_mail_body で登録されないように
-				foreach ( $attachments as $key => $filepath ) {
-					$this->Data->clearValue( $key );
-				}
-
-				// $this->insert_id を設定 ( save_mail_body で 使用 )
-				$this->insert_id = wp_insert_post( array(
-					'post_title' => $admin_mail_subject,
-					'post_status' => 'publish',
-					'post_type' => MWF_Config::DBDATA . $this->options_by_formkey['post_id'],
-				) );
-				// 保存
-				preg_replace_callback(
-					'/{(.+?)}/',
-					array( $this, 'save_mail_body' ),
-					$admin_mail_content
-				);
-
-				// 添付ファイルをメディアに保存
-				if ( !empty( $this->insert_id ) ) {
-					$save_attached_key = array();
-					foreach ( $attachments as $key => $filepath ) {
-						// WordPress( get_allowed_mime_types ) で許可されたファイルタイプ限定
-						$wp_check_filetype = wp_check_filetype( $filepath );
-						if ( file_exists( $filepath ) && !empty( $wp_check_filetype['type'] ) ) {
-							$post_type = get_post_type_object( MWF_Config::DBDATA . $this->options_by_formkey['post_id'] );
-							$attachment = array(
-								'post_mime_type' => $wp_check_filetype['type'],
-								'post_title'     => $key,
-								'post_status'    => 'inherit',
-								'post_content'   => __( 'Uploaded from ' ) . $post_type->label,
-							);
-							$attach_id = wp_insert_attachment( $attachment, $filepath, $this->insert_id );
-							require_once( ABSPATH . 'wp-admin' . '/includes/image.php' );
-							$attach_data = wp_generate_attachment_metadata( $attach_id, $filepath );
-							$update_attachment_flg = wp_update_attachment_metadata( $attach_id, $attach_data );
-							if ( $update_attachment_flg ) {
-								// 代わりにここで attachment_id を保存
-								update_post_meta( $this->insert_id, $key, $attach_id );
-								// $key が 添付ファイルのキーであるとわかるように隠し設定を保存
-								//add_post_meta( $this->insert_id, '_' . MWF_Config::UPLOAD_FILE_KEYS, $key );
-								$save_attached_key[] = $key;
-							}
-						}
-					}
-					if ( $save_attached_key )
-						update_post_meta( $this->insert_id, '_' . MWF_Config::UPLOAD_FILE_KEYS, $save_attached_key );
-				}
-			}
-			// DB非保存時
-			else {
-				foreach ( $attachments as $filepath ) {
-					if ( file_exists( $filepath ) )
-						unlink( $filepath );
 				}
 			}
 		}
@@ -694,6 +714,7 @@ class mw_wp_form {
 
 		// url引数が無効の場合、URL設定 で ?post_id が使われている場合はそれが使用される
 		// url引数が有効の場合は URL設定 で ?post_id が使われていても $_GET['post_id'] で上書きされる
+		$query_string = array_merge( $_GET, $query_string );
 		if ( !empty( $this->options_by_formkey['querystring'] ) && MWF_Functions::is_numeric( $_GET['post_id'] ) ) {
 			$query_string['post_id'] = $_GET['post_id'];
 		}
@@ -704,26 +725,25 @@ class mw_wp_form {
 
 	/**
 	 * _mwform_formkey
-	 * 管理画面で作成したフォームを出力
+	 * 管理画面で作成したフォームを出力（実際の出力は _mwform ）
 	 * @example
-	 * 		[mwform_formkey keys="post_id"]
+	 * 		[mwform_formkey key="post_id"]
 	 */
 	public function _mwform_formkey( $atts ) {
 		global $post;
 		$atts = shortcode_atts( array(
 			'key' => ''
 		), $atts );
-		$_mwform = '[mwform key="'.$this->key.'" input="'.$this->input.'" preview="'.$this->preview.'" complete="'.$this->complete.'"]';
 		$post = get_post( $atts['key'] );
 		setup_postdata( $post );
 
 		// 入力画面・確認画面
 		if ( $this->viewFlg == 'input' || $this->viewFlg == 'preview' ) {
-			$_ret = do_shortcode( $_mwform . get_the_content() . '[/mwform]' );
+			$_ret = do_shortcode( '[mwform]' . get_the_content() . '[/mwform]' );
 		}
 		// 完了画面
 		elseif( $this->viewFlg == 'complete' ) {
-			$_ret = do_shortcode( '[mwform_complete_message]'.$this->options_by_formkey['complete_message'].'[/mwform_complete_message]' );
+			$_ret = do_shortcode( '[mwform_complete_message]' . $this->options_by_formkey['complete_message'] . '[/mwform_complete_message]' );
 		}
 		wp_reset_postdata();
 		return $_ret;
@@ -731,15 +751,7 @@ class mw_wp_form {
 
 	/**
 	 * _mwform
-	 * @example
-	 * 		同一画面変遷の場合
-	 * 			[mwform key="hoge"]〜[/mwform]
-	 * 		別ページ画面変遷の場合
-	 * 			確認画面ありの場合
-	 * 				入力画面 : [mwform preview="/form_preview/" key="hoge"]〜[/mwform]
-	 * 				確認画面 : [mwform input="/form_input/" complete="/form_complete/" key="hoge"]〜[/mwform]
-	 * 			確認画面なしの場合
-	 * 				入力画面 : [mwform complete="/form_complete/" key="hoge"]〜[/mwform]
+	 * フォームを出力
 	 */
 	public function _mwform( $atts, $content = '' ) {
 		if ( $this->viewFlg == 'input' || $this->viewFlg == 'preview' ) {
@@ -842,139 +854,51 @@ class mw_wp_form {
 		if ( $this->viewFlg == 'complete' ) {
 			return $content;
 		}
-	 }
+	}
 
 	/**
-	 * fileUpload
-	 * ファイルアップロード処理。$this->data[$key] にファイルの URL を入れる
+	 * fileupload
+	 * ファイルアップロード処理。実際のアップロード状況に合わせてフォームデータも再生成する。
 	 */
-	protected function fileUpload() {
-		foreach ( $_FILES as $key => $file ) {
-			if ( empty( $file['tmp_name'] ) )
-				continue;
-			$extension = pathinfo( $file['name'], PATHINFO_EXTENSION );
-			$uploadfile = $this->setUploadFileName( $extension );
-			// WordPress( get_allowed_mime_types ) で許可されたファイルタイプ限定
-			$wp_check_filetype = wp_check_filetype( $uploadfile['file'] );
-			if ( !( $file['error'] == UPLOAD_ERR_OK
-				 && is_uploaded_file( $file['tmp_name'] )
-				 && !empty( $wp_check_filetype['type'] ) ) )
-				 continue;
-			$this->Data->setValue( $key, $uploadfile['url'] );
-			$upload_file_keys = $this->Data->getValue( MWF_Config::UPLOAD_FILE_KEYS );
-			if ( !( is_array( $upload_file_keys ) && in_array( $key, $upload_file_keys ) ) ) {
+	protected function fileupload() {
+		$uploadedFiles = $this->File->fileupload();
+		$excludedFiles = array_diff_key( $_FILES, $uploadedFiles );
+		$upload_file_keys = $this->Data->getValue( MWF_Config::UPLOAD_FILE_KEYS );
+		if ( !$upload_file_keys )
+			$upload_file_keys = array();
+
+		// 確認 => 入力 => 確認のときに空の $_FILES が送られアップ済みのも $excludesFiles に入ってしまうので消す
+		$wp_upload_dir = wp_upload_dir();
+		foreach ( $upload_file_keys as $upload_file_key ) {
+			$upload_file_url = $this->Data->getValue( $upload_file_key );
+			if ( $upload_file_url ) {
+				$filepath = str_replace(
+					$wp_upload_dir['baseurl'],
+					realpath( $wp_upload_dir['basedir'] ),
+					$upload_file_url
+				);
+				if ( file_exists( $filepath ) ) {
+					unset( $excludedFiles[$upload_file_key] );
+				}
+			}
+		}
+
+		// アップロードに失敗したファイルのキーは削除
+		foreach ( $excludedFiles as $key => $excludedFile ) {
+			$this->Data->clearValue( $key );
+			$delete_key = array_search( $key, $upload_file_keys );
+			if ( $delete_key !== false )
+				unset( $upload_file_keys[$delete_key] );
+		}
+		$this->Data->setValue( MWF_Config::UPLOAD_FILE_KEYS, $upload_file_keys );
+
+		// アップロードに成功したファイルをフォームデータに格納
+		foreach ( $uploadedFiles as $key => $uploadfile ) {
+			$this->Data->setValue( $key, $uploadfile );
+			if ( !in_array( $key, $upload_file_keys ) ) {
 				$this->Data->pushValue( MWF_Config::UPLOAD_FILE_KEYS, $key );
 			}
-			$this->Form = new MW_Form( $this->Data->getValues(), $this->key );
-			move_uploaded_file( $file['tmp_name'], $uploadfile['file'] );
 		}
-	}
-
-	/**
-	 * setUploadFileName
-	 * ファイルパスとファイルURL を返す
-	 * @param  String  拡張子 ( ex: jpg )
-	 * @return Array   ( file =>, url => )
-	 */
-	private function setUploadFileName( $extension ) {
-		$count      = 0;
-		$filename   = date( 'Ymdhis' ) . '.' . $extension;
-		$wp_upload_dir = wp_upload_dir();
-		$upload_dir = realpath( $wp_upload_dir['path'] );
-		$upload_url = $wp_upload_dir['url'];
-		$uploadfile['file'] = $upload_dir . '/' . $filename;
-		$uploadfile['url']  = $upload_url . '/' . $filename;
-		$slugname = preg_replace( '/\.[^.]+$/', '', basename( $uploadfile['file'] ) );
-		while ( file_exists( $uploadfile['file'] ) ) {
-			$count ++;
-			$uploadfile['file'] = $upload_dir . '/' . $slugname . '-' . $count . '.' . $extension;
-			$uploadfile['url']  = $upload_url . '/' . $slugname . '-' . $count . '.' . $extension;
-		}
-		return $uploadfile;
-	}
-}
-
-/**
- * mw_wp_form_data
- * mw_wp_form のデータ操作用
- * Version: 1.0
- * Created: May 29, 2013
- */
-class mw_wp_form_data {
-	private $data;
-	private $Session;
-
-	/**
-	 * __construct
-	 * @param    String    $key    データのキー
-	 */
-	public function __construct( $key ) {
-		$this->Session = MW_Session::start( $key );
-	}
-
-	/**
-	 * getValue
-	 * データを取得
-	 * @param    String    $key    データのキー
-	 * @return   String    データ
-	 */
-	public function getValue( $key ) {
-		if ( isset( $this->data[$key] ) )
-			return $this->data[$key];
-	}
-
-	/**
-	 * getValues
-	 * 全てのデータを取得
-	 * @return   Array   データ
-	 */
-	public function getValues() {
-		if ( $this->data === null)
-			return array();
-		return $this->data;
-	}
-
-	/**
-	 * setValue
-	 * データを追加
-	 * @param    String    $key    データのキー
-	 * @param    String    $value  値
-	 */
-	public function setValue( $key, $value ){
-		$this->data[$key] = $value;
-		$this->Session->setValue( $key, $value );
-	}
-
-	/**
-	 * setValue
-	 * 複数のデータを一括で追加
-	 * @param    Array    値
-	 */
-	public function setValues( Array $array ) {
-		foreach ( $array as $key => $value ) {
-			$this->data[$key] = $value;
-			$this->Session->setValue( $key, $value );
-		}
-	}
-
-	/**
-	 * clearValue
-	 * データを消す
-	 * @param    String    $key    データのキー
-	 */
-	public function clearValue( $key ) {
-		unset( $this->data[$key] );
-		$this->Session->clearValue( $key );
-	}
-
-	/**
-	 * pushValue
-	 * 指定した $key をキーと配列にデータを追加
-	 * @param    String    $key    データのキー
-	 * @param    String    $value  値
-	 */
-	public function pushValue( $key, $value ) {
-		$this->data[$key][] = $value;
-		$this->Session->pushValue( $key, $value );
+		$this->Form = new MW_Form( $this->Data->getValues(), $this->key );
 	}
 }

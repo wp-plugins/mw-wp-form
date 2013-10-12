@@ -1,10 +1,10 @@
 === MW WP Form ===
 Contributors: inc2734
-Donate link:
+Donate link: http://www.amazon.co.jp/registry/wishlist/39ANKRNSTNW40
 Tags: plugin, form, confirm, preview
 Requires at least: 3.4
 Tested up to: 3.5
-Stable tag: 0.9.11
+Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,6 +36,13 @@ http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 1. You can create a form by settings page.
 
 == Changelog ==
+
+= 1.0.0 =
+* Added  : Donate link を追加
+* Cahged : ファイルアップロード用のディレクトリにアップロードするように変更専用
+* Cahged : 拡張子が偽造されたファイルの場合はアップロードし（php5.3.0以上）
+* Cahged : 表示ページのURLに引数が付いている場合でも管理画面で設定したURLにリダイレクトしてしまわないように変更
+* Bug fix: 通常バリデーションは配列が来ることを想定していなかったため修正
 
 = 0.9.11 =
 * Bug fix: 添付ファイルが複数あり、かつDB保存の場合、管理画面で最後の画像しか表示されないバグを修正
