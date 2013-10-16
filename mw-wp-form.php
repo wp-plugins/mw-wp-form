@@ -3,11 +3,11 @@
  * Plugin Name: MW WP Form
  * Plugin URI: http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
  * Description: MW WP Form can create mail form with a confirmation screen.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: September 25, 2012
- * Modified: October 11, 2013
+ * Modified: October 16, 2013
  * Text Domain: mw-wp-form
  * Domain Path: /languages/
  * License: GPL2
@@ -549,7 +549,6 @@ class mw_wp_form {
 		$Mail = apply_filters( $filter_name, $Mail, $this->Data->getValues() );
 		if ( $this->options_by_formkey && is_a( $Mail, 'MW_Mail' ) ) {
 
-			// DB保存時
 			// メール送信前にファイルのリネームをしないと、tempファイル名をメールで送信してしまう。
 			if ( !empty( $this->options_by_formkey['usedb'] ) ) {
 				// save_mail_body で登録されないように
@@ -579,19 +578,20 @@ class mw_wp_form {
 					);
 				}
 			}
-			// DB非保存時
-			else {
-				foreach ( $attachments as $filepath ) {
-					if ( file_exists( $filepath ) )
-						unlink( $filepath );
-				}
-			}
 
 			$filter_name = 'mwform_admin_mail_' . $this->key;
 			$Mail = apply_filters( $filter_name, $Mail, $this->Data->getValues() );
 			if ( !is_a( $Mail, 'MW_Mail' ) )
 				return;
 			$Mail->send();
+
+			// DB非保存時は管理者メール送信後、ファイルを削除
+			if ( empty( $this->options_by_formkey['usedb'] ) ) {
+				foreach ( $attachments as $filepath ) {
+					if ( file_exists( $filepath ) )
+						unlink( $filepath );
+				}
+			}
 
 			if ( isset( $this->options_by_formkey['automatic_reply_email'] ) ) {
 				$automatic_reply_email = $this->Data->getValue( $this->options_by_formkey['automatic_reply_email'] );
