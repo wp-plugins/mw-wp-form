@@ -169,13 +169,16 @@ span#formkey_field {
 /**
  * DB保存データのカスタムフィールド
  */
-#mw-wp-form_custom_fields table {
+#mw-wp-form_custom_fields table,
+#mw-wp-form_data_custom_fields table {
 	border-top: #dfdfdf solid 1px;
 	border-right: #dfdfdf solid 1px;
 	width: 100%;
 }
 #mw-wp-form_custom_fields table th,
-#mw-wp-form_custom_fields table td {
+#mw-wp-form_custom_fields table td,
+#mw-wp-form_data_custom_fields table th,
+#mw-wp-form_data_custom_fields table td {
 	border-bottom: #dfdfdf solid 1px;
 	border-left: #dfdfdf solid 1px;
 	padding: 5px 10px;
@@ -183,9 +186,13 @@ span#formkey_field {
 	vertical-align: top;
 	width: 30%;
 }
-#mw-wp-form_custom_fields table td {
+#mw-wp-form_custom_fields table td,
+#mw-wp-form_data_custom_fields table td {
 	background-color: #fff;
 	width: 70%;
+}
+#mw-wp-form_data_custom_fields textarea {
+	width: 100%;
 }
 
 /**

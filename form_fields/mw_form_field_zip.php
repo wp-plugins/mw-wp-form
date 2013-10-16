@@ -3,11 +3,11 @@
  * Name: MW Form Field Zip
  * URI: http://2inc.org
  * Description: 郵便番号フィールドを出力。
- * Version: 1.1
+ * Version: 1.2
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: December 14, 2012
- * Modified: May 29, 2013
+ * Modified: Septermber 19, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -47,27 +47,25 @@ class mw_form_field_zip extends mw_form_field {
 	/**
 	 * inputPage
 	 * 入力ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function inputPage( $atts ) {
-		$_ret = $this->Form->zip( $atts['name'] );
-		if ( $atts['show_error'] !== 'false' )
-			$_ret .= $this->getError( $atts['name'] );
+	protected function inputPage() {
+		$_ret = $this->Form->zip( $this->atts['name'] );
+		if ( $this->atts['show_error'] !== 'false' )
+			$_ret .= $this->getError( $this->atts['name'] );
 		return $_ret;
 	}
 
 	/**
 	 * previewPage
 	 * 確認ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function previewPage( $atts ) {
-		$value = $this->Form->getZipValue( $atts['name'] );
+	protected function previewPage() {
+		$value = $this->Form->getZipValue( $this->atts['name'] );
 		$_ret  = $value;
-		$_ret .= $this->Form->hidden( $atts['name'].'[data]', $value );
-		$_ret .= $this->Form->separator( $atts['name'] );
+		$_ret .= $this->Form->hidden( $this->atts['name'].'[data]', $value );
+		$_ret .= $this->Form->separator( $this->atts['name'] );
 		return $_ret;
 	}
 

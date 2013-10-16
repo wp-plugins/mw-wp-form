@@ -3,11 +3,11 @@
  * Name: MW Form Field
  * URI: http://2inc.org
  * Description: フォームフィールドの抽象クラス
- * Version: 1.1
+ * Version: 1.2
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: December 14, 2012
- * Modified: May 29, 2013
+ * Modified: September 19, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -40,7 +40,12 @@ abstract class mw_form_field {
 	/**
 	 * Array	$defaults	属性値等初期値
 	 */
-	protected $defaults;
+	protected $defaults = array();
+
+	/**
+	 * Array	$atts	属性値
+	 */
+	protected $atts = array();
 
 	/**
 	 * Error	$Error	エラーオブジェクト
@@ -48,11 +53,16 @@ abstract class mw_form_field {
 	protected $Error;
 
 	/**
+	 * key	$key	フォーム識別子
+	 */
+	protected $key;
+
+	/**
 	 * __construct
 	 */
 	public function __construct() {
 		$this->defaults = $this->setDefaults();
-		add_action( 'mwform_add_shortcode', array( $this, 'add_shortcode' ), 10, 3 );
+		add_action( 'mwform_add_shortcode', array( $this, 'add_shortcode' ), 10, 4 );
 		add_action( 'mwform_add_qtags', array( $this, '_add_qtags' ) );
 	}
 
@@ -84,10 +94,10 @@ abstract class mw_form_field {
 	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	abstract protected function inputPage( $atts );
+	abstract protected function inputPage();
 	public function _inputPage( $atts ) {
-		$atts = shortcode_atts( $this->defaults, $atts );
-		return $this->inputPage( $atts );
+		$this->atts = shortcode_atts( $this->defaults, $atts );
+		return $this->inputPage();
 	}
 
 	/**
@@ -96,10 +106,10 @@ abstract class mw_form_field {
 	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	abstract protected function previewPage( $atts );
+	abstract protected function previewPage();
 	public function _previewPage( $atts ) {
-		$atts = shortcode_atts( $this->defaults, $atts );
-		return $this->previewPage( $atts );
+		$this->atts = shortcode_atts( $this->defaults, $atts );
+		return $this->previewPage();
 	}
 
 	/**
@@ -108,11 +118,13 @@ abstract class mw_form_field {
 	 * @param	MW_Form		$Form
 	 * 			String		$viewFlg
 	 * 			MW_Error	$Error
+	 * 			String		$key
 	 */
-	public function add_shortcode( mw_form $Form, $viewFlg, mw_error $Error ) {
+	public function add_shortcode( mw_form $Form, $viewFlg, mw_error $Error, $key ) {
 		if ( !empty( $this->short_code_name ) ) {
 			$this->Form = $Form;
 			$this->Error = $Error;
+			$this->key = $key;
 			switch( $viewFlg ) {
 				case 'input' :
 					add_shortcode( $this->short_code_name, array( $this, '_inputPage' ) );
@@ -139,6 +151,8 @@ abstract class mw_form_field {
 		foreach ( $_children as $child ) {
 			$children[$child] = $child;
 		}
+		if ( $this->key )
+			$children = apply_filters( 'mwform_choices_' . $this->key, $children, $this->atts );
 		return $children;
 	}
 
