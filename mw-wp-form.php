@@ -3,11 +3,11 @@
  * Plugin Name: MW WP Form
  * Plugin URI: http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
  * Description: MW WP Form can create mail form with a confirmation screen.
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: September 25, 2012
- * Modified: October 16, 2013
+ * Modified: October 19, 2013
  * Text Domain: mw-wp-form
  * Domain Path: /languages/
  * License: GPL2
@@ -200,6 +200,7 @@ class mw_wp_form {
 	 */
 	public function main() {
 		global $post;
+		if ( !is_singular() ) return;
 		if ( empty( $post->ID ) ) return;
 
 		// URL設定を取得
@@ -715,7 +716,10 @@ class mw_wp_form {
 		// url引数が無効の場合、URL設定 で ?post_id が使われている場合はそれが使用される
 		// url引数が有効の場合は URL設定 で ?post_id が使われていても $_GET['post_id'] で上書きされる
 		$query_string = array_merge( $_GET, $query_string );
-		if ( !empty( $this->options_by_formkey['querystring'] ) && MWF_Functions::is_numeric( $_GET['post_id'] ) ) {
+		if ( !empty( $this->options_by_formkey['querystring'] )
+			 && isset( $_GET['post_id'] )
+			 && MWF_Functions::is_numeric( $_GET['post_id'] ) ) {
+
 			$query_string['post_id'] = $_GET['post_id'];
 		}
 		if ( !empty( $query_string ) )
@@ -827,7 +831,7 @@ class mw_wp_form {
 	public function get_post_property( $matches ) {
 		if ( isset( $this->options_by_formkey['querystring'] ) )
 			$querystring = $this->options_by_formkey['querystring'];
-		if ( !empty( $querystring ) && MWF_Functions::is_numeric( $_GET['post_id'] ) ) {
+		if ( !empty( $querystring ) && isset( $_GET['post_id'] ) && MWF_Functions::is_numeric( $_GET['post_id'] ) ) {
 			$_post = get_post( $_GET['post_id'] );
 			if ( empty( $_post->ID ) )
 				return $matches[0];
