@@ -217,3 +217,26 @@ span#formkey_field {
 #mw-wp-form_csv .button-primary {
 }
 
+/**
+ * 寄付ボタン
+ */
+.wp-admin li.donation {
+	color: #ffffe0;
+	display: block;
+	margin: -8px 0 0;
+	overflow: hidden;
+	zoom: 1;
+}
+.wp-admin li.donation div.donation {
+	background-color: #ffffe0;
+	border: #e6db55 solid 1px;
+	color: #000;
+	float: left;
+	padding: 0 10px;
+	margin: 0 -5px 10px 0;
+	border-radius: 3px;
+}
+.wp-admin li.donation div.donation p {
+	margin: 3px 0;
+}
+

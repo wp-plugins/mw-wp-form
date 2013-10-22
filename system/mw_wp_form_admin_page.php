@@ -3,11 +3,11 @@
  * Name: MW WP Form Admin Page
  * URI: http://2inc.org
  * Description: 管理画面クラス
- * Version: 1.5.5
+ * Version: 1.5.6
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : February 21, 2013
- * Modified: October 11, 2013
+ * Modified: October 22, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -38,6 +38,21 @@ class MW_WP_Form_Admin_Page {
 		add_action( 'admin_head', array( $this, 'add_meta_box' ) );
 		add_action( 'save_post', array( $this, 'save_post' ) );
 		add_action( 'admin_print_footer_scripts', array( $this, 'add_quicktag' ) );
+		add_action( 'current_screen', array( $this, 'current_screen' ) );
+	}
+
+	/**
+	 * current_screen
+	 * 寄付リンクを表示
+	 */
+	public function current_screen( $screen ) {
+		if ( $screen->id === 'edit-' . MWF_Config::NAME )
+			add_filter( 'views_' . $screen->id, array( $this, 'display_donate_link' ) );
+	}
+	public function display_donate_link( $views ) {
+		$donation = array( 'donation' => '<div class="donation"><p>' . __( 'Your contribution is needed for making this plugin better.', MWF_Config::DOMAIN ) . ' <a href="http://www.amazon.co.jp/registry/wishlist/39ANKRNSTNW40" class="button">' . __( 'Donate', MWF_Config::DOMAIN ) . '</a></p></div>' );
+		$views = array_merge( $donation, $views );
+		return $views;
 	}
 
 	/**
