@@ -3,11 +3,11 @@
  * Name: MW WP Form File
  * URI: http://2inc.org
  * Description: Tempディレクトリ、ファイルアップロードの処理を行うクラス
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : October 10, 2013
- * Modified:
+ * Modified: October 23, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -113,7 +113,7 @@ class MW_WP_Form_File {
 			$attach_id = wp_insert_attachment( $attachment, $filepath, $post_id );
 			$attach_data = wp_generate_attachment_metadata( $attach_id, $filepath );
 			$update_attachment_flg = wp_update_attachment_metadata( $attach_id, $attach_data );
-			if ( $update_attachment_flg ) {
+			if ( $attach_id ) {
 				// 代わりにここで attachment_id を保存
 				update_post_meta( $post_id, $key, $attach_id );
 				// $key が 添付ファイルのキーであるとわかるように隠し設定を保存

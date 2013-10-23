@@ -1,4 +1,30 @@
 <?php
+/**
+ * Name: MW WP Form Contact Data Page
+ * URI: http://2inc.org
+ * Description: DB保存データを扱うクラス
+ * Version: 1.0.1
+ * Author: Takashi Kitajima
+ * Author URI: http://2inc.org
+ * Created : October 10, 2013
+ * Modified: October 23, 2013
+ * License: GPL2
+ *
+ * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License, version 2, as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 class MW_WP_Form_Contact_Data_Page {
 
 	private $POST_DATA_NAME;
@@ -286,8 +312,9 @@ class MW_WP_Form_Contact_Data_Page {
 								// 画像以外
 								else {
 									$src = wp_get_attachment_image_src( $value[0], 'none', true );
+									echo '<a href="' . esc_url( wp_get_attachment_url( $value[0] ) ) .'" target="_blank">';
 									echo '<img src="' . esc_url( $src[0] ) .'" alt="" />';
-									echo '<a href="' . esc_url( wp_get_attachment_url( $value[0] ) ) .'" target="_blank">' . esc_url( wp_get_attachment_url( $value[0] ) ) .'</a>';
+									echo '</a>';
 								}
 							}
 						} else {
@@ -298,7 +325,7 @@ class MW_WP_Form_Contact_Data_Page {
 				</tr>
 				<?php endforeach; ?>
 				<tr>
-					<th><?php _e( 'Memo' ); ?></th>
+					<th><?php _e( 'Memo', MWF_Config::DOMAIN ); ?></th>
 					<td><textarea name="<?php echo $this->POST_DATA_NAME; ?>[memo]" cols="50" rows="5"><?php echo $this->get_post_data( 'memo' ); ?></textarea></td>
 				</tr>
 			</table>
