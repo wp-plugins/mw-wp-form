@@ -37,6 +37,10 @@ http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 
 == Changelog ==
 
+= 1.0.4 =
+* Bug fix: 画像以外の添付ファイルがカスタムフィールドに表示されないバグを修正
+* Bug fix: 動画アップロード時にFatal Errorがでるバグを修正
+
 = 1.0.3 =
 * Added  : 管理画面に Donate link を追加
 

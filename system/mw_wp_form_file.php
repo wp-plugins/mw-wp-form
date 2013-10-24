@@ -96,6 +96,7 @@ class MW_WP_Form_File {
 	 * @param  Int    生成フォーム（usedb）の post_id
 	 */
 	public function saveAttachmentsInMedia( $post_id, $attachments, $form_key_post_id ) {
+		require_once( ABSPATH . 'wp-admin' . '/includes/media.php' );
 		require_once( ABSPATH . 'wp-admin' . '/includes/image.php' );
 		$save_attached_key = array();
 		foreach ( $attachments as $key => $filepath ) {
