@@ -37,6 +37,9 @@ http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 
 == Changelog ==
 
+= 1.0.5 =
+* Bug fix: 複数のMIMEタイプをとりえる拡張子を持つファイルのアップロードに対応（avi、mp3、mpg）
+
 = 1.0.4 =
 * Bug fix: 画像以外の添付ファイルがカスタムフィールドに表示されないバグを修正
 * Bug fix: 動画アップロード時にFatal Errorがでるバグを修正

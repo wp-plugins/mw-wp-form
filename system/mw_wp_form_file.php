@@ -3,11 +3,11 @@
  * Name: MW WP Form File
  * URI: http://2inc.org
  * Description: Tempディレクトリ、ファイルアップロードの処理を行うクラス
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : October 10, 2013
- * Modified: October 23, 2013
+ * Modified: October 31, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -49,11 +49,43 @@ class MW_WP_Form_File {
 		if ( empty( $wp_check_filetype['type'] ) )
 			return false;
 
+		// 1つの拡張子に対し複数のMIMEタイプを持つファイルの対応
+		switch ( $wp_check_filetype['ext'] ) {
+			case 'avi' :
+				$wp_check_filetype['type'] = array(
+					'application/x-troff-msvideo',
+					'video/avi',
+					'video/msvideo',
+					'video/x-msvideo',
+				);
+				break;
+			case 'mp3' :
+				$wp_check_filetype['type'] = array(
+					'audio/mpeg3',
+					'audio/x-mpeg3',
+					'video/mpeg',
+					'video/x-mpeg',
+					'audio/mpeg',
+				);
+				break;
+			case 'mpg' :
+				$wp_check_filetype['type'] = array(
+					'audio/mpeg',
+					'video/mpeg',
+				);
+				break;
+		}
+
 		if ( version_compare( phpversion(), '5.3.0' ) >= 0 ) {
 			$finfo = new finfo( FILEINFO_MIME_TYPE );
 			$type = $finfo->file( $filepath );
-			if ( !( $finfo !== false && $type === $wp_check_filetype['type'] ) )
-				return false;
+			if ( is_array( $wp_check_filetype['type'] ) ) {
+				if ( !( $finfo !== false && in_array( $type, $wp_check_filetype['type'] ) ) )
+					return false;
+			} else {
+				if ( !( $finfo !== false && $type === $wp_check_filetype['type'] ) )
+					return false;
+			}
 		}
 		return true;
 	}
