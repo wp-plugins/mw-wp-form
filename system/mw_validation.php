@@ -3,11 +3,11 @@
  * Name: MW Validation
  * URI: http://2inc.org
  * Description: バリデーションクラス
- * Version: 1.4.2
+ * Version: 1.5
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : July 20, 2012
- * Modified: October 11, 2013
+ * Modified: December 5, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -180,6 +180,28 @@ class MW_Validation {
 		if ( isset( $value ) && !preg_match( '/^[0-9A-Za-z]+$/', $value ) && !$this->isEmpty( $value ) ) {
 			$defaults = array(
 				'message' => __( 'Please enter with a half-width alphanumeric character.', MWF_Config::DOMAIN )
+			);
+			$options = array_merge( $defaults, $options );
+			$_ret = $options['message'];
+		}
+		return $_ret;
+	}
+
+	/**
+	 * katakana
+	 * 値がカタカナ
+	 * @param	String	キー
+	 *			Array	( 'message' => )
+	 * @return	String	エラーメッセージ
+	 */
+	public function katakana( $key, $options = array() ) {
+		$_ret = '';
+		$value = $this->getValue( $key );
+		if ( is_array( $value ) )
+			$value = implode( $this->getSeparatorValue( $key ), $value );
+		if ( isset( $value ) && !preg_match( '/[ァ-ヾ]+$/u', $value ) && !$this->isEmpty( $value ) ) {
+			$defaults = array(
+				'message' => __( 'Please enter with a Japanese Katakana.', MWF_Config::DOMAIN )
 			);
 			$options = array_merge( $defaults, $options );
 			$_ret = $options['message'];

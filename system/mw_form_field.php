@@ -3,11 +3,11 @@
  * Name: MW Form Field
  * URI: http://2inc.org
  * Description: フォームフィールドの抽象クラス
- * Version: 1.2
+ * Version: 1.3
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: December 14, 2012
- * Modified: September 19, 2013
+ * Modified: December 5, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -96,6 +96,9 @@ abstract class mw_form_field {
 	 */
 	abstract protected function inputPage();
 	public function _inputPage( $atts ) {
+		if ( isset( $this->defaults['value'], $atts['name'] ) && !isset( $atts['value'] ) ) {
+			$atts['value'] = apply_filters( 'mwform_value_' . $this->key, $this->defaults['value'], $atts['name'] );
+		}
 		$this->atts = shortcode_atts( $this->defaults, $atts );
 		return $this->inputPage();
 	}

@@ -3,11 +3,11 @@
  * Name: MW WP Form Admin Page
  * URI: http://2inc.org
  * Description: 管理画面クラス
- * Version: 1.5.6
+ * Version: 1.6.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : February 21, 2013
- * Modified: October 22, 2013
+ * Modified: December 5, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -82,6 +82,7 @@ class MW_WP_Form_Admin_Page {
 				'not_found' => __( 'No Forms found', MWF_Config::DOMAIN ),
 				'not_found_in_trash' => __( 'No Forms found in Trash', MWF_Config::DOMAIN ),
 			),
+			'capability_type' => 'page',
 			'public'  => false,
 			'show_ui' => true,
 		) );
@@ -201,7 +202,7 @@ class MW_WP_Form_Admin_Page {
 			return $post_ID;
 		if ( !wp_verify_nonce( $_POST[MWF_Config::NAME . '_nonce'], MWF_Config::NAME ) )
 			return $post_ID;
-		if ( !current_user_can( 'manage_options', $post_ID ) )
+		if ( !current_user_can( 'edit_pages' ) )
 			return $post_ID;
 
 		$data = $_POST[MWF_Config::NAME];
@@ -439,6 +440,7 @@ class MW_WP_Form_Admin_Page {
 			'numeric'      => '',
 			'alpha'        => '',
 			'alphanumeric' => '',
+			'katakana'     => '',
 			'zip'          => '',
 			'tel'          => '',
 			'mail'         => '',
@@ -467,6 +469,7 @@ class MW_WP_Form_Admin_Page {
 							<label><input type="checkbox" <?php checked( $value['numeric'], 1 ); ?> name="<?php echo MWF_Config::NAME; ?>[validation][<?php echo $key; ?>][numeric]" value="1" /><?php _e( 'Numeric', MWF_Config::DOMAIN ); ?></label>
 							<label><input type="checkbox" <?php checked( $value['alpha'], 1 ); ?> name="<?php echo MWF_Config::NAME; ?>[validation][<?php echo $key; ?>][alpha]" value="1" /><?php _e( 'Alphabet', MWF_Config::DOMAIN ); ?></label>
 							<label><input type="checkbox" <?php checked( $value['alphanumeric'], 1 ); ?> name="<?php echo MWF_Config::NAME; ?>[validation][<?php echo $key; ?>][alphanumeric]" value="1" /><?php _e( 'Alphabet and Numeric', MWF_Config::DOMAIN ); ?></label>
+							<label><input type="checkbox" <?php checked( $value['katakana'], 1 ); ?> name="<?php echo MWF_Config::NAME; ?>[validation][<?php echo $key; ?>][katakana]" value="1" /><?php _e( 'Japanese Katakana', MWF_Config::DOMAIN ); ?></label>
 							<label><input type="checkbox" <?php checked( $value['zip'], 1 ); ?> name="<?php echo MWF_Config::NAME; ?>[validation][<?php echo $key; ?>][zip]" value="1" /><?php _e( 'Zip Code', MWF_Config::DOMAIN ); ?></label>
 							<label><input type="checkbox" <?php checked( $value['tel'], 1 ); ?> name="<?php echo MWF_Config::NAME; ?>[validation][<?php echo $key; ?>][tel]" value="1" /><?php _e( 'Tel', MWF_Config::DOMAIN ); ?></label>
 							<label><input type="checkbox" <?php checked( $value['mail'], 1 ); ?> name="<?php echo MWF_Config::NAME; ?>[validation][<?php echo $key; ?>][mail]" value="1" /><?php _e( 'E-mail', MWF_Config::DOMAIN ); ?></label>

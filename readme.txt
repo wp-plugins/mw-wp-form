@@ -37,7 +37,11 @@ http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 
 == Changelog ==
 
-= 1.0.5 =
+= 1.1.0 =
+* Added  : mwform_value_識別子 フィルターフック追加
+* Added  : mwform_hidden の引数 echo を追加（ true or false ）
+* Added  : カタカナ バリデーション項目を追加
+* Cahged : 管理画面メニュー表示、設定保存の権限を変更（edit_pagesに統一）
 * Bug fix: 複数のMIMEタイプをとりえる拡張子を持つファイルのアップロードに対応（avi、mp3、mpg）
 
 = 1.0.4 =
