@@ -4,11 +4,11 @@
  * URI: http://2inc.org
  * Description: サブミットボタンを出力。
  * Description: 確認ボタンと送信ボタンを自動出力。
- * Version: 1.1.1
+ * Version: 1.2
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: December 14, 2012
- * Modified: July 28, 2013
+ * Modified: Septermber 19, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -49,24 +49,22 @@ class mw_form_field_submit_button extends mw_form_field {
 	/**
 	 * inputPage
 	 * 入力ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function inputPage( $atts ) {
-		if ( !empty( $atts['preview_value'] ) ) {
-			return $this->Form->submit( $this->Form->getPreviewButtonName(), $atts['preview_value'] );
+	protected function inputPage() {
+		if ( !empty( $this->atts['preview_value'] ) ) {
+			return $this->Form->submit( $this->Form->getPreviewButtonName(), $this->atts['preview_value'] );
 		}
-		return $this->Form->submit( $atts['name'], $atts['submit_value'] );
+		return $this->Form->submit( $this->atts['name'], $this->atts['submit_value'] );
 	}
 
 	/**
 	 * previewPage
 	 * 確認ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function previewPage( $atts ) {
-		return $this->Form->submit( $atts['name'], $atts['submit_value'] );
+	protected function previewPage() {
+		return $this->Form->submit( $this->atts['name'], $this->atts['submit_value'] );
 	}
 
 	/**
