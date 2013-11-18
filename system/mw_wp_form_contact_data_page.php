@@ -3,11 +3,11 @@
  * Name: MW WP Form Contact Data Page
  * URI: http://2inc.org
  * Description: DB保存データを扱うクラス
- * Version: 1.0.2
+ * Version: 1.0.3
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : October 10, 2013
- * Modified: December 6, 2013
+ * Modified: November 18, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -153,7 +153,7 @@ class MW_WP_Form_Contact_Data_Page {
 
 				$posts_mwf = get_posts( array(
 					'post_type' => $post_type,
-					'pre_get_posts' => -1,
+					'posts_per_page' => -1,
 					'post_status' => 'any',
 				) );
 				$csv = '';

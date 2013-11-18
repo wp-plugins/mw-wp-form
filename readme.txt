@@ -4,7 +4,7 @@ Donate link: http://www.amazon.co.jp/registry/wishlist/39ANKRNSTNW40
 Tags: plugin, form, confirm, preview, shortcode
 Requires at least: 3.4
 Tested up to: 3.6.1
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,6 +36,9 @@ http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 1. You can create a form by settings page.
 
 == Changelog ==
+
+= 1.1.1 =
+* Bug fix: ダウンロードしたCSVに全件表示されないバグを修正
 
 = 1.1.0 =
 * Added  : mwform_value_識別子 フィルターフック追加
