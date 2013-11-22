@@ -4,7 +4,7 @@ Donate link: http://www.amazon.co.jp/registry/wishlist/39ANKRNSTNW40
 Tags: plugin, form, confirm, preview, shortcode
 Requires at least: 3.4
 Tested up to: 3.6.1
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,8 +37,11 @@ http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 
 == Changelog ==
 
+= 1.1.2 =
+* TODO   : メール件名にも{キー}が使用できるようにしたい
+
 = 1.1.1 =
-* Bug fix: ダウンロードしたCSVに全件表示されないバグを修正
+* Cahged : セッションまわりの処理をリファクタリング
 
 = 1.1.0 =
 * Added  : mwform_value_識別子 フィルターフック追加

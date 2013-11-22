@@ -3,11 +3,11 @@
  * Plugin Name: MW WP Form
  * Plugin URI: http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
  * Description: MW WP Form can create mail form with a confirmation screen.
- * Version: 1.1.1
+ * Version: 1.1.2
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : September 25, 2012
- * Modified: November 18, 2013
+ * Modified: November 22, 2013
  * Text Domain: mw-wp-form
  * Domain Path: /languages/
  * License: GPL2
@@ -269,17 +269,20 @@ class mw_wp_form {
 				$this->viewFlg = 'complete';
 				$this->fileUpload();
 
-				// 管理画面作成・個別URL・現在画面と完了画面が同じとき以外はメール送信
-				$REQUEST_URI = $this->parse_url( $_SERVER['REQUEST_URI'] );
-				if ( ! ( $this->is_management_different_url() && $REQUEST_URI == $this->complete ) )
+				if ( $this->Data->getValue( $this->Form->getTokenName() ) ) {
 					$this->apply_filters_mwform_mail();
+					$this->Data->clearValue( $this->Form->getTokenName() );
 
-				// 管理画面作成・個別URLのとき以外はクリア
-				if ( ! $this->is_management_different_url() )
-					$this->Form->clearToken();
+					// 手動フォーム対応
+					$REQUEST_URI = $this->parse_url( $_SERVER['REQUEST_URI'] );
+					$input = $this->parse_url( $this->input );
+					$complete = $this->parse_url( $this->complete );
+					if ( !$this->options_by_formkey && $REQUEST_URI !== $complete && $input !== $complete ) {
+						$this->Data->clearValues();
+					}
+				}
 
 				$this->redirect( $this->complete );
-				$this->Form->clearToken();
 			} else {
 				if ( !empty( $this->validation_error ) ) {
 					$this->redirect( $this->validation_error );
@@ -288,24 +291,11 @@ class mw_wp_form {
 				}
 			}
 		}
-		$this->Session->clearValues();
 
 		add_shortcode( 'mwform_formkey', array( $this, '_mwform_formkey' ) );
 		add_shortcode( 'mwform', array( $this, '_mwform' ) );
 		add_shortcode( 'mwform_complete_message', array( $this, '_mwform_complete_message' ) );
-	}
-
-	/**
-	 * is_management_different_url
-	 * 管理画面作成・個別URLのときtrueを返す
-	 * @return	Boolean
-	 */
-	protected function is_management_different_url() {
-		if ( !empty( $this->options_by_formkey ) && ( $this->input !== $this->complete || $this->preview !== $this->complete ) ) {
-			return true;
-		} else {
-			return false;
-		}
+		add_action( 'wp_footer', array( $this->Data, 'clearValues' ) );
 	}
 
 	/**
@@ -481,47 +471,47 @@ class mw_wp_form {
 	protected function apply_filters_mwform_mail() {
 		$Mail = new MW_Mail();
 
-		$admin_mail_subject = $this->options_by_formkey['mail_subject'];
-		if ( !empty( $this->options_by_formkey['admin_mail_subject'] ) )
-			$admin_mail_subject = $this->options_by_formkey['admin_mail_subject'];
-
-		$admin_mail_content = $this->options_by_formkey['mail_content'];
-		if ( !empty( $this->options_by_formkey['admin_mail_content'] ) )
-			$admin_mail_content = $this->options_by_formkey['admin_mail_content'];
-
-		// 添付ファイルのデータをためた配列を作成
-		// $Mail->attachments を設定（メールにファイルを添付）
-		$attachments = array();
-		$upload_file_keys = $this->Data->getValue( MWF_Config::UPLOAD_FILE_KEYS );
-		if ( $upload_file_keys !== null ) {
-			if ( is_array( $upload_file_keys ) ) {
-				$wp_upload_dir = wp_upload_dir();
-				foreach ( $upload_file_keys as $key ) {
-					$upload_file_url = $this->Data->getValue( $key );
-					if ( !$upload_file_url )
-						continue;
-					$filepath = str_replace(
-						$wp_upload_dir['baseurl'],
-						realpath( $wp_upload_dir['basedir'] ),
-						$upload_file_url
-					);
-					if ( file_exists( $filepath ) ) {
-						$filepath = $this->File->moveTempFileToUploadDir( $filepath );
-						$new_upload_file_url = str_replace(
-							realpath( $wp_upload_dir['basedir'] ),
-							$wp_upload_dir['baseurl'],
-							$filepath
-						);
-						$attachments[$key] = $filepath;
-						$this->Data->setValue( $key, $new_upload_file_url );
-						$this->Form = new MW_Form( $this->Data->getValues(), $this->key );
-					}
-				}
-				$Mail->attachments = $attachments;
-			}
-		}
-
 		if ( $this->options_by_formkey ) {
+			$admin_mail_subject = $this->options_by_formkey['mail_subject'];
+			if ( !empty( $this->options_by_formkey['admin_mail_subject'] ) )
+				$admin_mail_subject = $this->options_by_formkey['admin_mail_subject'];
+
+			$admin_mail_content = $this->options_by_formkey['mail_content'];
+			if ( !empty( $this->options_by_formkey['admin_mail_content'] ) )
+				$admin_mail_content = $this->options_by_formkey['admin_mail_content'];
+
+			// 添付ファイルのデータをためた配列を作成
+			$attachments = array();
+			// $Mail->attachments を設定（メールにファイルを添付）
+			$upload_file_keys = $this->Data->getValue( MWF_Config::UPLOAD_FILE_KEYS );
+			if ( $upload_file_keys !== null ) {
+				if ( is_array( $upload_file_keys ) ) {
+					$wp_upload_dir = wp_upload_dir();
+					foreach ( $upload_file_keys as $key ) {
+						$upload_file_url = $this->Data->getValue( $key );
+						if ( !$upload_file_url )
+							continue;
+						$filepath = str_replace(
+							$wp_upload_dir['baseurl'],
+							realpath( $wp_upload_dir['basedir'] ),
+							$upload_file_url
+						);
+						if ( file_exists( $filepath ) ) {
+							$filepath = $this->File->moveTempFileToUploadDir( $filepath );
+							$new_upload_file_url = str_replace(
+								realpath( $wp_upload_dir['basedir'] ),
+								$wp_upload_dir['baseurl'],
+								$filepath
+							);
+							$attachments[$key] = $filepath;
+							$this->Data->setValue( $key, $new_upload_file_url );
+							$this->Form = new MW_Form( $this->Data->getValues(), $this->key );
+						}
+					}
+					$Mail->attachments = $attachments;
+				}
+			}
+
 			// 送信先を指定
 			$Mail->to = get_bloginfo( 'admin_email' );
 			if ( $mailto = $this->options_by_formkey['mail_to'] )
@@ -683,7 +673,7 @@ class mw_wp_form {
 		$redirect = ( empty( $url ) ) ? $_SERVER['REQUEST_URI'] : $url;
 		$redirect = $this->parse_url( $redirect );
 		$REQUEST_URI = $this->parse_url( $_SERVER['REQUEST_URI'] );
-		if ( $redirect != $REQUEST_URI || $this->Form->isInput() && !empty( $_POST ) ) {
+		if ( !empty( $_POST ) || $redirect != $REQUEST_URI ) {
 			wp_redirect( $redirect );
 			exit();
 		}

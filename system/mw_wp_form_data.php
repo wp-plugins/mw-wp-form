@@ -3,11 +3,11 @@
  * Name: MW WP Form Data
  * URI: http://2inc.org
  * Description: mw_wp_form のデータ操作用
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : October 10, 2013
- * Modified:
+ * Modified: November 22, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -90,6 +90,16 @@ class mw_wp_form_data {
 	public function clearValue( $key ) {
 		unset( $this->data[$key] );
 		$this->Session->clearValue( $key );
+	}
+
+	/**
+	 * clearValues
+	 * データを消す
+	 * @param    String    $key    データのキー
+	 */
+	public function clearValues() {
+		unset( $this->data );
+		$this->Session->clearValues();
 	}
 
 	/**
