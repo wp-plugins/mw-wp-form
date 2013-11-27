@@ -3,11 +3,11 @@
  * Name: MW Form Field Text
  * URI: http://2inc.org
  * Description: テキストフィールドを出力。
- * Version: 1.1
+ * Version: 1.2.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
- * Created: December 14, 2012
- * Modified: May 29, 2013
+ * Created : December 14, 2012
+ * Modified: November 2, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -50,31 +50,32 @@ class mw_form_field_text extends mw_form_field {
 	/**
 	 * inputPage
 	 * 入力ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function inputPage( $atts ) {
-		$_ret = $this->Form->text( $atts['name'], array(
-			'size'      => $atts['size'],
-			'maxlength' => $atts['maxlength'],
-			'value'     => $atts['value'],
+	protected function inputPage() {
+		$_ret = $this->Form->text( $this->atts['name'], array(
+			'size'      => $this->atts['size'],
+			'maxlength' => $this->atts['maxlength'],
+			'value'     => $this->atts['value'],
 		) );
-		if ( $atts['show_error'] !== 'false' )
-			$_ret .= $this->getError( $atts['name'] );
+		if ( $this->atts['show_error'] !== 'false' )
+			$_ret .= $this->getError( $this->atts['name'] );
 		return $_ret;
 	}
 
 	/**
-	 * previewPage
+	 * confirmPage
 	 * 確認ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function previewPage( $atts ) {
-		$value = $this->Form->getValue( $atts['name'] );
+	protected function confirmPage() {
+		$value = $this->Form->getValue( $this->atts['name'] );
 		$_ret  = $value;
-		$_ret .= $this->Form->hidden( $atts['name'], $value );
+		$_ret .= $this->Form->hidden( $this->atts['name'], $value );
 		return $_ret;
+	}
+	protected function previewPage() {
+		return $this->confirmPage();
 	}
 
 	/**

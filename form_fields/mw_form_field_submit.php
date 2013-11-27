@@ -3,11 +3,11 @@
  * Name: MW Form Field Submit Button
  * URI: http://2inc.org
  * Description: 送信ボタンを出力。
- * Version: 1.1.1
+ * Version: 1.2.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
- * Created: December 14, 2012
- * Modified: July 28, 2013
+ * Created : December 14, 2012
+ * Modified: November 26, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -47,21 +47,22 @@ class mw_form_field_submit extends mw_form_field {
 	/**
 	 * inputPage
 	 * 入力ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function inputPage( $atts ) {
-		return $this->Form->submit( $atts['name'], $atts['value'] );
+	protected function inputPage() {
+		return $this->Form->submit( $this->atts['name'], $this->atts['value'] );
 	}
 
 	/**
-	 * previewPage
+	 * confirmPage
 	 * 確認ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function previewPage( $atts ) {
-		return $this->inputPage( $atts );
+	protected function confirmPage() {
+		return $this->inputPage( $this->atts );
+	}
+	protected function previewPage() {
+		return $this->confirmPage();
 	}
 
 	/**

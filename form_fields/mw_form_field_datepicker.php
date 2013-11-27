@@ -3,11 +3,11 @@
  * Name: MW Form Field Datepicker
  * URI: http://2inc.org
  * Description: datepickerを出力。
- * Version: 1.1
+ * Version: 1.2.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
- * Created: December 14, 2012
- * Modified: May 29, 2013
+ * Created : December 14, 2012
+ * Modified: November 26, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -50,21 +50,20 @@ class mw_form_field_datepicker extends mw_form_field {
 	/**
 	 * inputPage
 	 * 入力ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function inputPage( $atts ) {
+	protected function inputPage() {
 		wp_enqueue_style( 'jquery.ui', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css', array(), '1.9.2' );
 		wp_enqueue_script( 'jquery-ui-datepicker' );
 		// jsの指定がないときはデフォルトで年付き変更機能追加
-		if ( empty( $atts['js'] ) ) {
-			$atts['js'] = 'showMonthAfterYear: true, changeYear: true, changeMonth: true';
+		if ( empty( $this->atts['js'] ) ) {
+			$this->atts['js'] = 'showMonthAfterYear: true, changeYear: true, changeMonth: true';
 		}
 		// 日本語の場合は日本語表記に変更
 		if ( get_locale() == 'ja' ) {
-			if ( !empty( $atts['js'] ) )
-				$atts['js'] = $atts['js'] . ',';
-			$atts['js'] .= '
+			if ( !empty( $this->atts['js'] ) )
+				$this->atts['js'] = $this->atts['js'] . ',';
+			$this->atts['js'] .= '
 				yearSuffix: "年",
 				dateFormat: "yy-mm-dd",
 				dayNames: ["日曜日","月曜日","火曜日","水曜日","木曜日","金曜日","土曜日"],
@@ -75,27 +74,29 @@ class mw_form_field_datepicker extends mw_form_field {
 			';
 		}
 		$_ret  = '';
-		$_ret .= $this->Form->datepicker( $atts['name'], array(
-			'size'  => $atts['size'],
-			'js'    => $atts['js'],
-			'value' => $atts['value'],
+		$_ret .= $this->Form->datepicker( $this->atts['name'], array(
+			'size'  => $this->atts['size'],
+			'js'    => $this->atts['js'],
+			'value' => $this->atts['value'],
 		) );
-		if ( $atts['show_error'] !== 'false' )
-			$_ret .= $this->getError( $atts['name'] );
+		if ( $this->atts['show_error'] !== 'false' )
+			$_ret .= $this->getError( $this->atts['name'] );
 		return $_ret;
 	}
 
 	/**
-	 * previewPage
+	 * confirmPage
 	 * 確認ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function previewPage( $atts ) {
-		$value = $this->Form->getValue( $atts['name'] );
+	protected function confirmPage() {
+		$value = $this->Form->getValue( $this->atts['name'] );
 		$_ret  = $value;
-		$_ret .= $this->Form->hidden( $atts['name'], $value );
+		$_ret .= $this->Form->hidden( $this->atts['name'], $value );
 		return $_ret;
+	}
+	protected function previewPage() {
+		return $this->confirmPage();
 	}
 
 	/**
