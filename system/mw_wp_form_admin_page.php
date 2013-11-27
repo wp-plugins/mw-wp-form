@@ -3,11 +3,11 @@
  * Name: MW WP Form Admin Page
  * URI: http://2inc.org
  * Description: 管理画面クラス
- * Version: 1.6.0
+ * Version: 1.7.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : February 21, 2013
- * Modified: December 5, 2013
+ * Modified: November 26, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -39,6 +39,7 @@ class MW_WP_Form_Admin_Page {
 		add_action( 'save_post', array( $this, 'save_post' ) );
 		add_action( 'admin_print_footer_scripts', array( $this, 'add_quicktag' ) );
 		add_action( 'current_screen', array( $this, 'current_screen' ) );
+		add_filter( 'default_content', array( $this, 'default_content' ) );
 	}
 
 	/**
@@ -60,8 +61,26 @@ class MW_WP_Form_Admin_Page {
 	 * フォームの設定データを返す
 	 */
 	protected function get_post_data( $key ) {
+		global $post;
 		if ( isset( $this->postdata[$key] ) ) {
 			return $this->postdata[$key];
+		} else {
+			$date = $post->post_date;
+			$modified = $post->post_modified;
+			if ( $date === $modified ){
+				return apply_filters( 'mwform_default_postdata', '', $key );
+			}
+		}
+	}
+
+	/**
+	 * default_content
+	 * 本文の初期値を設定
+	 */
+	public function default_content( $content ) {
+		global $typenow;
+		if ( $typenow === MWF_Config::NAME ) {
+			return apply_filters( 'mwform_default_content', '' );
 		}
 	}
 
@@ -172,8 +191,8 @@ class MW_WP_Form_Admin_Page {
 		$post_type = get_post_type();
 		if ( MWF_Config::NAME == $post_type ) {
 			$url = plugin_dir_url( __FILE__ );
-			wp_register_style( MWF_Config::DOMAIN.'-admin', $url.'../css/admin.css' );
-			wp_enqueue_style( MWF_Config::DOMAIN.'-admin' );
+			wp_register_style( MWF_Config::DOMAIN . '-admin', $url . '../css/admin.css' );
+			wp_enqueue_style( MWF_Config::DOMAIN . '-admin' );
 		}
 	}
 
@@ -184,8 +203,8 @@ class MW_WP_Form_Admin_Page {
 	public function admin_scripts() {
 		if ( MWF_Config::NAME == get_post_type() ) {
 			$url = plugin_dir_url( __FILE__ );
-			wp_register_script( MWF_Config::DOMAIN.'-admin', $url.'../js/admin.js' );
-			wp_enqueue_script( MWF_Config::DOMAIN.'-admin' );
+			wp_register_script( MWF_Config::DOMAIN . '-admin', $url . '../js/admin.js' );
+			wp_enqueue_script( MWF_Config::DOMAIN . '-admin' );
 		}
 	}
 

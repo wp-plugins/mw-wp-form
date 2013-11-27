@@ -1,13 +1,13 @@
 <?php
 /**
- * Name: MW Form Field Radio
+ * Name: MW Form Field Confirm Button
  * URI: http://2inc.org
- * Description: ラジオボタンを出力。
+ * Description: 確認ボタンを出力。
  * Version: 1.2.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: November 26, 2013
+ * Modified: December 26, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -25,12 +25,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-class mw_form_field_radio extends mw_form_field {
+class mw_form_field_confirm_button extends mw_form_field {
 
 	/**
 	 * String $short_code_name
 	 */
-	protected $short_code_name = 'mwform_radio';
+	protected $short_code_name = 'mwform_confirmButton';
 
 	/**
 	 * setDefaults
@@ -39,10 +39,7 @@ class mw_form_field_radio extends mw_form_field {
 	 */
 	protected function setDefaults() {
 		return array(
-			'name'       => '',
-			'children'   => '',
-			'value'      => '',
-			'show_error' => 'true',
+			'value' => __( 'Confirm', MWF_Config::DOMAIN ),
 		);
 	}
 
@@ -52,13 +49,7 @@ class mw_form_field_radio extends mw_form_field {
 	 * @return	String	HTML
 	 */
 	protected function inputPage() {
-		$children = $this->getChildren( $this->atts['children'] );
-		$_ret = $this->Form->radio( $this->atts['name'], $children, array(
-			'value' => $this->atts['value'],
-		) );
-		if ( $this->atts['show_error'] !== 'false' )
-			$_ret .= $this->getError( $this->atts['name'] );
-		return $_ret;
+		return $this->Form->submit( $this->Form->getConfirmButtonName(), $this->atts['value'] );
 	}
 
 	/**
@@ -67,14 +58,6 @@ class mw_form_field_radio extends mw_form_field {
 	 * @return	String	HTML
 	 */
 	protected function confirmPage() {
-		$children = $this->getChildren( $this->atts['children'] );
-		$value = $this->Form->getRadioValue( $this->atts['name'], $children );
-		$_ret  = $value;
-		$_ret .= $this->Form->hidden( $this->atts['name'], $value );
-		return $_ret;
-	}
-	protected function previewPage() {
-		return $this->confirmPage();
 	}
 
 	/**
@@ -84,8 +67,8 @@ class mw_form_field_radio extends mw_form_field {
 	protected function add_qtags() {
 		?>
 		'<?php echo $this->short_code_name; ?>',
-		'<?php _e( 'Radio', MWF_Config::DOMAIN ); ?>',
-		'[<?php echo $this->short_code_name; ?> name="" children=""]',
+		'<?php _e( 'Confirm Button', MWF_Config::DOMAIN ); ?>',
+		'[<?php echo $this->short_code_name; ?>]',
 		''
 		<?php
 	}

@@ -3,11 +3,11 @@
  * Name: MW Form Field Datepicker
  * URI: http://2inc.org
  * Description: datepickerを出力。
- * Version: 1.2
+ * Version: 1.2.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
- * Created: December 14, 2012
- * Modified: Septermber 19, 2013
+ * Created : December 14, 2012
+ * Modified: November 26, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -85,15 +85,18 @@ class mw_form_field_datepicker extends mw_form_field {
 	}
 
 	/**
-	 * previewPage
+	 * confirmPage
 	 * 確認ページでのフォーム項目を返す
 	 * @return	String	HTML
 	 */
-	protected function previewPage() {
+	protected function confirmPage() {
 		$value = $this->Form->getValue( $this->atts['name'] );
 		$_ret  = $value;
 		$_ret .= $this->Form->hidden( $this->atts['name'], $value );
 		return $_ret;
+	}
+	protected function previewPage() {
+		return $this->confirmPage();
 	}
 
 	/**

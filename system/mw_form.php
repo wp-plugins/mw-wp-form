@@ -3,11 +3,11 @@
  * Name: MW Form
  * URI: http://2inc.org
  * Description: フォームクラス
- * Version: 1.3.5
+ * Version: 1.3.6
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
- * Created: September 25, 2012
- * Modified: November 22, 2013
+ * Created : September 25, 2012
+ * Modified: November 26, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -32,6 +32,7 @@ class MW_Form {
 	protected $token;					// トークンの値
 	protected $data;					// データ
 	protected $Session;					// sessionオブジェクト
+	protected $confirmButton = 'submitConfirm';	// 確認ボタンの名前
 	protected $previewButton = 'submitPreview';	// 確認ボタンの名前
 	protected $backButton = 'submitBack';		// 戻るボタンの名前
 	protected $modeCheck = 'input';
@@ -55,7 +56,7 @@ class MW_Form {
 			$this->Session->save( array( $this->tokenName => $this->token ) );
 		}
 		// 戻る、確認画面へのポスト、完了画面へのポストでないときはデータを破棄
-		if ( !( isset( $this->data[$this->backButton] ) || $this->isPreview() || $this->isComplete() ) ) {
+		if ( !( isset( $this->data[$this->backButton] ) || $this->isConfirm() || $this->isComplete() ) ) {
 			// フォームオブジェクト再生成
 			$this->data = array();
 		}
@@ -85,12 +86,12 @@ class MW_Form {
 	}
 
 	/**
-	 * isPreview
+	 * isConfirm
 	 * 確認画面かどうか
 	 * @return	Boolean
 	 */
-	public function isPreview() {
-		if ( !empty( $this->data ) && $this->modeCheck === 'preview' )
+	public function isConfirm() {
+		if ( !empty( $this->data ) && $this->modeCheck === 'confirm' )
 			return true;
 		return false;
 	}
@@ -109,20 +110,22 @@ class MW_Form {
 	/**
 	 * modeCheck
 	 * 表示画面判定
-	 * @return	input || preview || complete
+	 * @return	input || confirm || complete
 	 */
 	protected function modeCheck() {
 		if ( isset( $this->data[$this->backButton] ) ) {
 			$backButton = $this->data[$this->backButton];
+		} elseif ( isset( $this->data[$this->confirmButton] ) ) {
+			$confirmButton = $this->data[$this->confirmButton];
 		} elseif ( isset( $this->data[$this->previewButton] ) ) {
-			$previewButton = $this->data[$this->previewButton];
+			$confirmButton = $this->data[$this->previewButton];
 		}
 		$_ret = 'input';
 		if ( isset( $backButton ) ) {
 			$_ret = 'input';
-		} elseif ( isset( $previewButton ) ) {
-			$_ret = 'preview';
-		} elseif ( !isset( $previewButton ) && !isset( $backButton ) && $this->check() ) {
+		} elseif ( isset( $confirmButton ) ) {
+			$_ret = 'confirm';
+		} elseif ( !isset( $confirmButton ) && !isset( $backButton ) && $this->check() ) {
 			$_ret = 'complete';
 		}
 		return $_ret;
@@ -149,12 +152,12 @@ class MW_Form {
 	}
 
 	/**
-	 * getPreviewButtonName
+	 * getConfirmButtonName
 	 * 確認画面への変遷用ボタンのname属性値を返す
 	 * @return	String	name属性値
 	 */
-	public function getPreviewButtonName() {
-		return $this->previewButton;
+	public function getConfirmButtonName() {
+		return $this->confirmButton;
 	}
 
 	/**

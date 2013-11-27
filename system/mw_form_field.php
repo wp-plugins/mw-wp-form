@@ -3,11 +3,11 @@
  * Name: MW Form Field
  * URI: http://2inc.org
  * Description: フォームフィールドの抽象クラス
- * Version: 1.3
+ * Version: 1.3.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
- * Created: December 14, 2012
- * Modified: December 5, 2013
+ * Created : December 14, 2012
+ * Modified: December 26, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -104,15 +104,18 @@ abstract class mw_form_field {
 	}
 
 	/**
-	 * previewPage
+	 * confirmPage
 	 * 確認ページでのフォーム項目を返す
 	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	abstract protected function previewPage();
-	public function _previewPage( $atts ) {
+	abstract protected function confirmPage();
+	public function _confirmPage( $atts ) {
 		$this->atts = shortcode_atts( $this->defaults, $atts );
-		return $this->previewPage();
+		return $this->confirmPage();
+	}
+	protected function previewPage() {
+		return $this->confirmPage();
 	}
 
 	/**
@@ -132,8 +135,8 @@ abstract class mw_form_field {
 				case 'input' :
 					add_shortcode( $this->short_code_name, array( $this, '_inputPage' ) );
 					break;
-				case 'preview' :
-					add_shortcode( $this->short_code_name, array( $this, '_previewPage' ) );
+				case 'confirm' :
+					add_shortcode( $this->short_code_name, array( $this, '_confirmPage' ) );
 					break;
 				default :
 					exit( '$viewFlg is not right value.' );

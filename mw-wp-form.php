@@ -3,11 +3,11 @@
  * Plugin Name: MW WP Form
  * Plugin URI: http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
  * Description: MW WP Form can create mail form with a confirmation screen.
- * Version: 1.1.2
+ * Version: 1.1.3
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : September 25, 2012
- * Modified: November 22, 2013
+ * Modified: November 26, 2013
  * Text Domain: mw-wp-form
  * Domain Path: /languages/
  * License: GPL2
@@ -34,7 +34,7 @@ class mw_wp_form {
 
 	protected $key;
 	protected $input;
-	protected $preview;
+	protected $confirm;
 	protected $complete;
 	protected $validation_error;
 	protected $Data;
@@ -216,7 +216,7 @@ class mw_wp_form {
 		// フォームが定義されていない場合は終了
 		if ( is_null( $this->key ) ||
 			 is_null( $this->input ) ||
-			 is_null( $this->preview ) ||
+			 is_null( $this->confirm ) ||
 			 is_null( $this->complete ) ||
 			 is_null( $this->validation_error ) )
 			return;
@@ -250,11 +250,11 @@ class mw_wp_form {
 			$this->redirect( $this->input );
 		}
 		// 確認画面のとき
-		elseif ( $this->Form->isPreview() ) {
+		elseif ( $this->Form->isConfirm() ) {
 			if ( $this->Validation->check() ) {
-				$this->viewFlg = 'preview';
+				$this->viewFlg = 'confirm';
 				$this->fileUpload();
-				$this->redirect( $this->preview );
+				$this->redirect( $this->confirm );
 			} else {
 				if ( !empty( $this->validation_error ) ) {
 					$this->redirect( $this->validation_error );
@@ -301,13 +301,13 @@ class mw_wp_form {
 	/**
 	 * _meta_mwform
 	 * [mwform〜]を解析し、プロパティを設定
-	 * @param	Array	( input, preview, complete, key )
+	 * @param	Array	( input, preview, confirm complete, key )
 	 * @example
 	 * 		同一画面変遷の場合
 	 * 			[mwform key="hoge"]〜[/mwform]
 	 * 		別ページ画面変遷の場合
 	 * 			確認画面ありの場合
-	 * 				入力画面 : [mwform preview="/form_preview/" key="hoge"]〜[/mwform]
+	 * 				入力画面 : [mwform confirm="/form_confirm/" key="hoge"]〜[/mwform]
 	 * 				確認画面 : [mwform input="/form_input/" complete="/form_complete/" key="hoge"]〜[/mwform]
 	 * 			確認画面なしの場合
 	 * 				入力画面 : [mwform complete="/form_complete/" key="hoge"]〜[/mwform]
@@ -316,13 +316,20 @@ class mw_wp_form {
 		$atts = shortcode_atts( array(
 			'input' => '',
 			'preview' => '',
+			'confirm' => '',
 			'complete' => '',
 			'validation_error' => '',
 			'key' => 'mwform'
 		), $atts );
 		$this->key = $atts['key'];
 		$this->input = $this->parse_url( $atts['input'] );
-		$this->preview = $this->parse_url( $atts['preview'] );
+		if ( $atts['confirm'] ) {
+			$this->confirm = $this->parse_url( $atts['confirm'] );
+		} elseif ( $atts['preview'] ) {
+			$this->confirm = $this->parse_url( $atts['preview'] );
+		} else {
+			$this->confirm = $this->parse_url( $atts['confirm'] );
+		}
 		$this->complete = $this->parse_url( $atts['complete'] );
 		$this->validation_error = $this->parse_url( $atts['validation_error'] );
 	}
@@ -347,7 +354,7 @@ class mw_wp_form {
 				$this->options_by_formkey['post_id'] = $post->ID;
 				$this->key = MWF_Config::NAME . '-' . $atts['key'];
 				$this->input = $this->parse_url( $this->options_by_formkey['input_url'] );
-				$this->preview = $this->parse_url( $this->options_by_formkey['confirmation_url'] );
+				$this->confirm = $this->parse_url( $this->options_by_formkey['confirmation_url'] );
 				$this->complete = $this->parse_url( $this->options_by_formkey['complete_url'] );
 				$this->validation_error = $this->parse_url( $this->options_by_formkey['validation_error_url'] );
 			}
@@ -732,7 +739,7 @@ class mw_wp_form {
 		setup_postdata( $post );
 
 		// 入力画面・確認画面
-		if ( $this->viewFlg == 'input' || $this->viewFlg == 'preview' ) {
+		if ( $this->viewFlg == 'input' || $this->viewFlg == 'confirm' ) {
 			$_ret = do_shortcode( '[mwform]' . get_the_content() . '[/mwform]' );
 		}
 		// 完了画面
@@ -748,7 +755,7 @@ class mw_wp_form {
 	 * フォームを出力
 	 */
 	public function _mwform( $atts, $content = '' ) {
-		if ( $this->viewFlg == 'input' || $this->viewFlg == 'preview' ) {
+		if ( $this->viewFlg == 'input' || $this->viewFlg == 'confirm' ) {
 			$this->Error = $this->Validation->Error();
 			do_action( 'mwform_add_shortcode', $this->Form, $this->viewFlg, $this->Error, $this->key );
 
@@ -771,8 +778,9 @@ class mw_wp_form {
 					$upload_file_hidden .= $this->Form->hidden( MWF_Config::UPLOAD_FILE_KEYS . '[]', $value );
 				}
 			}
+			$_preview_class = ( $this->viewFlg === 'confirm' ) ? ' mw_wp_form_preview' : '';
 			return
-				'<div id="mw_wp_form_' . $this->key . '" class="mw_wp_form mw_wp_form_' . $this->viewFlg . '">' .
+				'<div id="mw_wp_form_' . $this->key . '" class="mw_wp_form mw_wp_form_' . $this->viewFlg . $_preview_class . '">' .
 				$this->Form->start() .
 				do_shortcode( $content ) .
 				$upload_file_hidden .
