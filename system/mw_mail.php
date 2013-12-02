@@ -3,11 +3,11 @@
  * Name: MW Mail
  * URI: http://2inc.org
  * Description: メールクラス
- * Version: 1.3.2
+ * Version: 1.3.3
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: July 20, 2012
- * Modified: September 13, 2013
+ * Modified: December 2, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -80,19 +80,21 @@ class MW_Mail {
 		);
 		$options = array_merge( $defaults, $options );
 		foreach( $array as $key => $value ) {
-			if ( in_array( $key, $options['exclude'] ) ) continue;
-			if ( isset( $value['separator'] ) && is_array( $value ) ) {
-				if ( isset( $value['data'] ) && is_array( $value['data'] ) ) {
+			if ( in_array( $key, $options['exclude'] ) )
+				continue;
+			if ( is_array( $value ) && isset( $value['separator'], $value['data'] ) ) {
+				$_value = '';
+				if ( is_array( $value['data'] ) ) {
 					foreach ( $value['data'] as $_val ) {
 						if ( !( $_val === '' || $_val === null ) ) {
-							$value = implode( $value['separator'], $value['data'] );
+							$_value = implode( $value['separator'], $value['data'] );
 							break;
 						}
-						$value = '';
 					}
 				} else {
-					continue;
+					$_value = $value['data'];
 				}
+				$value = $_value;
 			}
 			if ( $value )
 				$_ret .= sprintf( "▼%s\n%s\n\n", esc_html( $key ), esc_html( $value ) );

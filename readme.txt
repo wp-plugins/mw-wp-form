@@ -37,6 +37,9 @@ http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 
 == Changelog ==
 
+= 1.1.5 =
+* Bug fix : $MW_Mail->createBody()のバグ修正
+
 = 1.1.4 =
 * Changed : 設定を読み込むため際、無駄な do_shortcode() が行われないように修正
 * Bug fix : チェックボックスの値が送信されないバグ修正
