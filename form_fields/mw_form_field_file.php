@@ -3,11 +3,11 @@
  * Name: MW Form Field File
  * URI: http://2inc.org
  * Description: 画像アップロードフィールドを出力。
- * Version: 1.1.1
+ * Version: 1.2.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
- * Created: May 17, 2013
- * Modified: July 10, 2013
+ * Created : May 17, 2013
+ * Modified: November 26, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -48,41 +48,42 @@ class mw_form_field_file extends mw_form_field {
 	/**
 	 * inputPage
 	 * 入力ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function inputPage( $atts ) {
-		$_ret = $this->Form->file( $atts['name'], array(
-			'size' => $atts['size'],
+	protected function inputPage() {
+		$_ret = $this->Form->file( $this->atts['name'], array(
+			'size' => $this->atts['size'],
 		) );
-		$value = $this->Form->getValue( $atts['name'] );
+		$value = $this->Form->getValue( $this->atts['name'] );
 		$upload_file_keys = $this->Form->getValue( MWF_Config::UPLOAD_FILE_KEYS );
-		if ( !empty( $value ) && is_array( $upload_file_keys ) && in_array( $atts['name'], $upload_file_keys ) ) {
+		if ( !empty( $value ) && is_array( $upload_file_keys ) && in_array( $this->atts['name'], $upload_file_keys ) ) {
 			$_ret .= '<div class="' . MWF_Config::NAME . '_file">';
 			$_ret .= '<a href="' . esc_attr( $value ) . '" target="_blank">' . __( 'Uploaded.', MWF_Config::DOMAIN ) . '</a>';
-			$_ret .= $this->Form->hidden( $atts['name'], $value );
+			$_ret .= $this->Form->hidden( $this->atts['name'], $value );
 			$_ret .= '</div>';
 		}
-		if ( $atts['show_error'] !== 'false' )
-			$_ret .= $this->getError( $atts['name'] );
+		if ( $this->atts['show_error'] !== 'false' )
+			$_ret .= $this->getError( $this->atts['name'] );
 		return $_ret;
 	}
 
 	/**
-	 * previewPage
+	 * confirmPage
 	 * 確認ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function previewPage( $atts ) {
-		$value = $this->Form->getValue( $atts['name'] );
+	protected function confirmPage() {
+		$value = $this->Form->getValue( $this->atts['name'] );
 		if ( $value ) {
 			$_ret  = '<div class="' . MWF_Config::NAME . '_file">';
 			$_ret .= '<a href="' . esc_attr( $value ) . '" target="_blank">' . __( 'Uploaded.', MWF_Config::DOMAIN ) . '</a>';
 			$_ret .= '</div>';
-			$_ret .= $this->Form->hidden( $atts['name'], $value );
+			$_ret .= $this->Form->hidden( $this->atts['name'], $value );
 			return $_ret;
 		}
+	}
+	protected function previewPage() {
+		return $this->confirmPage();
 	}
 
 	/**

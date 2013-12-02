@@ -3,11 +3,11 @@
  * Name: MW Form Field Error
  * URI: http://2inc.org
  * Description: エラーを出力。
- * Version: 1.1
+ * Version: 1.2.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
- * Created: December 14, 2012
- * Modified: May 29, 2013
+ * Created : December 14, 2012
+ * Modified: November 26, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -46,11 +46,10 @@ class mw_form_field_error extends mw_form_field {
 	/**
 	 * inputPage
 	 * 入力ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function inputPage( $atts ) {
-		$keys = explode( ',', $atts['keys'] );
+	protected function inputPage() {
+		$keys = explode( ',', $this->atts['keys'] );
 		$_ret = '';
 		foreach ( $keys as $key ) {
 			$_ret .= $this->getError( trim( $key ) );
@@ -59,12 +58,14 @@ class mw_form_field_error extends mw_form_field {
 	}
 
 	/**
-	 * previewPage
+	 * confirmPage
 	 * 確認ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function previewPage( $atts ) {
+	protected function confirmPage() {
+	}
+	protected function previewPage() {
+		$this->confirmPage();
 	}
 
 	/**
