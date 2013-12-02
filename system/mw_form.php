@@ -3,11 +3,11 @@
  * Name: MW Form
  * URI: http://2inc.org
  * Description: フォームクラス
- * Version: 1.3.6
+ * Version: 1.3.7
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : September 25, 2012
- * Modified: November 26, 2013
+ * Modified: December 2, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -54,11 +54,6 @@ class MW_Form {
 		$this->token = sha1( $this->key . session_id() );
 		if ( $this->isInput() && empty( $_POST ) && !$this->Session->getValue( $this->tokenName ) ) {
 			$this->Session->save( array( $this->tokenName => $this->token ) );
-		}
-		// 戻る、確認画面へのポスト、完了画面へのポストでないときはデータを破棄
-		if ( !( isset( $this->data[$this->backButton] ) || $this->isConfirm() || $this->isComplete() ) ) {
-			// フォームオブジェクト再生成
-			$this->data = array();
 		}
 	}
 

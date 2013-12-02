@@ -555,7 +555,7 @@ class MW_Validation {
 	public function setRule( $key, $rule, Array $options = array() ) {
 		$rules = array(
 			'rule' => $rule,
-			'options' =>$options
+			'options' => $options
 		);
 		$this->validate[$key][] = $rules;
 		return $this;

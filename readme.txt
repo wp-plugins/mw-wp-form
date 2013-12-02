@@ -4,7 +4,7 @@ Donate link: http://www.amazon.co.jp/registry/wishlist/39ANKRNSTNW40
 Tags: plugin, form, confirm, preview, shortcode
 Requires at least: 3.4
 Tested up to: 3.6.1
-Stable tag: 1.1.3
+Stable tag: 1.1.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,13 +37,18 @@ http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 
 == Changelog ==
 
+= 1.1.4 =
+* Changed : 設定を読み込むため際、無駄な do_shortcode() が行われないように修正
+* Bug fix : チェックボックスの値が送信されないバグ修正
+
 = 1.1.3 =
 * Deprecated: div.mw_wp_form_previewは次回のバージョンアップで削除予定（div.mw_wp_form_confirmに置換）
 * Deprecated: MW_Form::previewPage()は次回のバージョンアップで削除予定（MW_Form::confirmPage()に置換）
 * Deprecated: [mwform_submitButton]の引数preview_valueは次回のバージョンアップで削除予定（confirm_valueに置換）
 * Deprecated: [mwform]の引数previewは次回のバージョンアップで削除予定（confirmに置換）
-* Cahged    : MW_Form::isPreview() -> MW_Form::isConfirm()
-* Cahged    : MW_Form::getPreviewButtonName() -> MW_Form::getConfirmButtonName()
+* Deprecated: [mwform_previewButton]は次回のバージョンアップで削除予定（[mwform_confirmButton]に置換）
+* Changed   : MW_Form::isPreview() -> MW_Form::isConfirm()
+* Changed   : MW_Form::getPreviewButtonName() -> MW_Form::getConfirmButtonName()
 * Added     : mwform_default_content フィルターフック
 * Added     : mwform_default_postdata フィルターフック
 
