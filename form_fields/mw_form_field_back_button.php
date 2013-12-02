@@ -3,11 +3,11 @@
  * Name: MW Form Field Back Button
  * URI: http://2inc.org
  * Description: 戻るボタンを出力。
- * Version: 1.1
+ * Version: 1.2.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
- * Created: December 14, 2012
- * Modified: May 29, 2013
+ * Created : December 14, 2012
+ * Modified: November 26, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -46,20 +46,21 @@ class mw_form_field_back_button extends mw_form_field {
 	/**
 	 * inputPage
 	 * 入力ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function inputPage( $atts ) {
+	protected function inputPage() {
 	}
 
 	/**
-	 * previewPage
+	 * confirmPage
 	 * 確認ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function previewPage( $atts ) {
-		return $this->Form->submit( $this->Form->getBackButtonName(), $atts['value'] );
+	protected function confirmPage() {
+		return $this->Form->submit( $this->Form->getBackButtonName(), $this->atts['value'] );
+	}
+	protected function previewPage() {
+		return $this->confirmPage();
 	}
 
 	/**

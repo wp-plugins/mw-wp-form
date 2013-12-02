@@ -1,10 +1,10 @@
 === MW WP Form ===
 Contributors: inc2734
-Donate link:
-Tags: plugin, form, confirm, preview
+Donate link: http://www.amazon.co.jp/registry/wishlist/39ANKRNSTNW40
+Tags: plugin, form, confirm, preview, shortcode
 Requires at least: 3.4
-Tested up to: 3.5
-Stable tag: 0.9.9
+Tested up to: 3.6.1
+Stable tag: 1.1.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,6 +36,67 @@ http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 1. You can create a form by settings page.
 
 == Changelog ==
+
+= 1.1.4 =
+* Changed : 設定を読み込むため際、無駄な do_shortcode() が行われないように修正
+* Bug fix : チェックボックスの値が送信されないバグ修正
+
+= 1.1.3 =
+* Deprecated: div.mw_wp_form_previewは次回のバージョンアップで削除予定（div.mw_wp_form_confirmに置換）
+* Deprecated: MW_Form::previewPage()は次回のバージョンアップで削除予定（MW_Form::confirmPage()に置換）
+* Deprecated: [mwform_submitButton]の引数preview_valueは次回のバージョンアップで削除予定（confirm_valueに置換）
+* Deprecated: [mwform]の引数previewは次回のバージョンアップで削除予定（confirmに置換）
+* Deprecated: [mwform_previewButton]は次回のバージョンアップで削除予定（[mwform_confirmButton]に置換）
+* Changed   : MW_Form::isPreview() -> MW_Form::isConfirm()
+* Changed   : MW_Form::getPreviewButtonName() -> MW_Form::getConfirmButtonName()
+* Added     : mwform_default_content フィルターフック
+* Added     : mwform_default_postdata フィルターフック
+
+= 1.1.2 =
+* Cahged : セッションまわりの処理をリファクタリング
+
+= 1.1.1 =
+* Bug fix: ダウンロードしたCSVに全件表示されないバグを修正
+
+= 1.1.0 =
+* Added  : mwform_value_識別子 フィルターフック追加
+* Added  : mwform_hidden の引数 echo を追加（ true or false ）
+* Added  : カタカナ バリデーション項目を追加
+* Cahged : 管理画面メニュー表示、設定保存の権限を変更（edit_pagesに統一）
+* Bug fix: 複数のMIMEタイプをとりえる拡張子を持つファイルのアップロードに対応（avi、mp3、mpg）
+
+= 1.0.4 =
+* Bug fix: 画像以外の添付ファイルがカスタムフィールドに表示されないバグを修正
+* Bug fix: 動画アップロード時にFatal Errorがでるバグを修正
+
+= 1.0.3 =
+* Added  : 管理画面に Donate link を追加
+
+= 1.0.2 =
+* Bug fix: シングルページのみ実行可能に変更（検索結果ページ等でリダイレクトしてしまうため）
+* Bug fix: URL引数有効 + 同一URL時にリダイレクトループが発生してしまうバグを修正
+
+= 1.0.1 =
+* Bug fix: DBに保存しないときに添付ファイルが送られてこない
+
+= 1.0.0 =
+* Added  : Donate link を追加
+* Added  : DB保存データにメモ欄追加
+* Cahged : ファイルアップロード用のディレクトリにアップロードするように変更専用
+* Cahged : 拡張子が偽造されたファイルの場合はアップロードしない（php5.3.0以上）
+* Cahged : 表示ページのURLに引数が付いている場合でも管理画面で設定したURLにリダイレクトしてしまわないように変更
+* Bug fix: 通常バリデーションは配列が来ることを想定していなかったため修正
+
+= 0.9.11 =
+* Bug fix: 添付ファイルが複数あり、かつDB保存の場合、管理画面で最後の画像しか表示されないバグを修正
+* Cahged : どのフィールドが画像かを示すメタデータの保存形式を配列に変更
+* Cahged : mw_form_field::inputPage、mw_form_field::previewPage の引数削除
+
+= 0.9.10 =
+* Bug fix: mwform_admin_mail_識別子、mwform_auto_mail_識別子フィルターフックの定義位置が逆だったのを修正
+* Bug fix: 添付ファイルが添付されないバグを修正（From Ver0.9.4）
+* Bug fix: Akismet Email、Akismet URL の設定が正しく行えなかったのを修正
+* Cahged : フォーム送信時は $_POST を WP Query に含めない
 
 = 0.9.9 =
 * Added  : mwform_csv_button_識別子 フィルターフック

@@ -3,11 +3,11 @@
  * Name: MW Validation
  * URI: http://2inc.org
  * Description: バリデーションクラス
- * Version: 1.4.1
+ * Version: 1.5
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
- * Created: July 20, 2012
- * Modified: August 28, 2013
+ * Created : July 20, 2012
+ * Modified: December 5, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -27,7 +27,6 @@
  */
 class MW_Validation {
 
-	const DOMAIN = 'mw-wp-form';
 	protected $data = array();
 	protected $Error;
 	public $validate = array();
@@ -132,6 +131,8 @@ class MW_Validation {
 	public function alpha( $key, $options = array() ) {
 		$_ret = '';
 		$value = $this->getValue( $key );
+		if ( is_array( $value ) )
+			$value = implode( $this->getSeparatorValue( $key ), $value );
 		if ( isset( $value ) && !preg_match( '/^[A-Za-z]+$/', $value ) && !$this->isEmpty( $value ) ) {
 			$defaults = array(
 				'message' => __( 'Please enter with a half-width alphabetic character.', MWF_Config::DOMAIN )
@@ -152,6 +153,8 @@ class MW_Validation {
 	public function numeric( $key, $options = array() ) {
 		$_ret = '';
 		$value = $this->getValue( $key );
+		if ( is_array( $value ) )
+			$value = implode( $this->getSeparatorValue( $key ), $value );
 		if ( isset( $value ) && !preg_match( '/^[0-9]+$/', $value ) && !$this->isEmpty( $value ) ) {
 			$defaults = array(
 				'message' => __( 'Please enter with a half-width number.', MWF_Config::DOMAIN )
@@ -172,9 +175,33 @@ class MW_Validation {
 	public function alphaNumeric( $key, $options = array() ) {
 		$_ret = '';
 		$value = $this->getValue( $key );
+		if ( is_array( $value ) )
+			$value = implode( $this->getSeparatorValue( $key ), $value );
 		if ( isset( $value ) && !preg_match( '/^[0-9A-Za-z]+$/', $value ) && !$this->isEmpty( $value ) ) {
 			$defaults = array(
 				'message' => __( 'Please enter with a half-width alphanumeric character.', MWF_Config::DOMAIN )
+			);
+			$options = array_merge( $defaults, $options );
+			$_ret = $options['message'];
+		}
+		return $_ret;
+	}
+
+	/**
+	 * katakana
+	 * 値がカタカナ
+	 * @param	String	キー
+	 *			Array	( 'message' => )
+	 * @return	String	エラーメッセージ
+	 */
+	public function katakana( $key, $options = array() ) {
+		$_ret = '';
+		$value = $this->getValue( $key );
+		if ( is_array( $value ) )
+			$value = implode( $this->getSeparatorValue( $key ), $value );
+		if ( isset( $value ) && !preg_match( '/[ァ-ヾ]+$/u', $value ) && !$this->isEmpty( $value ) ) {
+			$defaults = array(
+				'message' => __( 'Please enter with a Japanese Katakana.', MWF_Config::DOMAIN )
 			);
 			$options = array_merge( $defaults, $options );
 			$_ret = $options['message'];
@@ -192,18 +219,16 @@ class MW_Validation {
 	public function zip( $key, $options = array() ) {
 		$_ret = '';
 		$value = $this->getValue( $key );
-		if ( isset( $value ) ) {
+		if ( isset( $value ) && !empty( $value ) ) {
 			$defaults = array(
 				'message' => __( 'This is not the format of a zip code.', MWF_Config::DOMAIN )
 			);
 			$options = array_merge( $defaults, $options );
-			if ( !empty( $value ) ) {
-				if ( is_array( $value ) ) {
-					$value = implode( '-', $value );
-				}
-				if ( !preg_match( '/^\d{3}-\d{4}$/', $value ) ) {
-					$_ret = $options['message'];
-				}
+			if ( is_array( $value ) ) {
+				$value = implode( $this->getSeparatorValue( $key ), $value );
+			}
+			if ( !preg_match( '/^\d{3}-\d{4}$/', $value ) ) {
+				$_ret = $options['message'];
 			}
 		}
 		return $_ret;
@@ -219,23 +244,21 @@ class MW_Validation {
 	public function tel( $key, $options = array() ) {
 		$_ret = '';
 		$value = $this->getValue( $key );
-		if ( isset( $value ) ) {
+		if ( isset( $value ) && !empty( $value ) ) {
 			$defaults = array(
 				'message' => __( 'This is not the format of a tel number.', MWF_Config::DOMAIN )
 			);
 			$options = array_merge( $defaults, $options );
-			if ( !empty( $value ) ) {
-				if ( is_array( $value ) ) {
-					$value = implode( '-', $value );
-				}
-				if ( ! (
-					preg_match( '/^\d{2}-\d{4}-\d{4}$/', $value ) ||
-					preg_match( '/^\d{3}-\d{3,4}-\d{4}$/', $value ) ||
-					preg_match( '/^\d{4}-\d{2}-\d{4}$/', $value ) ||
-					preg_match( '/^\d{5}-\d{1}-\d{4}$/', $value )
-				) ) {
-					$_ret = $options['message'];
-				}
+			if ( is_array( $value ) ) {
+				$value = implode( $this->getSeparatorValue( $key ), $value );
+			}
+			if ( ! (
+				preg_match( '/^\d{2}-\d{4}-\d{4}$/', $value ) ||
+				preg_match( '/^\d{3}-\d{3,4}-\d{4}$/', $value ) ||
+				preg_match( '/^\d{4}-\d{2}-\d{4}$/', $value ) ||
+				preg_match( '/^\d{5}-\d{1}-\d{4}$/', $value )
+			) ) {
+				$_ret = $options['message'];
 			}
 		}
 		return $_ret;
@@ -251,6 +274,8 @@ class MW_Validation {
 	public function mail( $key, $options = array() ) {
 		$_ret = '';
 		$value = $this->getValue( $key );
+		if ( is_array( $value ) )
+			$value = implode( $this->getSeparatorValue( $key ), $value );
 		if ( isset( $value ) && !preg_match( '/^[^@]+@[^@]+$/', $value ) && !$this->isEmpty( $value ) ) {
 			$defaults = array(
 				'message' => __( 'This is not the format of a mail address.', MWF_Config::DOMAIN )
@@ -271,6 +296,8 @@ class MW_Validation {
 	public function url( $key, $options = array() ) {
 		$_ret = '';
 		$value = $this->getValue( $key );
+		if ( is_array( $value ) )
+			$value = implode( $this->getSeparatorValue( $key ), $value );
 		if ( isset( $value ) && !preg_match( '/^https{0,1}:\/\//', $value ) && !$this->isEmpty( $value ) ) {
 			$defaults = array(
 				'message' => __( 'This is not the format of a url.', MWF_Config::DOMAIN )
@@ -314,6 +341,8 @@ class MW_Validation {
 	public function between( $key, $options = array() ) {
 		$_ret = '';
 		$value = $this->getValue( $key );
+		if ( is_array( $value ) )
+			$value = implode( $this->getSeparatorValue( $key ), $value );
 		if ( isset( $value ) && !$this->isEmpty( $value ) ) {
 			$defaults = array(
 				'min' => 0,
@@ -351,6 +380,8 @@ class MW_Validation {
 	public function minLength( $key, $options = array() ) {
 		$_ret = '';
 		$value = $this->getValue( $key );
+		if ( is_array( $value ) )
+			$value = implode( $this->getSeparatorValue( $key ), $value );
 		if ( isset( $value ) && !$this->isEmpty( $value ) ) {
 			$defaults = array(
 				'min' => 0,
@@ -375,13 +406,15 @@ class MW_Validation {
 	public function in( $key, $options = array() ) {
 		$_ret = '';
 		$value = $this->getValue( $key );
+		if ( is_array( $value ) )
+			$value = implode( $this->getSeparatorValue( $key ), $value );
 		if ( isset( $value ) ) {
 			$defaults = array(
 				'options' => array(),
 				'message' => __( 'This value is invalid.', MWF_Config::DOMAIN )
 			);
 			$options = array_merge( $defaults, $options );
-			if ( !( isset( $options[ 'options' ] ) && is_array( $options[ 'options' ] ) ) ) {
+			if ( !( is_array( $options['options'] ) && in_array( $value, $options['options'] ) ) ) {
 				$_ret = $options['message'];
 			}
 		}
@@ -398,6 +431,8 @@ class MW_Validation {
 	public function date( $key, $options = array() ) {
 		$_ret = '';
 		$value = $this->getValue( $key );
+		if ( is_array( $value ) )
+			$value = implode( $this->getSeparatorValue( $key ), $value );
 		if ( isset( $value ) ) {
 			$defaults = array(
 				'message' => __( 'This is not the format of a date.', MWF_Config::DOMAIN )
@@ -425,6 +460,8 @@ class MW_Validation {
 	public function fileType( $key, $options = array() ) {
 		$_ret = '';
 		$value = $this->getValue( $key );
+		if ( is_array( $value ) )
+			$value = implode( $this->getSeparatorValue( $key ), $value );
 		if ( !empty( $value ) ) {
 			$defaults = array(
 				'types' => '',
@@ -518,7 +555,7 @@ class MW_Validation {
 	public function setRule( $key, $rule, Array $options = array() ) {
 		$rules = array(
 			'rule' => $rule,
-			'options' =>$options
+			'options' => $options
 		);
 		$this->validate[$key][] = $rules;
 		return $this;
@@ -572,6 +609,18 @@ class MW_Validation {
 		} else {
 			return false;
 		}
+	}
+
+	/**
+	 * getSeparatorValue
+	 * 送られてきたseparatorを返す
+	 * @param	String	キー
+	 * 			Array	データ
+	 * @return	String	データ
+	 */
+	public function getSeparatorValue( $key ) {
+		if ( isset( $this->data[$key]['separator'] ) )
+			return $this->data[$key]['separator'];
 	}
 }
 ?>

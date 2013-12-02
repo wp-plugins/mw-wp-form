@@ -3,11 +3,11 @@
  * Name: MW Form
  * URI: http://2inc.org
  * Description: フォームクラス
- * Version: 1.3.4
+ * Version: 1.3.7
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
- * Created: September 25, 2012
- * Modified: September 5, 2013
+ * Created : September 25, 2012
+ * Modified: December 2, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -32,6 +32,7 @@ class MW_Form {
 	protected $token;					// トークンの値
 	protected $data;					// データ
 	protected $Session;					// sessionオブジェクト
+	protected $confirmButton = 'submitConfirm';	// 確認ボタンの名前
 	protected $previewButton = 'submitPreview';	// 確認ボタンの名前
 	protected $backButton = 'submitBack';		// 戻るボタンの名前
 	protected $modeCheck = 'input';
@@ -46,19 +47,13 @@ class MW_Form {
 	 */
 	public function __construct( $data, $key = '' ) {
 		$this->data = $data;
-		if ( !empty( $key ) ) {
-			$this->key = $key.'_token';
-		}
+		if ( $key )
+			$this->key = $key . '_token';
 		$this->Session = MW_Session::start( $this->key );
 		$this->modeCheck = $this->modeCheck();
 		$this->token = sha1( $this->key . session_id() );
-		if ( $this->isInput() && empty( $_POST ) ) {
+		if ( $this->isInput() && empty( $_POST ) && !$this->Session->getValue( $this->tokenName ) ) {
 			$this->Session->save( array( $this->tokenName => $this->token ) );
-		}
-		// 戻る、確認画面へのポスト、完了画面へのポストでないときはデータを破棄
-		if ( !( isset( $this->data[$this->backButton] ) || $this->isPreview() || $this->isComplete() ) ) {
-			// フォームオブジェクト再生成
-			$this->data = array();
 		}
 	}
 
@@ -66,8 +61,12 @@ class MW_Form {
 	 * clearToken
 	 * トークン用のセッションを破棄
 	 */
-	public function clearToken() {
+	private function clearToken() {
 		$this->Session->clearValue( $this->tokenName );
+	}
+
+	public function getTokenName() {
+		return $this->tokenName;
 	}
 
 	/**
@@ -76,24 +75,20 @@ class MW_Form {
 	 * @return	Boolean
 	 */
 	public function isComplete() {
-		$_ret = false;
-		if ( !empty( $this->data ) && $this->modeCheck === 'complete' ) {
-			$_ret = true;
-		}
-		return $_ret;
+		if ( !empty( $this->data ) && $this->modeCheck === 'complete' )
+			return true;
+		return false;
 	}
 
 	/**
-	 * isPreview
+	 * isConfirm
 	 * 確認画面かどうか
 	 * @return	Boolean
 	 */
-	public function isPreview() {
-		$_ret = false;
-		if ( !empty( $this->data ) && $this->modeCheck === 'preview' ) {
-			$_ret = true;
-		}
-		return $_ret;
+	public function isConfirm() {
+		if ( !empty( $this->data ) && $this->modeCheck === 'confirm' )
+			return true;
+		return false;
 	}
 
 	/**
@@ -102,30 +97,30 @@ class MW_Form {
 	 * @return	Boolean
 	 */
 	public function isInput() {
-		$_ret = false;
-		if ( $this->modeCheck === 'input' ) {
-			$_ret = true;
-		}
-		return $_ret;
+		if ( $this->modeCheck === 'input' )
+			return true;
+		return false;
 	}
 
 	/**
 	 * modeCheck
 	 * 表示画面判定
-	 * @return	input || preview || complete
+	 * @return	input || confirm || complete
 	 */
 	protected function modeCheck() {
 		if ( isset( $this->data[$this->backButton] ) ) {
 			$backButton = $this->data[$this->backButton];
+		} elseif ( isset( $this->data[$this->confirmButton] ) ) {
+			$confirmButton = $this->data[$this->confirmButton];
 		} elseif ( isset( $this->data[$this->previewButton] ) ) {
-			$previewButton = $this->data[$this->previewButton];
+			$confirmButton = $this->data[$this->previewButton];
 		}
 		$_ret = 'input';
 		if ( isset( $backButton ) ) {
 			$_ret = 'input';
-		} elseif ( isset( $previewButton ) ) {
-			$_ret = 'preview';
-		} elseif ( !isset( $previewButton ) && !isset( $backButton ) && $this->check() ) {
+		} elseif ( isset( $confirmButton ) ) {
+			$_ret = 'confirm';
+		} elseif ( !isset( $confirmButton ) && !isset( $backButton ) && $this->check() ) {
 			$_ret = 'complete';
 		}
 		return $_ret;
@@ -137,22 +132,27 @@ class MW_Form {
 	 * @return	Boolean
 	 */
 	protected function check() {
-		if ( isset( $this->data[$this->tokenName] ) )
-			$requestToken = $this->data[$this->tokenName];
-		$_ret = false;
+		if ( isset( $_POST[$this->tokenName] ) )
+			$requestToken = $_POST[$this->tokenName];
 		$s_token = $this->Session->getValue( $this->tokenName );
-		if ( isset( $requestToken ) && !empty( $s_token ) && $requestToken == $s_token )
-			$_ret = true;
-		return $_ret;
+
+		if ( isset( $requestToken ) && !empty( $s_token ) && $requestToken === $s_token ) {
+			$this->clearToken();
+			return true;
+		} elseif ( empty( $_POST ) && $this->data ) {
+			$this->clearToken();
+			return true;
+		}
+		return false;
 	}
 
 	/**
-	 * getPreviewButtonName
+	 * getConfirmButtonName
 	 * 確認画面への変遷用ボタンのname属性値を返す
 	 * @return	String	name属性値
 	 */
-	public function getPreviewButtonName() {
-		return $this->previewButton;
+	public function getConfirmButtonName() {
+		return $this->confirmButton;
 	}
 
 	/**
@@ -174,7 +174,6 @@ class MW_Form {
 		$_ret = null;
 		if ( isset( $this->data[$key] ) ) {
 			$_ret = $this->data[$key];
-			$_ret = $this->e( $_ret );
 		}
 		return $_ret;
 	}
@@ -194,7 +193,6 @@ class MW_Form {
 				foreach ( $this->data[$key]['data'] as $value ) {
 					if ( !( $value === '' || $value === null ) ) {
 						$_ret = implode( $separator, $this->data[$key]['data'] );
-						$_ret = $this->e( $_ret );
 						break;
 					}
 				}
@@ -232,7 +230,6 @@ class MW_Form {
 					}
 				}
 				$_ret = implode( $separator, $rightData );
-				$_ret = $this->e( $_ret );
 			}
 		}
 		return $_ret;
@@ -250,7 +247,7 @@ class MW_Form {
 		if ( isset( $this->data[$key] ) && !is_array( $this->data[$key] ) ) {
 			if ( isset( $data[$this->data[$key]] ) ) {
 				$_ret = $data[$this->data[$key]];
-				$_ret = $this->e( $_ret );
+				$_ret = esc_html( $_ret );
 			}
 		}
 		return $_ret;
@@ -307,7 +304,7 @@ class MW_Form {
 		);
 		$options = array_merge( $defaults, $options );
 		$_ret = sprintf( '<form method="%s" action="%s" enctype="%s">',
-				$this->method, $this->e( $options['action'] ), $this->e( $options['enctype'] ) );
+				$this->method, esc_attr( $options['action'] ), esc_attr( $options['enctype'] ) );
 		return $_ret;
 	}
 
@@ -340,7 +337,7 @@ class MW_Form {
 		$options = array_merge( $defaults, $options );
 		$value = ( isset( $this->data[$name] ) )? $this->data[$name] : $options['value'];
 		$_ret = sprintf( '<input type="text" name="%s" value="%s" size="%d" maxlength="%d" />',
-			$this->e( $name ), $this->e( $value ), $this->e( $options['size'] ), $this->e( $options['maxlength'] )
+			esc_attr( $name ), esc_attr( $value ), esc_attr( $options['size'] ), esc_attr( $options['maxlength'] )
 		);
 		return $_ret;
 	}
@@ -353,10 +350,10 @@ class MW_Form {
 	 * @return	String	htmlタグ
 	 */
 	public function hidden( $name, $value ) {
-		$value = ( isset( $this->data[$name] ) )? $this->data[$name] : $value;
+		//$value = ( isset( $this->data[$name] ) )? $this->data[$name] : $value;
 		if ( is_array( $value ) )
 			$value = $this->getZipValue( $name );
-		$_ret = sprintf( '<input type="hidden" name="%s" value="%s" />', $this->e( $name ), $this->e( $value ) );
+		$_ret = sprintf( '<input type="hidden" name="%s" value="%s" />', esc_attr( $name ), esc_attr( $value ) );
 		return $_ret;
 	}
 
@@ -376,7 +373,7 @@ class MW_Form {
 		$options = array_merge( $defaults, $options );
 		$value = ( isset( $this->data[$name] ) )? $this->data[$name] : $options['value'];
 		$_ret = sprintf( '<input type="password" name="%s" value="%s" size="%d" maxlength="%d" />',
-			$this->e( $name ), $this->e( $value ), $this->e( $options['size'] ), $this->e( $options['maxlength'] )
+			esc_attr( $name ), esc_attr( $value ), esc_attr( $options['size'] ), esc_attr( $options['maxlength'] )
 		);
 		return $_ret;
 	}
@@ -450,7 +447,7 @@ class MW_Form {
 		$options = array_merge( $defaults, $options );
 		$value = ( isset( $this->data[$name] ) )? $this->data[$name] : $options['value'];
 		$_ret = sprintf( '<textarea name="%s" cols="%d" rows="%d">%s</textarea>',
-			$this->e( $name ), $this->e( $options['cols'] ), $this->e( $options['rows'] ), $this->e( $value )
+			esc_attr( $name ), esc_attr( $options['cols'] ), esc_attr( $options['rows'] ), esc_html( $value )
 		);
 		return $_ret;
 	}
@@ -469,11 +466,11 @@ class MW_Form {
 		);
 		$options = array_merge( $defaults, $options );
 		$value = ( isset( $this->data[$name] ) )? $this->data[$name] : $options['value'];
-		$_ret = sprintf( '<select name="%s">', $this->e( $name ) );
+		$_ret = sprintf( '<select name="%s">', esc_attr( $name ) );
 		foreach ( $children as $key => $_value ) {
 			$selected = ( $key == $value )? ' selected="selected"' : '';
 			$_ret .= sprintf( '<option value="%s"%s>%s</option>',
-				$this->e( $key ), $selected, $this->e( $_value )
+				esc_attr( $key ), $selected, esc_html( $_value )
 			);
 		}
 		$_ret .= '</select>';
@@ -498,7 +495,7 @@ class MW_Form {
 		foreach ( $children as $key => $_value ) {
 			$checked = ( $key == $value )? ' checked="checked"' : '';
 			$_ret .= sprintf( '<label><input type="radio" name="%s" value="%s"%s />%s</label>',
-				$this->e( $name ), $this->e( $key ), $checked, $this->e( $_value )
+				esc_attr( $name ), esc_attr( $key ), $checked, esc_html( $_value )
 			);
 		}
 		return $_ret;
@@ -530,7 +527,7 @@ class MW_Form {
 		foreach ( $children as $key => $_value ) {
 			$checked = ( is_array( $value ) && in_array( $key, $value ) )? ' checked="checked"' : '';
 			$_ret .= sprintf( '<label><input type="checkbox" name="%s" value="%s"%s />%s</label>',
-				$this->e( $name.'[data][]' ), $this->e( $key ), $checked, $this->e( $_value )
+				esc_attr( $name.'[data][]' ), esc_attr( $key ), $checked, esc_html( $_value )
 			);
 		}
 		$_ret .= $this->separator( $name, $separator );
@@ -545,7 +542,7 @@ class MW_Form {
 	 * @return	String	submitボタン
 	 */
 	public function submit( $name, $value ) {
-		$_ret = sprintf( '<input type="submit" name="%s" value="%s" />', $this->e( $name ), $this->e( $value ) );
+		$_ret = sprintf( '<input type="submit" name="%s" value="%s" />', esc_attr( $name ), esc_attr( $value ) );
 		return $_ret;
 	}
 
@@ -557,7 +554,7 @@ class MW_Form {
 	 * @return	String	ボタン
 	 */
 	public function button( $name, $value ) {
-		$_ret = sprintf( '<input type="button" name="%s" value="%s" />', $this->e( $name ), $this->e( $value ) );
+		$_ret = sprintf( '<input type="button" name="%s" value="%s" />', esc_attr( $name ), esc_attr( $value ) );
 		return $_ret;
 	}
 
@@ -579,7 +576,7 @@ class MW_Form {
 		$options = array_merge( $defaults, $options );
 		$value = ( isset( $this->data[$name] ) )? $this->data[$name] : $options['value'];
 		$_ret = sprintf( '<input type="text" name="%s" value="%s" size="%d" />',
-			$this->e( $name ), $this->e( $value ), $this->e( $options['size'] )
+			esc_attr( $name ), esc_attr( $value ), esc_attr( $options['size'] )
 		);
 		$_ret .= sprintf( '
 			<script type="text/javascript">
@@ -587,7 +584,7 @@ class MW_Form {
 				$("input[name=\'%s\']").datepicker({%s});
 			} );
 			</script>
-		',$this->e( $name ), $options['js'] );
+		', esc_html( $name ), $options['js'] );
 		return $_ret;
 	}
 
@@ -604,26 +601,8 @@ class MW_Form {
 		);
 		$options = array_merge( $defaults, $options );
 		$_ret = sprintf( '<input type="file" name="%s" size="%d" />',
-			$this->e( $name ), $this->e( $options['size'] )
+			esc_attr( $name ), esc_attr( $options['size'] )
 		);
 		return $_ret;
 	}
-
-	/**
-	 * e
-	 * htmlサニタイズ
-	 * @param	Mixed
-	 * @return	Mixed
-	 */
-	public function e( $str ){
-		if ( is_null( $str ) ) {
-			return null;
-		} elseif ( is_array( $str ) ) {
-			return array_map( array( $this, 'e' ), $str );
-		} else {
-			$str = stripslashes( $str );
-			return htmlspecialchars( $str, ENT_QUOTES, $this->ENCODE );
-		}
-	}
 }
-?>

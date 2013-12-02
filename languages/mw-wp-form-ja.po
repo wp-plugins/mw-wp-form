@@ -2,10 +2,10 @@
 # This file is distributed under the same license as the MW WP Form package.
 msgid ""
 msgstr ""
-"Project-Id-Version: MW WP Form 0.9.6\n"
+"Project-Id-Version: MW WP Form 1.1.0\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/mw-wp-form\n"
-"POT-Creation-Date: 2013-08-31 01:20:11+00:00\n"
-"PO-Revision-Date: 2013-08-31 10:24+0900\n"
+"POT-Creation-Date: 2013-11-06 10:18:26+00:00\n"
+"PO-Revision-Date: 2013-11-06 19:20+0900\n"
 "Last-Translator: Takashi Kitajima <inc@2inc.org>\n"
 "Language-Team: Takashi Kitajima <inc@2inc.org>\n"
 "MIME-Version: 1.0\n"
@@ -18,48 +18,48 @@ msgstr ""
 "X-Poedit-KeywordsList: __;_e;_x\n"
 "X-Poedit-SearchPath-0: ..\n"
 
-#: form_fields/mw_form_field_akismet_error.php:70
+#: form_fields/mw_form_field_akismet_error.php:68
 msgid "Akismet Error"
 msgstr "Akismetエラー"
 
 #: form_fields/mw_form_field_back_button.php:42
-#: form_fields/mw_form_field_back_button.php:72
+#: form_fields/mw_form_field_back_button.php:70
 msgid "Back"
 msgstr "戻る"
 
-#: form_fields/mw_form_field_button.php:74
+#: form_fields/mw_form_field_button.php:72
 msgid "Button"
 msgstr "ボタン"
 
-#: form_fields/mw_form_field_checkbox.php:89
+#: form_fields/mw_form_field_checkbox.php:86
 msgid "Checkbox"
 msgstr "チェックボックス"
 
-#: form_fields/mw_form_field_datepicker.php:108
+#: form_fields/mw_form_field_datepicker.php:106
 msgid "Datepicker"
 msgstr "日付"
 
-#: form_fields/mw_form_field_error.php:77
+#: form_fields/mw_form_field_error.php:75
 msgid "Error Message"
 msgstr "エラーメッセージ"
 
-#: form_fields/mw_form_field_file.php:62 form_fields/mw_form_field_file.php:81
+#: form_fields/mw_form_field_file.php:61 form_fields/mw_form_field_file.php:79
 msgid "Uploaded."
 msgstr "アップロードしました。"
 
-#: form_fields/mw_form_field_file.php:95
+#: form_fields/mw_form_field_file.php:93
 msgid "File"
 msgstr "ファイルフィールド"
 
-#: form_fields/mw_form_field_hidden.php:75
+#: form_fields/mw_form_field_hidden.php:82
 msgid "Hidden"
 msgstr "hiddenフィールド"
 
-#: form_fields/mw_form_field_image.php:95
+#: form_fields/mw_form_field_image.php:93
 msgid "Image"
 msgstr "画像フィールド"
 
-#: form_fields/mw_form_field_password.php:85
+#: form_fields/mw_form_field_password.php:83
 msgid "Password"
 msgstr "パスワードフィールド"
 
@@ -68,15 +68,15 @@ msgstr "パスワードフィールド"
 msgid "Confirm"
 msgstr "確認画面へ"
 
-#: form_fields/mw_form_field_preview_button.php:72
+#: form_fields/mw_form_field_preview_button.php:70
 msgid "Confirm Button"
 msgstr "確認ボタン"
 
-#: form_fields/mw_form_field_radio.php:87
+#: form_fields/mw_form_field_radio.php:84
 msgid "Radio"
 msgstr "ラジオボタン"
 
-#: form_fields/mw_form_field_select.php:86
+#: form_fields/mw_form_field_select.php:84
 msgid "Select"
 msgstr "セレクトボックス"
 
@@ -85,203 +85,183 @@ msgstr "セレクトボックス"
 msgid "Send"
 msgstr "送信する"
 
-#: form_fields/mw_form_field_submit.php:74
+#: form_fields/mw_form_field_submit.php:72
 msgid "Submit Button"
 msgstr "送信ボタン"
 
-#: form_fields/mw_form_field_submit_button.php:79
+#: form_fields/mw_form_field_submit_button.php:77
 msgid "Confirm &amp; Submit"
 msgstr "確認・送信"
 
-#: form_fields/mw_form_field_tel.php:81 system/mw_wp_form_admin_page.php:650
+#: form_fields/mw_form_field_tel.php:79 system/mw_wp_form_admin_page.php:474
 msgid "Tel"
 msgstr "電話番号"
 
-#: form_fields/mw_form_field_text.php:87
+#: form_fields/mw_form_field_text.php:85
 msgid "Text"
 msgstr "テキストフィールド"
 
-#: form_fields/mw_form_field_textarea.php:87
+#: form_fields/mw_form_field_textarea.php:85
 msgid "Textarea"
 msgstr "テキストエリア"
 
-#: form_fields/mw_form_field_zip.php:81 system/mw_wp_form_admin_page.php:649
+#: form_fields/mw_form_field_zip.php:79 system/mw_wp_form_admin_page.php:473
 msgid "Zip Code"
 msgstr "郵便番号"
 
-#: mw-wp-form.php:361
+#: mw-wp-form.php:402
 msgid "Validation Object is not a MW Validation Class."
 msgstr ""
 
-#: mw-wp-form.php:565
-msgid "Uploaded from "
-msgstr ""
-
-#: system/mw_validation.php:75
+#: system/mw_validation.php:74
 msgid "This is required."
 msgstr "必須項目です。"
 
-#: system/mw_validation.php:95 system/mw_validation.php:115
+#: system/mw_validation.php:94 system/mw_validation.php:114
 msgid "Please enter."
 msgstr "未入力です。"
 
-#: system/mw_validation.php:137
+#: system/mw_validation.php:138
 msgid "Please enter with a half-width alphabetic character."
 msgstr "半角英字で入力してください。"
 
-#: system/mw_validation.php:157
+#: system/mw_validation.php:160
 msgid "Please enter with a half-width number."
 msgstr "半角数字で入力してください。"
 
-#: system/mw_validation.php:177
+#: system/mw_validation.php:182
 msgid "Please enter with a half-width alphanumeric character."
 msgstr "半角英数字で入力してください。"
 
-#: system/mw_validation.php:197
+#: system/mw_validation.php:204
+msgid "Please enter with a Japanese Katakana."
+msgstr "カタカナで入力してください。"
+
+#: system/mw_validation.php:224
 msgid "This is not the format of a zip code."
 msgstr "郵便番号の形式ではありません。"
 
-#: system/mw_validation.php:224
+#: system/mw_validation.php:249
 msgid "This is not the format of a tel number."
 msgstr "電話番号の形式ではありません。"
 
-#: system/mw_validation.php:256
+#: system/mw_validation.php:281
 msgid "This is not the format of a mail address."
 msgstr "メールアドレスの形式ではありません。"
 
-#: system/mw_validation.php:276
+#: system/mw_validation.php:303
 msgid "This is not the format of a url."
 msgstr "URLの形式ではありません。"
 
-#: system/mw_validation.php:297
+#: system/mw_validation.php:324
 msgid "This is not in agreement."
 msgstr "一致しません。"
 
-#: system/mw_validation.php:321
+#: system/mw_validation.php:350
 msgid "The number of characters is invalid."
 msgstr "文字数が正しくありません。"
 
-#: system/mw_validation.php:357
+#: system/mw_validation.php:388
 msgid "The number of characters is a few."
 msgstr "文字数が足りません。"
 
-#: system/mw_validation.php:381
+#: system/mw_validation.php:414
 msgid "This value is invalid."
 msgstr "値が不正です。"
 
-#: system/mw_validation.php:403
+#: system/mw_validation.php:438
 msgid "This is not the format of a date."
 msgstr "日付の形式ではありません。"
 
-#: system/mw_validation.php:431
+#: system/mw_validation.php:468
 msgid "This file is invalid."
 msgstr "許可されたファイルではありません。"
 
-#: system/mw_validation.php:461
+#: system/mw_validation.php:498
 msgid "This file size is too big."
 msgstr "ファイルサイズが大きすぎます。"
 
-#: system/mw_validation.php:481
+#: system/mw_validation.php:518
 msgid "The contents which you input were judged with spam."
 msgstr "あなたの入力した内容はスパムと判定されました。"
 
-#: system/mw_wp_form_admin_page.php:62
-msgid "CSV Download"
-msgstr "CSVダウンロード"
+#: system/mw_wp_form_admin_page.php:53
+msgid "Your contribution is needed for making this plugin better."
+msgstr "あなたの貢献があればこのプラグインをもっと良くすることができます。"
 
-#: system/mw_wp_form_admin_page.php:159
+#: system/mw_wp_form_admin_page.php:53
+msgid "Donate"
+msgstr "寄付する"
+
+#: system/mw_wp_form_admin_page.php:77
 msgid "Add New Form"
 msgstr "フォームを追加"
 
-#: system/mw_wp_form_admin_page.php:160
+#: system/mw_wp_form_admin_page.php:78
 msgid "Edit Form"
 msgstr "フォームを編集"
 
-#: system/mw_wp_form_admin_page.php:161
+#: system/mw_wp_form_admin_page.php:79
 msgid "New Form"
 msgstr "新しいフォーム"
 
-#: system/mw_wp_form_admin_page.php:162
+#: system/mw_wp_form_admin_page.php:80
 msgid "View Form"
 msgstr "フォームを表示"
 
-#: system/mw_wp_form_admin_page.php:163
+#: system/mw_wp_form_admin_page.php:81
 msgid "Search Forms"
 msgstr "フォームを検索"
 
-#: system/mw_wp_form_admin_page.php:164
+#: system/mw_wp_form_admin_page.php:82
 msgid "No Forms found"
 msgstr "フォームがありません"
 
-#: system/mw_wp_form_admin_page.php:165
+#: system/mw_wp_form_admin_page.php:83
 msgid "No Forms found in Trash"
 msgstr "ゴミ箱にフォームはありません"
 
-#: system/mw_wp_form_admin_page.php:186
-msgid "Edit "
-msgstr "編集"
-
-#: system/mw_wp_form_admin_page.php:187
-msgid "View"
-msgstr "表示"
-
-#: system/mw_wp_form_admin_page.php:188
-msgid "Search"
-msgstr "検索"
-
-#: system/mw_wp_form_admin_page.php:189
-msgid "No data found"
-msgstr "データがありません"
-
-#: system/mw_wp_form_admin_page.php:190
-msgid "No data found in Trash"
-msgstr "ゴミ箱にデータはありません"
-
-#: system/mw_wp_form_admin_page.php:228
+#: system/mw_wp_form_admin_page.php:103
 msgid "Complete Message"
 msgstr "完了画面メッセージ"
 
-#: system/mw_wp_form_admin_page.php:235
+#: system/mw_wp_form_admin_page.php:110
 msgid "URL Options"
 msgstr "URL設定"
 
-#: system/mw_wp_form_admin_page.php:242
+#: system/mw_wp_form_admin_page.php:117
 msgid "Validation Rule"
 msgstr "バリデーションルール"
 
-#: system/mw_wp_form_admin_page.php:249
+#: system/mw_wp_form_admin_page.php:124
 msgid "Form Key"
 msgstr "フォーム識別子"
 
-#: system/mw_wp_form_admin_page.php:256
+#: system/mw_wp_form_admin_page.php:131
 msgid "Automatic Reply Email Options"
 msgstr "自動返信メール設定"
 
-#: system/mw_wp_form_admin_page.php:263
+#: system/mw_wp_form_admin_page.php:138
 msgid "Admin Email Options"
 msgstr "管理者宛メール設定"
 
-#: system/mw_wp_form_admin_page.php:270
+#: system/mw_wp_form_admin_page.php:145
 msgid "settings"
 msgstr "設定"
 
-#: system/mw_wp_form_admin_page.php:277
-msgid "Custom Fields"
-msgstr "カスタムフィールド"
-
-#: system/mw_wp_form_admin_page.php:442
+#: system/mw_wp_form_admin_page.php:264
 msgid "Copy and Paste this shortcode."
 msgstr "このショートコードをコピー＆ペーストしてください。"
 
-#: system/mw_wp_form_admin_page.php:443
+#: system/mw_wp_form_admin_page.php:265
 msgid "The key to use with hook is "
 msgstr "各フックで使用する修飾子は"
 
-#: system/mw_wp_form_admin_page.php:457
+#: system/mw_wp_form_admin_page.php:279
 msgid "Activate Query string of post"
 msgstr "URL引数を有効にする"
 
-#: system/mw_wp_form_admin_page.php:458
+#: system/mw_wp_form_admin_page.php:280
 msgid ""
 "If this field is active, MW WP Form get the post as query string \"post_id\" "
 "and you can use $post's property in editor"
@@ -289,57 +269,57 @@ msgstr ""
 "有効にした場合、MW WP FormはURL引数 ”post_id\" をもとに投稿を取得して、その投"
 "稿（$post） のプロパティを使用できるようになります。"
 
-#: system/mw_wp_form_admin_page.php:459
+#: system/mw_wp_form_admin_page.php:281
 msgid "Example: {ID}, {post_title}, {post_meta} etc..."
 msgstr "例：{ID}、{post_title}、{post_meta}など…"
 
-#: system/mw_wp_form_admin_page.php:462
+#: system/mw_wp_form_admin_page.php:284
 msgid "Saving contact data in database"
 msgstr "問い合わせデータをデータベースに保存"
 
-#: system/mw_wp_form_admin_page.php:466
+#: system/mw_wp_form_admin_page.php:288
 msgid "Akismet Setting"
 msgstr "Akismet 設定"
 
-#: system/mw_wp_form_admin_page.php:481
+#: system/mw_wp_form_admin_page.php:303
 msgid "Input the key to use Akismet."
 msgstr "Akismetを使用する項目のキーを入力してください。"
 
-#: system/mw_wp_form_admin_page.php:506 system/mw_wp_form_admin_page.php:548
+#: system/mw_wp_form_admin_page.php:328 system/mw_wp_form_admin_page.php:370
 msgid "Subject"
 msgstr "件名"
 
-#: system/mw_wp_form_admin_page.php:510 system/mw_wp_form_admin_page.php:552
+#: system/mw_wp_form_admin_page.php:332 system/mw_wp_form_admin_page.php:374
 msgid "Sender"
 msgstr "送信者"
 
-#: system/mw_wp_form_admin_page.php:512 system/mw_wp_form_admin_page.php:517
-#: system/mw_wp_form_admin_page.php:545 system/mw_wp_form_admin_page.php:554
-#: system/mw_wp_form_admin_page.php:559
+#: system/mw_wp_form_admin_page.php:334 system/mw_wp_form_admin_page.php:339
+#: system/mw_wp_form_admin_page.php:367 system/mw_wp_form_admin_page.php:376
+#: system/mw_wp_form_admin_page.php:381
 msgid "If empty:"
 msgstr "未入力の場合:"
 
-#: system/mw_wp_form_admin_page.php:515 system/mw_wp_form_admin_page.php:557
+#: system/mw_wp_form_admin_page.php:337 system/mw_wp_form_admin_page.php:379
 msgid "From ( E-mail address )"
 msgstr "送信元（E-mailアドレス）"
 
-#: system/mw_wp_form_admin_page.php:520 system/mw_wp_form_admin_page.php:562
+#: system/mw_wp_form_admin_page.php:342 system/mw_wp_form_admin_page.php:384
 msgid "Ccontent"
 msgstr "本文"
 
-#: system/mw_wp_form_admin_page.php:522 system/mw_wp_form_admin_page.php:564
+#: system/mw_wp_form_admin_page.php:344 system/mw_wp_form_admin_page.php:386
 msgid "{key} is converted form data."
 msgstr "{キー}でそのフォーム項目に変換されます。"
 
-#: system/mw_wp_form_admin_page.php:525
+#: system/mw_wp_form_admin_page.php:347
 msgid "Automatic reply email"
 msgstr "自動返信メール"
 
-#: system/mw_wp_form_admin_page.php:527
+#: system/mw_wp_form_admin_page.php:349
 msgid "Input the key to use as transmission to automatic reply email."
 msgstr "自動返信メールに使用する項目のキーを入力してください。"
 
-#: system/mw_wp_form_admin_page.php:540
+#: system/mw_wp_form_admin_page.php:362
 msgid ""
 "If Admin Email Options is a blank, Automatic Replay Email Options is used as "
 "Admin Email Options."
@@ -347,93 +327,133 @@ msgstr ""
 "管理者宛メール設定が空のときは自動返信メール設定が管理者宛メール設定が使用さ"
 "れます。"
 
-#: system/mw_wp_form_admin_page.php:543
+#: system/mw_wp_form_admin_page.php:365
 msgid "To ( E-mail address )"
 msgstr "送信先（E-mailアドレス）"
 
-#: system/mw_wp_form_admin_page.php:579
+#: system/mw_wp_form_admin_page.php:401
 msgid "Input Page URL"
 msgstr "入力画面URL"
 
-#: system/mw_wp_form_admin_page.php:585
+#: system/mw_wp_form_admin_page.php:407
 msgid "Confirmation Page URL"
 msgstr "確認画面URL"
 
-#: system/mw_wp_form_admin_page.php:591
+#: system/mw_wp_form_admin_page.php:413
 msgid "Complete Page URL"
 msgstr "完了画面URL"
 
-#: system/mw_wp_form_admin_page.php:597
+#: system/mw_wp_form_admin_page.php:419
 msgid "Validation Error Page URL"
 msgstr "エラー画面URL"
 
-#: system/mw_wp_form_admin_page.php:634
+#: system/mw_wp_form_admin_page.php:457
 msgid "Add Validation rule"
 msgstr "バリデーションルールを追加"
 
-#: system/mw_wp_form_admin_page.php:640
+#: system/mw_wp_form_admin_page.php:463
 msgid "The key which applies validation"
 msgstr "バリデーションを適用する項目"
 
-#: system/mw_wp_form_admin_page.php:644
+#: system/mw_wp_form_admin_page.php:467
 msgid "No empty"
 msgstr "必須項目"
 
-#: system/mw_wp_form_admin_page.php:645
+#: system/mw_wp_form_admin_page.php:468
 msgid "No empty( with checkbox )"
 msgstr "必須項目（チェックボックス）"
 
-#: system/mw_wp_form_admin_page.php:646
+#: system/mw_wp_form_admin_page.php:469
 msgid "Numeric"
 msgstr "半角数字"
 
-#: system/mw_wp_form_admin_page.php:647
+#: system/mw_wp_form_admin_page.php:470
 msgid "Alphabet"
 msgstr "半角英字"
 
-#: system/mw_wp_form_admin_page.php:648
+#: system/mw_wp_form_admin_page.php:471
 msgid "Alphabet and Numeric"
 msgstr "半角英数字"
 
-#: system/mw_wp_form_admin_page.php:651
+#: system/mw_wp_form_admin_page.php:472
+msgid "Japanese Katakana"
+msgstr "カタカナ"
+
+#: system/mw_wp_form_admin_page.php:475
 msgid "E-mail"
 msgstr "メールアドレス"
 
-#: system/mw_wp_form_admin_page.php:652
+#: system/mw_wp_form_admin_page.php:476
 msgid "Date"
 msgstr "日付"
 
-#: system/mw_wp_form_admin_page.php:656
+#: system/mw_wp_form_admin_page.php:480
 msgid "The key at same value"
 msgstr "一致する項目"
 
-#: system/mw_wp_form_admin_page.php:660
+#: system/mw_wp_form_admin_page.php:484
 msgid "The range of the number of characters"
 msgstr "文字数の範囲"
 
-#: system/mw_wp_form_admin_page.php:668
+#: system/mw_wp_form_admin_page.php:492
 msgid "The number of the minimum characters"
 msgstr "最小文字数"
 
-#: system/mw_wp_form_admin_page.php:672
+#: system/mw_wp_form_admin_page.php:496
 msgid "Permitted Extension"
 msgstr "拡張子制限"
 
-#: system/mw_wp_form_admin_page.php:673
+#: system/mw_wp_form_admin_page.php:497
 msgid "Example:jpg or jpg,txt,…"
 msgstr "例：jpg もしくは jpg,txt…"
 
-#: system/mw_wp_form_admin_page.php:676
+#: system/mw_wp_form_admin_page.php:500
 msgid "Permitted file size"
 msgstr "サイズ制限"
 
-#: system/mw_wp_form_admin_page.php:677
+#: system/mw_wp_form_admin_page.php:501
 msgid "bytes"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:714
+#: system/mw_wp_form_contact_data_page.php:92
+msgid "Edit "
+msgstr "編集"
+
+#: system/mw_wp_form_contact_data_page.php:93
+msgid "View"
+msgstr "表示"
+
+#: system/mw_wp_form_contact_data_page.php:94
+msgid "Search"
+msgstr "検索"
+
+#: system/mw_wp_form_contact_data_page.php:95
+msgid "No data found"
+msgstr "データがありません"
+
+#: system/mw_wp_form_contact_data_page.php:96
+msgid "No data found in Trash"
+msgstr "ゴミ箱にデータはありません"
+
+#: system/mw_wp_form_contact_data_page.php:137
+msgid "CSV Download"
+msgstr "CSVダウンロード"
+
+#: system/mw_wp_form_contact_data_page.php:225
+msgid "Custom Fields"
+msgstr "カスタムフィールド"
+
+#: system/mw_wp_form_contact_data_page.php:249
 msgid "Registed Date"
 msgstr "登録日時"
+
+#: system/mw_wp_form_contact_data_page.php:329
+msgid "Memo"
+msgstr "メモ"
+
+#: system/mw_wp_form_file.php:144
+msgid "Uploaded from "
+msgstr ""
 
 #. Plugin Name of the plugin/theme
 msgid "MW WP Form"
