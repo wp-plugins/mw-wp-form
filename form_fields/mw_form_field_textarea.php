@@ -3,11 +3,11 @@
  * Name: MW Form Field TextArea
  * URI: http://2inc.org
  * Description: テキストエリアを出力。
- * Version: 1.1
+ * Version: 1.2.2
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
- * Created: December 14, 2012
- * Modified: May 29, 2013
+ * Created : December 14, 2012
+ * Modified: December 3, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -35,45 +35,45 @@ class mw_form_field_textarea extends mw_form_field {
 	/**
 	 * setDefaults
 	 * $this->defaultsを設定し返す
-	 * @return	Array	defaults
+	 * @return array
 	 */
 	protected function setDefaults() {
 		return array(
-			'name'       => '',
-			'cols'       => 50,
-			'rows'       => 5,
-			'value'      => '',
-			'show_error' => 'true',
+			'name'        => '',
+			'cols'        => 50,
+			'rows'        => 5,
+			'value'       => '',
+			'placeholder' => '',
+			'show_error'  => 'true',
 		);
 	}
 
 	/**
 	 * inputPage
 	 * 入力ページでのフォーム項目を返す
-	 * @param	Array	$atts
-	 * @return	String	HTML
+	 * @return string html
 	 */
-	protected function inputPage( $atts ) {
-		$_ret = $this->Form->textarea( $atts['name'], array(
-			'cols' => $atts['cols'],
-			'rows' => $atts['rows'],
-			'value' => $atts['value'],
+	protected function inputPage() {
+		$_ret = $this->Form->textarea( $this->atts['name'], array(
+			'cols' => $this->atts['cols'],
+			'rows' => $this->atts['rows'],
+			'value' => $this->atts['value'],
+			'placeholder' => $this->atts['placeholder'],
 		) );
-		if ( $atts['show_error'] !== 'false' )
-			$_ret .= $this->getError( $atts['name'] );
+		if ( $this->atts['show_error'] !== 'false' )
+			$_ret .= $this->getError( $this->atts['name'] );
 		return $_ret;
 	}
 
 	/**
-	 * previewPage
+	 * confirmPage
 	 * 確認ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function previewPage( $atts ) {
-		$value = $this->Form->getValue( $atts['name'] );
+	protected function confirmPage() {
+		$value = $this->Form->getValue( $this->atts['name'] );
 		$_ret  = nl2br( $value );
-		$_ret .= $this->Form->hidden( $atts['name'], $value );
+		$_ret .= $this->Form->hidden( $this->atts['name'], $value );
 		return $_ret;
 	}
 
