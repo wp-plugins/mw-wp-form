@@ -3,11 +3,11 @@
  * Name: MW Form Field Text
  * URI: http://2inc.org
  * Description: テキストフィールドを出力。
- * Version: 1.2.1
+ * Version: 1.2.2
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: November 2, 2013
+ * Modified: December 3, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -35,28 +35,30 @@ class mw_form_field_text extends mw_form_field {
 	/**
 	 * setDefaults
 	 * $this->defaultsを設定し返す
-	 * @return	Array	defaults
+	 * @return array
 	 */
 	protected function setDefaults() {
 		return array(
-			'name' => '',
-			'size' => 60,
-			'maxlength' => 255,
-			'value' => '',
-			'show_error' => 'true'
+			'name'        => '',
+			'size'        => 60,
+			'maxlength'   => 255,
+			'value'       => '',
+			'placeholder' => '',
+			'show_error'  => 'true',
 		);
 	}
 
 	/**
 	 * inputPage
 	 * 入力ページでのフォーム項目を返す
-	 * @return	String	HTML
+	 * @return string html
 	 */
 	protected function inputPage() {
 		$_ret = $this->Form->text( $this->atts['name'], array(
 			'size'      => $this->atts['size'],
 			'maxlength' => $this->atts['maxlength'],
 			'value'     => $this->atts['value'],
+			'placeholder'     => $this->atts['placeholder'],
 		) );
 		if ( $this->atts['show_error'] !== 'false' )
 			$_ret .= $this->getError( $this->atts['name'] );
@@ -73,9 +75,6 @@ class mw_form_field_text extends mw_form_field {
 		$_ret  = $value;
 		$_ret .= $this->Form->hidden( $this->atts['name'], $value );
 		return $_ret;
-	}
-	protected function previewPage() {
-		return $this->confirmPage();
 	}
 
 	/**

@@ -1,9 +1,9 @@
 <?php
 /**
  * Plugin Name: MW WP Form
- * Plugin URI: http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
+ * Plugin URI: http://2inc.org/manual-mw-wp-form/
  * Description: MW WP Form can create mail form with a confirmation screen.
- * Version: 1.1.5
+ * Version: 1.2.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : September 25, 2012
@@ -69,6 +69,7 @@ class mw_wp_form {
 		'complete_url' => '',
 		'validation_error_url' => '',
 		'validation' => array(),
+		'use_template' => null,
 	);
 
 	/**
@@ -115,16 +116,17 @@ class mw_wp_form {
 		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_validation.php' );
 		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_wp_form_data.php' );
 		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_wp_form_file.php' );
-		add_action( 'wp', array( $this, 'main' ) );
+		add_action( 'get_header', array( $this, 'main' ) );
 		add_action( 'wp_print_styles', array( $this, 'original_style' ) );
-		add_action( 'parse_request', array( $this, 'remote_query_vars_from_post' ) );
+		add_action( 'wp_print_scripts', array( $this, 'original_script' ) );
+		add_action( 'parse_request', array( $this, 'remove_query_vars_from_post' ) );
 	}
 
 	/**
-	 * remote_query_vars_from_post
+	 * remove_query_vars_from_post
 	 * WordPressへのリクエストに含まれている、$_POSTの値を削除
 	 */
-	public function remote_query_vars_from_post( $query ) {
+	public function remove_query_vars_from_post( $query ) {
 		if ( strtolower( $_SERVER['REQUEST_METHOD'] ) === 'post' && isset( $_POST['token'] ) ) {
 			foreach ( $_POST as $key => $value ) {
 				if ( $key == 'token' )
@@ -190,8 +192,18 @@ class mw_wp_form {
 	 */
 	public function original_style() {
 		$url = plugin_dir_url( __FILE__ );
-		wp_register_style( MWF_Config::DOMAIN, $url.'css/style.css' );
+		wp_register_style( MWF_Config::DOMAIN, $url . 'css/style.css' );
 		wp_enqueue_style( MWF_Config::DOMAIN );
+	}
+
+	/**
+	 * original_script
+	 * CSS適用
+	 */
+	public function original_script() {
+		$url = plugin_dir_url( __FILE__ );
+		wp_register_script( MWF_Config::DOMAIN, $url . 'js/form.js', array( 'jquery' ), false, true );
+		wp_enqueue_script( MWF_Config::DOMAIN );
 	}
 
 	/**
@@ -199,15 +211,20 @@ class mw_wp_form {
 	 * 表示画面でのプラグインの処理等。
 	 */
 	public function main() {
-		global $post;
-		if ( !is_singular() ) return;
-		if ( empty( $post->ID ) ) return;
+		global $post, $template;
 
 		// URL設定を取得
 		add_shortcode( 'mwform', array( $this, '_meta_mwform' ) );
 		// formkeyでのフォーム生成の場合はそれをもとに設定を取得
 		add_shortcode( 'mwform_formkey', array( $this, '_meta_mwform_formkey' ) );
-		preg_match_all( '/' . get_shortcode_regex() . '/s', $post->post_content, $matches, PREG_SET_ORDER );
+
+		if ( is_singular() && !empty( $post->ID ) ) {
+			preg_match_all( '/' . get_shortcode_regex() . '/s', $post->post_content, $matches, PREG_SET_ORDER );
+		}
+		if ( empty( $matches ) && !( defined( 'MWFORM_NOT_USE_TEMPLATE' ) && MWFORM_NOT_USE_TEMPLATE === true ) ) {
+			$template_data = @file_get_contents( $template );
+			preg_match_all( '/' . get_shortcode_regex() . '/s', $template_data, $matches, PREG_SET_ORDER );
+		}
 		if ( !empty( $matches ) ) {
 			foreach ( $matches as $shortcode ) {
 				if ( in_array( $shortcode[2], array( 'mwform', 'mwform_formkey' ) ) ) {
@@ -307,7 +324,7 @@ class mw_wp_form {
 	/**
 	 * _meta_mwform
 	 * [mwform〜]を解析し、プロパティを設定
-	 * @param	Array	( input, preview, confirm complete, key )
+	 * @param	Array	( input, confirm complete, key )
 	 * @example
 	 * 		同一画面変遷の場合
 	 * 			[mwform key="hoge"]〜[/mwform]
@@ -321,7 +338,6 @@ class mw_wp_form {
 	public function _meta_mwform( $atts ) {
 		$atts = shortcode_atts( array(
 			'input' => '',
-			'preview' => '',
 			'confirm' => '',
 			'complete' => '',
 			'validation_error' => '',
@@ -331,8 +347,6 @@ class mw_wp_form {
 		$this->input = $this->parse_url( $atts['input'] );
 		if ( $atts['confirm'] ) {
 			$this->confirm = $this->parse_url( $atts['confirm'] );
-		} elseif ( $atts['preview'] ) {
-			$this->confirm = $this->parse_url( $atts['preview'] );
 		} else {
 			$this->confirm = $this->parse_url( $atts['confirm'] );
 		}
@@ -716,15 +730,15 @@ class mw_wp_form {
 		}
 		$url = preg_replace( '/([^:])\/+/', '$1/', $url );
 
-		// url引数が無効の場合、URL設定 で ?post_id が使われている場合はそれが使用される
-		// url引数が有効の場合は URL設定 で ?post_id が使われていても $_GET['post_id'] で上書きされる
-		$query_string = array_merge( $_GET, $query_string );
-		if ( !empty( $this->options_by_formkey['querystring'] )
-			 && isset( $_GET['post_id'] )
-			 && MWF_Functions::is_numeric( $_GET['post_id'] ) ) {
-
-			$query_string['post_id'] = $_GET['post_id'];
+		// URL設定でURL引数が使用されている場合はそれを使う。
+		// 「URL引数を有効にする」が有効の場合は $_GET を利用する（重複するURL引数はURL設定のものが優先される ※post_id除く）
+		if ( !empty( $this->options_by_formkey['querystring'] ) ) {
+			$query_string = array_merge( $_GET, $query_string );
+			if ( isset( $_GET['post_id'] ) && MWF_Functions::is_numeric( $_GET['post_id'] ) ) {
+				$query_string['post_id'] = $_GET['post_id'];
+			}
 		}
+
 		if ( !empty( $query_string ) )
 			$url = $url . '?' . http_build_query( $query_string, null, '&' );
 		return $url;

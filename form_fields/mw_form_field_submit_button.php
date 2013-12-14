@@ -4,11 +4,11 @@
  * URI: http://2inc.org
  * Description: サブミットボタンを出力。
  * Description: 確認ボタンと送信ボタンを自動出力。
- * Version: 1.2.1
+ * Version: 1.2.2
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: November 26, 2013
+ * Modified: December 3, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -41,7 +41,6 @@ class mw_form_field_submit_button extends mw_form_field {
 	protected function setDefaults() {
 		return array(
 			'name' => '',
-			'preview_value' => __( 'Confirm', MWF_Config::DOMAIN ),
 			'confirm_value' => __( 'Confirm', MWF_Config::DOMAIN ),
 			'submit_value'  => __( 'Send', MWF_Config::DOMAIN ),
 		);
@@ -55,8 +54,6 @@ class mw_form_field_submit_button extends mw_form_field {
 	protected function inputPage() {
 		if ( !empty( $this->atts['confirm_value'] ) ) {
 			return $this->Form->submit( $this->Form->getConfirmButtonName(), $this->atts['confirm_value'] );
-		} elseif ( !empty( $this->atts['preview_value'] ) ) {
-			return $this->Form->submit( $this->Form->getConfirmButtonName(), $this->atts['preview_value'] );
 		}
 		return $this->Form->submit( $this->atts['name'], $this->atts['submit_value'] );
 	}
@@ -68,9 +65,6 @@ class mw_form_field_submit_button extends mw_form_field {
 	 */
 	protected function confirmPage() {
 		return $this->Form->submit( $this->atts['name'], $this->atts['submit_value'] );
-	}
-	protected function previewPage() {
-		return $this->confirmPage();
 	}
 
 	/**

@@ -3,11 +3,11 @@
  * Name: MW WP Form Admin Page
  * URI: http://2inc.org
  * Description: 管理画面クラス
- * Version: 1.7.0
+ * Version: 1.7.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : February 21, 2013
- * Modified: November 26, 2013
+ * Modified: December 3, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -189,7 +189,7 @@ class MW_WP_Form_Admin_Page {
 	 */
 	public function admin_style() {
 		$post_type = get_post_type();
-		if ( MWF_Config::NAME == $post_type ) {
+		if ( isset( $_GET['post_type'] ) && MWF_Config::NAME === $_GET['post_type'] || MWF_Config::NAME == $post_type ) {
 			$url = plugin_dir_url( __FILE__ );
 			wp_register_style( MWF_Config::DOMAIN . '-admin', $url . '../css/admin.css' );
 			wp_enqueue_style( MWF_Config::DOMAIN . '-admin' );
@@ -296,7 +296,7 @@ class MW_WP_Form_Admin_Page {
 		?>
 		<p>
 			<label><input type="checkbox" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[querystring]" value="1" <?php checked( $this->get_post_data( 'querystring' ), 1 ); ?> /> <?php _e( 'Activate Query string of post', MWF_Config::DOMAIN ); ?></label><br />
-			<span class="mwf_note"><?php _e( 'If this field is active, MW WP Form get the post as query string "post_id" and you can use $post\'s property in editor', MWF_Config::DOMAIN ); ?><br />
+			<span class="mwf_note"><?php _e( 'If this field is active, MW WP Form get query string. And get post data from query string "post_id". You can use $post\'s property in editor.', MWF_Config::DOMAIN ); ?><br />
 			<?php _e( 'Example: {ID}, {post_title}, {post_meta} etc...', MWF_Config::DOMAIN ); ?></span>
 		</p>
 		<p>
@@ -460,6 +460,7 @@ class MW_WP_Form_Admin_Page {
 			'alpha'        => '',
 			'alphanumeric' => '',
 			'katakana'     => '',
+			'hiragana'     => '',
 			'zip'          => '',
 			'tel'          => '',
 			'mail'         => '',
@@ -489,6 +490,7 @@ class MW_WP_Form_Admin_Page {
 							<label><input type="checkbox" <?php checked( $value['alpha'], 1 ); ?> name="<?php echo MWF_Config::NAME; ?>[validation][<?php echo $key; ?>][alpha]" value="1" /><?php _e( 'Alphabet', MWF_Config::DOMAIN ); ?></label>
 							<label><input type="checkbox" <?php checked( $value['alphanumeric'], 1 ); ?> name="<?php echo MWF_Config::NAME; ?>[validation][<?php echo $key; ?>][alphanumeric]" value="1" /><?php _e( 'Alphabet and Numeric', MWF_Config::DOMAIN ); ?></label>
 							<label><input type="checkbox" <?php checked( $value['katakana'], 1 ); ?> name="<?php echo MWF_Config::NAME; ?>[validation][<?php echo $key; ?>][katakana]" value="1" /><?php _e( 'Japanese Katakana', MWF_Config::DOMAIN ); ?></label>
+							<label><input type="checkbox" <?php checked( $value['hiragana'], 1 ); ?> name="<?php echo MWF_Config::NAME; ?>[validation][<?php echo $key; ?>][hiragana]" value="1" /><?php _e( 'Japanese Hiragana', MWF_Config::DOMAIN ); ?></label>
 							<label><input type="checkbox" <?php checked( $value['zip'], 1 ); ?> name="<?php echo MWF_Config::NAME; ?>[validation][<?php echo $key; ?>][zip]" value="1" /><?php _e( 'Zip Code', MWF_Config::DOMAIN ); ?></label>
 							<label><input type="checkbox" <?php checked( $value['tel'], 1 ); ?> name="<?php echo MWF_Config::NAME; ?>[validation][<?php echo $key; ?>][tel]" value="1" /><?php _e( 'Tel', MWF_Config::DOMAIN ); ?></label>
 							<label><input type="checkbox" <?php checked( $value['mail'], 1 ); ?> name="<?php echo MWF_Config::NAME; ?>[validation][<?php echo $key; ?>][mail]" value="1" /><?php _e( 'E-mail', MWF_Config::DOMAIN ); ?></label>

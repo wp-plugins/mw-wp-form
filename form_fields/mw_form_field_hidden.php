@@ -3,11 +3,11 @@
  * Name: MW Form Field Hidden
  * URI: http://2inc.org
  * Description: hiddenフィールドを出力。
- * Version: 1.3.1
+ * Version: 1.3.2
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: November 26, 2013
+ * Modified: December 3, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -70,9 +70,6 @@ class mw_form_field_hidden extends mw_form_field {
 			$echo_value = $value;
 		}
 		return $echo_value . $this->Form->hidden( $this->atts['name'], $value );
-	}
-	protected function previewPage() {
-		return $this->confirmPage();
 	}
 
 	/**

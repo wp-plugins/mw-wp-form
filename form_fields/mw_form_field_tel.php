@@ -3,11 +3,11 @@
  * Name: MW Form Field Tel
  * URI: http://2inc.org
  * Description: 電話番号フィールドを出力。
- * Version: 1.2.1
+ * Version: 1.2.2
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: November 26, 2013
+ * Modified: December 3, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -41,6 +41,7 @@ class mw_form_field_tel extends mw_form_field {
 		return array(
 			'name'       => '',
 			'show_error' => 'true',
+			'conv_half_alphanumeric' => 'true',
 		);
 	}
 
@@ -50,7 +51,11 @@ class mw_form_field_tel extends mw_form_field {
 	 * @return	String	HTML
 	 */
 	protected function inputPage() {
-		$_ret = $this->Form->tel( $this->atts['name'] );
+		$conv_half_alphanumeric = false;
+		if ( $this->atts['conv_half_alphanumeric'] === 'true' ) {
+			$conv_half_alphanumeric = true;
+		}
+		$_ret = $this->Form->tel( $this->atts['name'], array( 'conv-half-alphanumeric' => $conv_half_alphanumeric ) );
 		if ( $this->atts['show_error'] !== 'false' )
 			$_ret .= $this->getError( $this->atts['name'] );
 		return $_ret;
@@ -67,9 +72,6 @@ class mw_form_field_tel extends mw_form_field {
 		$_ret .= $this->Form->hidden( $this->atts['name'].'[data]', $value );
 		$_ret .= $this->Form->separator( $this->atts['name'] );
 		return $_ret;
-	}
-	protected function previewPage() {
-		return $this->confirmPage();
 	}
 
 	/**

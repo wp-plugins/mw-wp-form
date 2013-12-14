@@ -3,11 +3,11 @@
  * Name: MW Form Field
  * URI: http://2inc.org
  * Description: フォームフィールドの抽象クラス
- * Version: 1.3.1
+ * Version: 1.3.2
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: December 26, 2013
+ * Modified: December 3, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -74,8 +74,10 @@ abstract class mw_form_field {
 	protected function getError( $key ) {
 		$_ret = '';
 		if ( is_array( $this->Error->getError( $key ) ) ) {
-			foreach ( $this->Error->getError( $key ) as $error ) {
-				$_ret .= sprintf( '<span class="error">%s</span>', htmlspecialchars( $error, ENT_QUOTES ) );
+			foreach ( $this->Error->getError( $key ) as $rule => $error ) {
+				$_ret .= sprintf( '<span class="error">%s</span>',
+					esc_html( apply_filters( 'mwform_error_message_' . $this->key, $error, $key, $rule ) )
+				);
 			}
 		}
 		return $_ret;
@@ -112,9 +114,6 @@ abstract class mw_form_field {
 	abstract protected function confirmPage();
 	public function _confirmPage( $atts ) {
 		$this->atts = shortcode_atts( $this->defaults, $atts );
-		return $this->confirmPage();
-	}
-	protected function previewPage() {
 		return $this->confirmPage();
 	}
 

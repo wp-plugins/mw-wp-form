@@ -3,11 +3,11 @@
  * Name: MW Form
  * URI: http://2inc.org
  * Description: フォームクラス
- * Version: 1.3.7
+ * Version: 1.3.8
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : September 25, 2012
- * Modified: December 2, 2013
+ * Modified: December 3, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -33,7 +33,6 @@ class MW_Form {
 	protected $data;					// データ
 	protected $Session;					// sessionオブジェクト
 	protected $confirmButton = 'submitConfirm';	// 確認ボタンの名前
-	protected $previewButton = 'submitPreview';	// 確認ボタンの名前
 	protected $backButton = 'submitBack';		// 戻るボタンの名前
 	protected $modeCheck = 'input';
 	protected $method = 'post';
@@ -112,8 +111,6 @@ class MW_Form {
 			$backButton = $this->data[$this->backButton];
 		} elseif ( isset( $this->data[$this->confirmButton] ) ) {
 			$confirmButton = $this->data[$this->confirmButton];
-		} elseif ( isset( $this->data[$this->previewButton] ) ) {
-			$confirmButton = $this->data[$this->previewButton];
 		}
 		$_ret = 'input';
 		if ( isset( $backButton ) ) {
@@ -324,20 +321,32 @@ class MW_Form {
 	/**
 	 * text
 	 * input[type=text]タグ生成
-	 * @param	String	name属性
-	 * 			Array	( 'size' =>, 'maxlength' =>, 'value' => )
-	 * @return	String	htmlタグ
+	 * @param string $name name属性
+	 * @param array
+	 * @return string html
 	 */
 	public function text( $name, $options = array() ) {
 		$defaults = array(
 			'size' => 60,
 			'maxlength' => 255,
 			'value' => '',
+			'conv-half-alphanumeric' => false,
+			'placeholder' => '',
 		);
 		$options = array_merge( $defaults, $options );
-		$value = ( isset( $this->data[$name] ) )? $this->data[$name] : $options['value'];
-		$_ret = sprintf( '<input type="text" name="%s" value="%s" size="%d" maxlength="%d" />',
-			esc_attr( $name ), esc_attr( $value ), esc_attr( $options['size'] ), esc_attr( $options['maxlength'] )
+		$value = ( isset( $this->data[$name] ) ) ? $this->data[$name] : $options['value'];
+		$placeholder = ( !empty( $options['placeholder'] ) ) ? 'placeholder="' . esc_attr( $options['placeholder'] ) . '"' : '';
+		$dataConvHalfAlphanumeric = null;
+		if ( $options['conv-half-alphanumeric'] === true ) {
+			$dataConvHalfAlphanumeric = 'data-conv-half-alphanumeric="true"';
+		}
+		$_ret = sprintf( '<input type="text" name="%s" value="%s" size="%d" maxlength="%d" %s %s />',
+			esc_attr( $name ),
+			esc_attr( $value ),
+			esc_attr( $options['size'] ),
+			esc_attr( $options['maxlength'] ),
+			$placeholder,
+			$dataConvHalfAlphanumeric
 		);
 		return $_ret;
 	}
@@ -350,7 +359,7 @@ class MW_Form {
 	 * @return	String	htmlタグ
 	 */
 	public function hidden( $name, $value ) {
-		//$value = ( isset( $this->data[$name] ) )? $this->data[$name] : $value;
+		$value = ( isset( $this->data[$name] ) )? $this->data[$name] : $value;
 		if ( is_array( $value ) )
 			$value = $this->getZipValue( $name );
 		$_ret = sprintf( '<input type="hidden" name="%s" value="%s" />', esc_attr( $name ), esc_attr( $value ) );
@@ -382,9 +391,16 @@ class MW_Form {
 	 * zip
 	 * 郵便番号フィールド生成
 	 * @param	String	name属性
+	 * @param   Array   $options
 	 * @return	String	htmlタグ
 	 */
-	public function zip( $name ) {
+	public function zip( $name, $options = array() ) {
+		$defaults = array(
+			'conv-half-alphanumeric' => false,
+		);
+		$options = array_merge( $defaults, $options );
+
+		$value = '';
 		$separator = '-';
 		if ( isset( $this->data[$name]['data'] ) ) {
 			if ( is_array( $this->data[$name]['data'] ) ) {
@@ -393,12 +409,30 @@ class MW_Form {
 				$value = explode( $separator, $this->data[$name]['data'] );
 			}
 		}
-		$value0 = ( isset( $value[0] ) )? $value[0] : '';
-		$value1 = ( isset( $value[1] ) )? $value[1] : '';
-		$_ret = '〒';
-		$_ret .= $this->text( $name.'[data][0]', array( 'size' => 4, 'maxlength' => 3, 'value' => $value0 ) );
-		$_ret .= ' '.$separator.' ';
-		$_ret .= $this->text( $name.'[data][1]', array( 'size' => 5, 'maxlength' => 4, 'value' => $value1 ) );
+
+		$values = array( '', '' );
+		if ( is_array( $value ) ) {
+			foreach ( $value as $key => $val ) {
+				if ( $key === 0 || $key === 1 ) {
+					$values[$key] = $val;
+				}
+			}
+		}
+
+		$_ret  = '〒';
+		$_ret .= $this->text( $name . '[data][0]', array(
+			'size' => 4,
+			'maxlength' => 3,
+			'value' => $values[0],
+			'conv-half-alphanumeric' => $options['conv-half-alphanumeric'],
+		) );
+		$_ret .= ' ' . $separator . ' ';
+		$_ret .= $this->text( $name . '[data][1]', array(
+			'size' => 5,
+			'maxlength' => 4,
+			'value' => $values[1],
+			'conv-half-alphanumeric' => $options['conv-half-alphanumeric'],
+		) );
 		$_ret .= $this->separator( $name, $separator );
 		return $_ret;
 	}
@@ -407,9 +441,16 @@ class MW_Form {
 	 * tel
 	 * 電話番号フィールド生成
 	 * @param	String	name属性
+	 * @param   Array   $options
 	 * @return	String	htmlタグ
 	 */
-	public function tel( $name ) {
+	public function tel( $name, $options = array() ) {
+		$defaults = array(
+			'conv-half-alphanumeric' => false,
+		);
+		$options = array_merge( $defaults, $options );
+
+		$value = '';
 		$separator = '-';
 		if ( isset( $this->data[$name]['data'] ) ) {
 			if ( is_array( $this->data[$name]['data'] ) ) {
@@ -418,15 +459,37 @@ class MW_Form {
 				$value = explode( $separator, $this->data[$name]['data'] );
 			}
 		}
-		$value0 = ( isset( $value[0] ) )? $value[0] : '';
-		$value1 = ( isset( $value[1] ) )? $value[1] : '';
-		$value2 = ( isset( $value[2] ) )? $value[2] : '';
+
+		$values = array( '', '', '' );
+		if ( is_array( $value ) ) {
+			foreach ( $value as $key => $val ) {
+				if ( $key === 0 || $key === 1 || $key === 2 ) {
+					$values[$key] = $val;
+				}
+			}
+		}
+
 		$_ret = '';
-		$_ret .= $this->text( $name.'[data][0]', array( 'size' => 6, 'maxlength' => 5, 'value' => $value0 ) );
-		$_ret .= ' '.$separator.' ';
-		$_ret .= $this->text( $name.'[data][1]', array( 'size' => 5, 'maxlength' => 4, 'value' => $value1 ) );
-		$_ret .= ' '.$separator.' ';
-		$_ret .= $this->text( $name.'[data][2]', array( 'size' => 5, 'maxlength' => 4, 'value' => $value2 ) );
+		$_ret .= $this->text( $name . '[data][0]', array(
+			'size' => 6,
+			'maxlength' => 5,
+			'value' => $values[0],
+			'conv-half-alphanumeric' => $options['conv-half-alphanumeric'],
+		) );
+		$_ret .= ' ' . $separator . ' ';
+		$_ret .= $this->text( $name . '[data][1]', array(
+			'size' => 5,
+			'maxlength' => 4,
+			'value' => $values[1],
+			'conv-half-alphanumeric' => $options['conv-half-alphanumeric'],
+		) );
+		$_ret .= ' ' . $separator . ' ';
+		$_ret .= $this->text( $name . '[data][2]', array(
+			'size' => 5,
+			'maxlength' => 4,
+			'value' => $values[2],
+			'conv-half-alphanumeric' => $options['conv-half-alphanumeric'],
+		) );
 		$_ret .= $this->separator( $name, $separator );
 		return $_ret;
 	}
@@ -434,20 +497,26 @@ class MW_Form {
 	/**
 	 * textarea
 	 * textareaタグ生成
-	 * @param	String	name属性
-	 * 			Array	( 'cols' =>, 'rows' =>, 'value' => )
-	 * @return	String	htmlタグ
+	 * @param string $name name属性
+	 * @param array $options
+	 * @return string html
 	 */
 	public function textarea( $name, $options = array() ) {
 		$defaults = array(
 			'cols' => 50,
 			'rows' => 5,
-			'value' => ''
+			'value' => '',
+			'placeholder' => '',
 		);
 		$options = array_merge( $defaults, $options );
 		$value = ( isset( $this->data[$name] ) )? $this->data[$name] : $options['value'];
-		$_ret = sprintf( '<textarea name="%s" cols="%d" rows="%d">%s</textarea>',
-			esc_attr( $name ), esc_attr( $options['cols'] ), esc_attr( $options['rows'] ), esc_html( $value )
+		$placeholder = ( !empty( $options['placeholder'] ) ) ? 'placeholder="' . esc_attr( $options['placeholder'] ) . '"' : '';
+		$_ret = sprintf( '<textarea name="%s" cols="%d" rows="%d" %s>%s</textarea>',
+			esc_attr( $name ),
+			esc_attr( $options['cols'] ),
+			esc_attr( $options['rows'] ),
+			$placeholder,
+			esc_html( $value )
 		);
 		return $_ret;
 	}

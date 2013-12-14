@@ -3,8 +3,8 @@ Contributors: inc2734
 Donate link: http://www.amazon.co.jp/registry/wishlist/39ANKRNSTNW40
 Tags: plugin, form, confirm, preview, shortcode
 Requires at least: 3.4
-Tested up to: 3.6.1
-Stable tag: 1.1.5
+Tested up to: 3.8.0
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -26,7 +26,7 @@ MW WP Form はショートコードを使って確認画面付きのメールフ
 * 同一URL・個別URLでの画面変遷が可能
 * 豊富なバリデーションルール
 
-http://2inc.org/manual-mw-wp-form/
+http://plugins.2inc.org/mw-wp-form/
 http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 
 == Installation ==
@@ -36,6 +36,19 @@ http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 1. You can create a form by settings page.
 
 == Changelog ==
+
+= 1.2.0 =
+* Added   : 電話番号、郵便番号フィールドはデフォルトで全角 -> 半角置換
+* Added   : mwform_error_message_識別子 フィルターフック追加
+* Added   : ひらがな バリデーション項目を追加
+* Added   : テンプレートでもショートコード [mwform_formkey] を実行可能に
+* Added   : Support placeholder in input, textarea
+* Changed : MW_Form::previewPage() -> MW_Form::confirmPage()
+* Changed : [mwform_submitButton preview_value=""] -> [mwform_submitButton confirm_value=""]
+* Changed : [mwform preview=""] -> [mwform confirm=""]
+* Changed : [mwform_previewButton] -> [mwform_confirmButton]
+* Changed : URL引数を有効にする の場合のみURL引数が利用されるように変更（URL設定で利用されているものは除く）
+* Bug fix : 入力画面にpostしたときにhiddenフィールドの値がリセットされる（引き継がれない）バグを修正
 
 = 1.1.5 =
 * Bug fix : $MW_Mail->createBody()のバグ修正

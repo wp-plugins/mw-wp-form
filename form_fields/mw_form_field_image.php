@@ -3,11 +3,11 @@
  * Name: MW Form Field Image
  * URI: http://2inc.org
  * Description: 画像アップロードフィールドを出力。
- * Version: 1.2.1
+ * Version: 1.2.2
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : May 17, 2013
- * Modified: November 26, 2013
+ * Modified: December 3, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -81,9 +81,6 @@ class mw_form_field_image extends mw_form_field {
 			$_ret .= '</div>';
 			return $_ret;
 		}
-	}
-	protected function previewPage() {
-		return $this->confirmPage();
 	}
 
 	/**

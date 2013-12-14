@@ -3,11 +3,11 @@
  * Name: MW WP Form File
  * URI: http://2inc.org
  * Description: Tempディレクトリ、ファイルアップロードの処理を行うクラス
- * Version: 1.0.2
+ * Version: 1.0.3
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : October 10, 2013
- * Modified: October 31, 2013
+ * Modified: December 11, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -208,7 +208,7 @@ class MW_WP_Form_File {
 		$_ret = false;
 		$temp_dir = $this->getTempDir();
 		$temp_dir = $temp_dir['dir'];
-		if ( !file_exists( $temp_dir ) ) {
+		if ( !file_exists( $temp_dir ) && !is_writable( $temp_dir ) ) {
 			$_ret = wp_mkdir_p( trailingslashit( $temp_dir ) );
 			@chmod( $temp_dir, 0733 );
 			return $_ret;
