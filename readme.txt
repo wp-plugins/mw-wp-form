@@ -27,7 +27,6 @@ MW WP Form はショートコードを使って確認画面付きのメールフ
 * 豊富なバリデーションルール
 
 http://plugins.2inc.org/mw-wp-form/
-http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 
 == Installation ==
 
@@ -35,7 +34,25 @@ http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 1. Activate the plugin through the 'Plugins' menu in WordPress
 1. You can create a form by settings page.
 
+== Frequently Asked Questions ==
+
+Do you have questions or issues with MW WP Form? Use these support channels appropriately.
+
+1. [Official](http://plugins.2inc.org/mw-wp-form/)
+1. [Support Forum](http://wordpress.org/support/plugin/mw-wp-form)
+
+== Screenshots ==
+
+1. screenshot-1.png
+
 == Changelog ==
+
+= 1.2.1 =
+* Bug fix : 管理者宛メール本文入力欄のサイズ
+* Bug fix : WM_Form::zip, WM_Form::tel
+* Bug fix : MW_Validation::fileType, MW_Validation::fileSize
+* Change  : jquery.ui.css のプロトコル指定、バージョンを変更
+* Added   : mwform_validation_xxx フィルターフックに引数を追加（$data）
 
 = 1.2.0 =
 * Added   : 電話番号、郵便番号フィールドはデフォルトで全角 -> 半角置換

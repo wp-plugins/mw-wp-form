@@ -475,9 +475,9 @@ class MW_Validation {
 	/**
 	 * fileType
 	 * ファイル名が指定した拡張子を含む。types は , 区切り
-	 * @param	String	キー
-	 *			Array	( 'types' =>, 'message' => )
-	 * @return	String	エラーメッセージ
+	 * @param string $key name属性値
+	 * @param array $options
+	 * @return string エラーメッセージ
 	 */
 	public function fileType( $key, $options = array() ) {
 		$_ret = '';
@@ -506,14 +506,14 @@ class MW_Validation {
 	/**
 	 * fileSize
 	 * ファイルが指定したサイズより小さい
-	 * @param	String	キー
-	 *			Array	( 'bytes' =>, 'message' => )
-	 * @return	String	エラーメッセージ
+	 * @param string $key name属性値
+	 * @param array $options
+	 * @return string エラーメッセージ
 	 */
 	public function fileSize( $key, $options = array() ) {
 		$_ret = '';
-		if ( isset( $_FILES[$key] ) ) {
-			$file = $_FILES[$key];
+		if ( isset( $this->data[MWF_Config::UPLOAD_FILES][$key] ) ) {
+			$file = $this->data[MWF_Config::UPLOAD_FILES][$key];
 			if ( !empty( $file['size'] ) ) {
 				$defaults = array(
 					'bytes' => '0',

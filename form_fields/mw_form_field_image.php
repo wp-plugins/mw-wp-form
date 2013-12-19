@@ -3,11 +3,11 @@
  * Name: MW Form Field Image
  * URI: http://2inc.org
  * Description: 画像アップロードフィールドを出力。
- * Version: 1.2.2
+ * Version: 1.2.3
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : May 17, 2013
- * Modified: December 3, 2013
+ * Modified: December 19, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -48,19 +48,23 @@ class mw_form_field_image extends mw_form_field {
 	/**
 	 * inputPage
 	 * 入力ページでのフォーム項目を返す
-	 * @return	String	HTML
+	 * @return string HTML
 	 */
 	protected function inputPage() {
 		$_ret = $this->Form->file( $this->atts['name'], array(
 			'size' => $this->atts['size'],
 		) );
 		$value = $this->Form->getValue( $this->atts['name'] );
+
 		$upload_file_keys = $this->Form->getValue( MWF_Config::UPLOAD_FILE_KEYS );
 		if ( !empty( $value ) && is_array( $upload_file_keys ) && in_array( $this->atts['name'], $upload_file_keys ) ) {
-			$_ret .= '<div class="' . MWF_Config::NAME . '_image">';
-			$_ret .= '<img src="' . esc_attr( $value ) . '" alt="" />';
-			$_ret .= $this->Form->hidden( $this->atts['name'], $value );
-			$_ret .= '</div>';
+			$filepath = MWF_Functions::fileurl_to_path( $value );
+			if ( file_exists( $filepath ) ) {
+				$_ret .= '<div class="' . MWF_Config::NAME . '_image">';
+				$_ret .= '<img src="' . esc_attr( $value ) . '" alt="" />';
+				$_ret .= $this->Form->hidden( $this->atts['name'], $value );
+				$_ret .= '</div>';
+			}
 		}
 		if ( $this->atts['show_error'] !== 'false' )
 			$_ret .= $this->getError( $this->atts['name'] );
@@ -70,16 +74,19 @@ class mw_form_field_image extends mw_form_field {
 	/**
 	 * confirmPage
 	 * 確認ページでのフォーム項目を返す
-	 * @return	String	HTML
+	 * @return string HTML
 	 */
 	protected function confirmPage() {
 		$value = $this->Form->getValue( $this->atts['name'] );
 		if ( $value ) {
-			$_ret  = '<div class="' . MWF_Config::NAME . '_image">';
-			$_ret .= '<img src="' . esc_attr( $value ) . '" alt="" />';
-			$_ret .= $this->Form->hidden( $this->atts['name'], $value );
-			$_ret .= '</div>';
-			return $_ret;
+			$filepath = MWF_Functions::fileurl_to_path( $value );
+			if ( file_exists( $filepath ) ) {
+				$_ret  = '<div class="' . MWF_Config::NAME . '_image">';
+				$_ret .= '<img src="' . esc_attr( $value ) . '" alt="" />';
+				$_ret .= $this->Form->hidden( $this->atts['name'], $value );
+				$_ret .= '</div>';
+				return $_ret;
+			}
 		}
 	}
 

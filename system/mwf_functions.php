@@ -3,11 +3,11 @@
  * Name: MWF Functions
  * URI: http://2inc.org
  * Description: 関数
- * Version: 1.0
+ * Version: 1.1.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: May 29, 2013
- * Modified:
+ * Modified:December 19, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -30,13 +30,45 @@ class MWF_Functions {
 	/**
 	 * is_numeric
 	 * 引数で渡された変数が存在し、かつ数値であるなら true
-	 * @param  String  参照渡し
-	 * @return Boorelan
+	 * @param string $value 参照渡し
+	 * @return bool
 	 */
 	public static function is_numeric( &$value ) {
 		if ( isset( $value ) && preg_match( '/^\d+$/', $value ) ) {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * fileurl_to_path
+	 * ファイルURLをファイルパスに変換
+	 * @param string $fileurl
+	 * @return string
+	 */
+	public static function fileurl_to_path( $fileurl ) {
+		$wp_upload_dir = wp_upload_dir();
+		$filepath = str_replace(
+			$wp_upload_dir['baseurl'],
+			realpath( $wp_upload_dir['basedir'] ),
+			$fileurl
+		);
+		return $filepath;
+	}
+
+	/**
+	 * filepath_to_url
+	 * ファイルパスをURLに変換
+	 * @param string $filepath
+	 * @return string
+	 */
+	public static function filepath_to_url( $filepath ) {
+		$wp_upload_dir = wp_upload_dir();
+		$fileurl = str_replace(
+			realpath( $wp_upload_dir['basedir'] ),
+			$wp_upload_dir['baseurl'],
+			$filepath
+		);
+		return $fileurl;
 	}
 }

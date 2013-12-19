@@ -53,7 +53,9 @@ class mw_form_field_datepicker extends mw_form_field {
 	 * @return	String	HTML
 	 */
 	protected function inputPage() {
-		wp_enqueue_style( 'jquery.ui', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css', array(), '1.9.2' );
+		global $wp_scripts;
+		$ui = $wp_scripts->query( 'jquery-ui-core' );
+		wp_enqueue_style( 'jquery.ui', '//ajax.googleapis.com/ajax/libs/jqueryui/' . $ui->ver . '/themes/smoothness/jquery-ui.min.css', array(), $ui->ver );
 		wp_enqueue_script( 'jquery-ui-datepicker' );
 		// jsの指定がないときはデフォルトで年付き変更機能追加
 		if ( empty( $this->atts['js'] ) ) {

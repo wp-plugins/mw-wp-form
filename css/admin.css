@@ -60,7 +60,8 @@ span#formkey_field {
 /**
  * メール設定
  */
-#mw-wp-form_mail textarea {
+#mw-wp-form_mail textarea,
+#mw-wp-form_admin_mail textarea {
 	width: 100%;
 }
 

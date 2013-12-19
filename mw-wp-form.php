@@ -3,11 +3,11 @@
  * Plugin Name: MW WP Form
  * Plugin URI: http://2inc.org/manual-mw-wp-form/
  * Description: MW WP Form can create mail form with a confirmation screen.
- * Version: 1.2.0
+ * Version: 1.2.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : September 25, 2012
- * Modified: December 2, 2013
+ * Modified: December 19, 2013
  * Text Domain: mw-wp-form
  * Domain Path: /languages/
  * License: GPL2
@@ -69,7 +69,6 @@ class mw_wp_form {
 		'complete_url' => '',
 		'validation_error_url' => '',
 		'validation' => array(),
-		'use_template' => null,
 	);
 
 	/**
@@ -252,11 +251,18 @@ class mw_wp_form {
 		$this->Data->setValues( $_data );
 
 		// $_FILESがあるときは$this->dataに統合
+		$files = array();
 		foreach ( $_FILES as $key => $file ) {
-			if ( $this->Data->getValue( $key ) === null ) {
+			if ( $file['error'] == UPLOAD_ERR_OK && is_uploaded_file( $file['tmp_name'] ) ) {
 				$this->Data->setValue( $key, $file['name'] );
+				$files[$key] = $file;
 			}
 		}
+		// この条件判定がないと fileSize チェックが正しく動作しない
+		if ( $files ) {
+			$this->Data->setValue( MWF_Config::UPLOAD_FILES, $files );
+		}
+
 		// フォームオブジェクト生成
 		$this->Form = new MW_Form( $this->Data->getValues(), $this->key );
 
@@ -314,7 +320,6 @@ class mw_wp_form {
 				}
 			}
 		}
-
 		add_shortcode( 'mwform_formkey', array( $this, '_mwform_formkey' ) );
 		add_shortcode( 'mwform', array( $this, '_mwform' ) );
 		add_shortcode( 'mwform_complete_message', array( $this, '_mwform_complete_message' ) );
@@ -414,7 +419,7 @@ class mw_wp_form {
 			$this->Validation->setRule( MWF_Config::AKISMET, 'akismet_check' );
 		}
 
-		$this->Validation = apply_filters( $filterName, $this->Validation );
+		$this->Validation = apply_filters( $filterName, $this->Validation, $this->Data->getValues() );
 		if ( !is_a( $this->Validation, 'MW_Validation' ) ) {
 			exit( __( 'Validation Object is not a MW Validation Class.', MWF_Config::DOMAIN ) );
 		}
@@ -518,18 +523,10 @@ class mw_wp_form {
 						$upload_file_url = $this->Data->getValue( $key );
 						if ( !$upload_file_url )
 							continue;
-						$filepath = str_replace(
-							$wp_upload_dir['baseurl'],
-							realpath( $wp_upload_dir['basedir'] ),
-							$upload_file_url
-						);
+						$filepath = MWF_Functions::fileurl_to_path( $upload_file_url );
 						if ( file_exists( $filepath ) ) {
 							$filepath = $this->File->moveTempFileToUploadDir( $filepath );
-							$new_upload_file_url = str_replace(
-								realpath( $wp_upload_dir['basedir'] ),
-								$wp_upload_dir['baseurl'],
-								$filepath
-							);
+							$new_upload_file_url = MWF_Functions::filepath_to_url( $filepath );
 							$attachments[$key] = $filepath;
 							$this->Data->setValue( $key, $new_upload_file_url );
 							$this->Form = new MW_Form( $this->Data->getValues(), $this->key );
@@ -884,7 +881,11 @@ class mw_wp_form {
 	 */
 	protected function fileupload() {
 		$uploadedFiles = $this->File->fileupload();
-		$excludedFiles = array_diff_key( $_FILES, $uploadedFiles );
+		$files = $this->Data->getValue( MWF_Config::UPLOAD_FILES );
+		if ( !is_array( $files ) ) {
+			$files = array();
+		}
+		$excludedFiles = array_diff_key( $files, $uploadedFiles );
 		$upload_file_keys = $this->Data->getValue( MWF_Config::UPLOAD_FILE_KEYS );
 		if ( !$upload_file_keys )
 			$upload_file_keys = array();
@@ -894,11 +895,7 @@ class mw_wp_form {
 		foreach ( $upload_file_keys as $upload_file_key ) {
 			$upload_file_url = $this->Data->getValue( $upload_file_key );
 			if ( $upload_file_url ) {
-				$filepath = str_replace(
-					$wp_upload_dir['baseurl'],
-					realpath( $wp_upload_dir['basedir'] ),
-					$upload_file_url
-				);
+				$filepath = MWF_Functions::fileurl_to_path( $upload_file_url );
 				if ( file_exists( $filepath ) ) {
 					unset( $excludedFiles[$upload_file_key] );
 				}
