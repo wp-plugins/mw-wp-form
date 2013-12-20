@@ -3,11 +3,11 @@
  * Name: MW Form Field Checkbox
  * URI: http://2inc.org
  * Description: チェックボックスを出力。
- * Version: 1.1.2
+ * Version: 1.2.2
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
- * Created: December 14, 2012
- * Modified: August 6, 2013
+ * Created : December 14, 2012
+ * Modified: December 3, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -50,32 +50,29 @@ class mw_form_field_checkbox extends mw_form_field {
 	/**
 	 * inputPage
 	 * 入力ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function inputPage( $atts ) {
-		$children = $this->getChildren( $atts['children'] );
-		// $_ret  = $this->Form->hidden( $atts['name'] . '[data]', '' );
-		$_ret = $this->Form->checkbox( $atts['name'], $children, array(
-			'value' => $atts['value'],
-		), $atts['separator'] );
-		if ( $atts['show_error'] !== 'false' )
-			$_ret .= $this->getError( $atts['name'] );
+	protected function inputPage() {
+		$children = $this->getChildren( $this->atts['children'] );
+		$_ret = $this->Form->checkbox( $this->atts['name'], $children, array(
+			'value' => $this->atts['value'],
+		), $this->atts['separator'] );
+		if ( $this->atts['show_error'] !== 'false' )
+			$_ret .= $this->getError( $this->atts['name'] );
 		return $_ret;
 	}
 
 	/**
-	 * previewPage
+	 * confirmPage
 	 * 確認ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function previewPage( $atts ) {
-		$children = $this->getChildren( $atts['children'] );
-		$value = $this->Form->getCheckedValue( $atts['name'], $children );
+	protected function confirmPage() {
+		$children = $this->getChildren( $this->atts['children'] );
+		$value = $this->Form->getCheckedValue( $this->atts['name'], $children );
 		$_ret  = $value;
-		$_ret .= $this->Form->hidden( $atts['name'] . '[data]', $value );
-		$_ret .= $this->Form->separator( $atts['name'] );
+		$_ret .= $this->Form->hidden( $this->atts['name'] . '[data]', $value );
+		$_ret .= $this->Form->separator( $this->atts['name'] );
 		return $_ret;
 	}
 

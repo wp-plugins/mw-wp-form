@@ -1,13 +1,13 @@
 <?php
 /**
- * Name: MW Form Field Preview Button
+ * Name: MW Form Field Confirm Button
  * URI: http://2inc.org
  * Description: 確認ボタンを出力。
- * Version: 1.1.3
+ * Version: 1.2.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
- * Created: December 14, 2012
- * Modified: August 6, 2013
+ * Created : December 14, 2012
+ * Modified: December 26, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -25,12 +25,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-class mw_form_field_preview_button extends mw_form_field {
+class mw_form_field_confirm_button extends mw_form_field {
 
 	/**
 	 * String $short_code_name
 	 */
-	protected $short_code_name = 'mwform_previewButton';
+	protected $short_code_name = 'mwform_confirmButton';
 
 	/**
 	 * setDefaults
@@ -46,20 +46,18 @@ class mw_form_field_preview_button extends mw_form_field {
 	/**
 	 * inputPage
 	 * 入力ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function inputPage( $atts ) {
-		return $this->Form->submit( $this->Form->getPreviewButtonName(), $atts['value'] );
+	protected function inputPage() {
+		return $this->Form->submit( $this->Form->getConfirmButtonName(), $this->atts['value'] );
 	}
 
 	/**
-	 * previewPage
+	 * confirmPage
 	 * 確認ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function previewPage( $atts ) {
+	protected function confirmPage() {
 	}
 
 	/**
