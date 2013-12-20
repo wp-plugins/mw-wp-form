@@ -3,11 +3,11 @@
  * Name: MW Form
  * URI: http://2inc.org
  * Description: フォームクラス
- * Version: 1.3.8
+ * Version: 1.3.9
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : September 25, 2012
- * Modified: December 3, 2013
+ * Modified: December 20, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -27,13 +27,41 @@
  */
 class MW_Form {
 
-	protected $key = 'form_token';		// 識別子
-	public $tokenName = 'token';		// トークンタグ用のトークン名
-	protected $token;					// トークンの値
-	protected $data;					// データ
-	protected $Session;					// sessionオブジェクト
-	protected $confirmButton = 'submitConfirm';	// 確認ボタンの名前
-	protected $backButton = 'submitBack';		// 戻るボタンの名前
+	/**
+	 * 識別子
+	 */
+	protected $key = 'form_token';
+
+	/**
+	 * トークンタグ用のトークン名
+	 */
+	public $tokenName = 'token';
+
+	/**
+	 * トークンの値
+	 */
+	protected $token;
+
+	/**
+	 * データ
+	 */
+	protected $Data;
+
+	/**
+	 * sessionオブジェクト
+	 */
+	protected $Session;
+
+	/**
+	 * 確認ボタンの名前
+	 */
+	protected $confirmButton = 'submitConfirm';
+
+	/**
+	 * 戻るボタンの名前
+	 */
+	protected $backButton = 'submitBack';
+
 	protected $modeCheck = 'input';
 	protected $method = 'post';
 	private $ENCODE = 'utf-8';
@@ -41,13 +69,13 @@ class MW_Form {
 	/**
 	 * __construct
 	 * 取得データを保存、識別子とセッションIDののhash値をトークンとして利用
-	 * @param	Array	リクエストデータ
-	 * 			String	識別子
+	 * @param string $key 識別子
 	 */
-	public function __construct( $data, $key = '' ) {
-		$this->data = $data;
-		if ( $key )
+	public function __construct( $key = '' ) {
+		$this->Data = MW_WP_Form_Data::getInstance( $key );
+		if ( $key ) {
 			$this->key = $key . '_token';
+		}
 		$this->Session = MW_Session::start( $this->key );
 		$this->modeCheck = $this->modeCheck();
 		$this->token = sha1( $this->key . session_id() );
@@ -71,21 +99,24 @@ class MW_Form {
 	/**
 	 * isComplete
 	 * 完了画面かどうか
-	 * @return	Boolean
+	 * @return bool
 	 */
 	public function isComplete() {
-		if ( !empty( $this->data ) && $this->modeCheck === 'complete' )
+		$data = $this->Data->getValues();
+		if ( !empty( $data ) && $this->modeCheck === 'complete' ) {
 			return true;
+		}
 		return false;
 	}
 
 	/**
 	 * isConfirm
 	 * 確認画面かどうか
-	 * @return	Boolean
+	 * @return bool
 	 */
 	public function isConfirm() {
-		if ( !empty( $this->data ) && $this->modeCheck === 'confirm' )
+		$data = $this->Data->getValues();
+		if ( !empty( $data ) && $this->modeCheck === 'confirm' )
 			return true;
 		return false;
 	}
@@ -93,7 +124,7 @@ class MW_Form {
 	/**
 	 * isInput
 	 * 入力画面かどうか
-	 * @return	Boolean
+	 * @return bool
 	 */
 	public function isInput() {
 		if ( $this->modeCheck === 'input' )
@@ -104,39 +135,36 @@ class MW_Form {
 	/**
 	 * modeCheck
 	 * 表示画面判定
-	 * @return	input || confirm || complete
+	 * @return string input || confirm || complete
 	 */
 	protected function modeCheck() {
-		if ( isset( $this->data[$this->backButton] ) ) {
-			$backButton = $this->data[$this->backButton];
-		} elseif ( isset( $this->data[$this->confirmButton] ) ) {
-			$confirmButton = $this->data[$this->confirmButton];
-		}
-		$_ret = 'input';
+		$backButton = $this->getValue( $this->backButton );
+		$confirmButton = $this->getValue( $this->confirmButton );
 		if ( isset( $backButton ) ) {
-			$_ret = 'input';
+			return 'input';
 		} elseif ( isset( $confirmButton ) ) {
-			$_ret = 'confirm';
+			return 'confirm';
 		} elseif ( !isset( $confirmButton ) && !isset( $backButton ) && $this->check() ) {
-			$_ret = 'complete';
+			return 'complete';
 		}
-		return $_ret;
+		return 'input';
 	}
 
 	/**
 	 * check
 	 * トークンチェック
-	 * @return	Boolean
+	 * @return bool
 	 */
 	protected function check() {
 		if ( isset( $_POST[$this->tokenName] ) )
 			$requestToken = $_POST[$this->tokenName];
 		$s_token = $this->Session->getValue( $this->tokenName );
 
+		$data = $this->Data->getValues();
 		if ( isset( $requestToken ) && !empty( $s_token ) && $requestToken === $s_token ) {
 			$this->clearToken();
 			return true;
-		} elseif ( empty( $_POST ) && $this->data ) {
+		} elseif ( empty( $_POST ) && $data ) {
 			$this->clearToken();
 			return true;
 		}
@@ -164,45 +192,37 @@ class MW_Form {
 	/**
 	 * getValue
 	 * データを返す
-	 * @param	String	キー
-	 * @return	Mixed	データ
+	 * @param string $key name属性値
+	 * @return mixed
 	 */
 	public function getValue( $key ) {
-		$_ret = null;
-		if ( isset( $this->data[$key] ) ) {
-			$_ret = $this->data[$key];
-		}
-		return $_ret;
+		return $this->Data->getValue( $key );
 	}
 
 	/**
 	 * getZipValue
 	 * データを返す ( 郵便番号用 )
-	 * @param	String	キー
-	 * @return	Mixed	データ
+	 * @param string $key name属性
+	 * @return string データ
 	 */
 	public function getZipValue( $key ) {
-		$_ret = null;
 		$separator = $this->getSeparatorValue( $key );
 		// すべて空のからのときはimplodeしないように（---がいってしまうため）
-		if ( isset( $this->data[$key] ) && is_array( $this->data[$key] ) ) {
-			if ( isset( $this->data[$key]['data'] ) && is_array( $this->data[$key]['data'] ) && !empty( $separator ) ) {
-				foreach ( $this->data[$key]['data'] as $value ) {
-					if ( !( $value === '' || $value === null ) ) {
-						$_ret = implode( $separator, $this->data[$key]['data'] );
-						break;
-					}
+		$value = $this->getValue( $key );
+		if ( is_array( $value ) && isset( $value['data'] ) && is_array( $value['data'] ) && !empty( $separator ) ) {
+			foreach ( $value['data'] as $child ) {
+				if ( $child !== '' && $child !== null ) {
+					return implode( $separator, $value['data'] );
 				}
 			}
 		}
-		return $_ret;
 	}
 
 	/**
 	 * getTelValue
 	 * データを返す ( 電話番号用 )
-	 * @param	String	キー
-	 * @return	String	データ
+	 * @param string $key name属性
+	 * @return string データ
 	 */
 	public function getTelValue( $key ) {
 		return $this->getZipValue( $key );
@@ -211,51 +231,46 @@ class MW_Form {
 	/**
 	 * getCheckedValue
 	 * データを返す（ checkbox用 ）。$dataに含まれる値のみ返す
-	 * @param	String	キー
-	 * 			Array	データ
-	 * @return	String	データ
+	 * @param string $key name属性
+	 * @param array $data
+	 * @return string データ
 	 */
 	public function getCheckedValue( $key, Array $data ) {
-		$_ret = null;
 		$separator = $this->getSeparatorValue( $key );
-		if ( isset( $this->data[$key] ) && is_array( $this->data[$key] ) ) {
-			if ( isset( $this->data[$key]['data'] ) && is_array( $this->data[$key]['data'] ) && !empty( $separator ) ) {
-				$rightData = array();
-				foreach ( $this->data[$key]['data'] as $value ) {
-					if ( isset( $data[$value] ) && !in_array( $data[$value], $rightData ) ) {
-						$rightData[] = $data[$value];
-					}
+		$value = $this->getValue( $key );
+		if ( is_array( $value ) && isset( $value['data'] ) && is_array( $value['data'] ) && !empty( $separator ) ) {
+			$rightData = array();
+			foreach ( $value['data'] as $child ) {
+				if ( isset( $data[$child] ) && !in_array( $data[$child], $rightData ) ) {
+					$rightData[] = $data[$child];
 				}
-				$_ret = implode( $separator, $rightData );
 			}
+			return implode( $separator, $rightData );
 		}
-		return $_ret;
 	}
 
 	/**
 	 * getRadioValue
 	 * データを返す（ radio用 ）。$dataに含まれる値のみ返す
-	 * @param	String	キー
-	 * 			Array	データ
-	 * @return	String	データ
+	 * @param string name属性値
+	 * @param array $data データ
+	 * @return string
 	 */
 	public function getRadioValue( $key, Array $data ) {
-		$_ret = null;
-		if ( isset( $this->data[$key] ) && !is_array( $this->data[$key] ) ) {
-			if ( isset( $data[$this->data[$key]] ) ) {
-				$_ret = $data[$this->data[$key]];
-				$_ret = esc_html( $_ret );
+		$value = $this->getValue( $key );
+		if ( !is_null( $value ) && !is_array( $value ) ) {
+			if ( isset( $data[$value] ) ) {
+				return $data[$value];
 			}
 		}
-		return $_ret;
 	}
 
 	/**
 	 * getSelectedValue
 	 * データを返す（ selectbox用 ）。$dataに含まれる値のみ返す
-	 * @param	String	キー
-	 * 			Array	データ
-	 * @return	String	データ
+	 * @param string $key name属性
+	 * @param array $data データ
+	 * @return string データ
 	 */
 	public function getSelectedValue( $key, Array $data ) {
 		return $this->getRadioValue( $key, $data );
@@ -264,34 +279,38 @@ class MW_Form {
 	/**
 	 * separator
 	 * separatorを設定するためのhiddenを返す
-	 * @param	String	キー
-	 * 			String	区切り文字
-	 * @return	String	HTML
+	 * @param string $key name属性
+	 * @param string $separator 区切り文字
+	 * @return string HTML
 	 */
 	public function separator( $key, $separator = '' ) {
-		if ( !$separator && $post_separator = $this->getSeparatorValue( $key ) )
+		$post_separator = $this->getSeparatorValue( $key );
+		if ( !$separator && $post_separator ) {
 			$separator = $post_separator;
-		if ( $separator )
-			return $this->hidden( $key.'[separator]', $separator );
+		}
+		if ( $separator ) {
+			return $this->hidden( $key . '[separator]', $separator );
+		}
 	}
 
 	/**
 	 * getSeparatorValue
 	 * 送られてきたseparatorを返す
-	 * @param	String	キー
-	 * 			Array	データ
-	 * @return	String	データ
+	 * @param string $key name属性
+	 * @return string
 	 */
 	public function getSeparatorValue( $key ) {
-		if ( isset( $this->data[$key]['separator'] ) )
-			return $this->data[$key]['separator'];
+		$value = $this->getValue( $key );
+		if ( is_array( $value ) && isset( $value['separator'] ) ) {
+			return $value['separator'];
+		}
 	}
 
 	/**
 	 * start
 	 * フォームタグ生成
-	 * @param	Array	( 'action' =>, 'enctype' => )
-	 * @return	String	form開始タグ
+	 * @param array $options
+	 * @return string form開始タグ
 	 */
 	public function start( $options = array() ) {
 		$defaults = array(
@@ -300,22 +319,22 @@ class MW_Form {
 			'enctype' => 'multipart/form-data',
 		);
 		$options = array_merge( $defaults, $options );
-		$_ret = sprintf( '<form method="%s" action="%s" enctype="%s">',
+		return sprintf( '<form method="%s" action="%s" enctype="%s">',
 				$this->method, esc_attr( $options['action'] ), esc_attr( $options['enctype'] ) );
-		return $_ret;
 	}
 
 	/**
 	 * end
 	 * トークンタグ、閉じタグ生成
-	 * @return	String	input[type=hidden]
+	 * @return string input[type=hidden]
 	 */
 	public function end() {
-		$_ret = '';
-		if ( $this->method == 'post' )
-			$_ret .= $this->hidden( $this->tokenName, $this->token );
-		$_ret .= '</form>';
-		return $_ret;
+		$html = '';
+		if ( $this->method === 'post' ) {
+			$html .= $this->hidden( $this->tokenName, $this->token );
+		}
+		$html .= '</form>';
+		return $html;
 	}
 
 	/**
@@ -334,13 +353,19 @@ class MW_Form {
 			'placeholder' => '',
 		);
 		$options = array_merge( $defaults, $options );
-		$value = ( isset( $this->data[$name] ) ) ? $this->data[$name] : $options['value'];
-		$placeholder = ( !empty( $options['placeholder'] ) ) ? 'placeholder="' . esc_attr( $options['placeholder'] ) . '"' : '';
+		$value = $this->getValue( $name );
+		if ( is_null( $value ) ) {
+			$value = $options['value'];
+		}
+		$placeholder = '';
+		if ( !empty( $options['placeholder'] ) ) {
+			$placeholder = 'placeholder="' . esc_attr( $options['placeholder'] ) . '"';
+		}
 		$dataConvHalfAlphanumeric = null;
 		if ( $options['conv-half-alphanumeric'] === true ) {
 			$dataConvHalfAlphanumeric = 'data-conv-half-alphanumeric="true"';
 		}
-		$_ret = sprintf( '<input type="text" name="%s" value="%s" size="%d" maxlength="%d" %s %s />',
+		return sprintf( '<input type="text" name="%s" value="%s" size="%d" maxlength="%d" %s %s />',
 			esc_attr( $name ),
 			esc_attr( $value ),
 			esc_attr( $options['size'] ),
@@ -348,30 +373,32 @@ class MW_Form {
 			$placeholder,
 			$dataConvHalfAlphanumeric
 		);
-		return $_ret;
 	}
 
 	/**
 	 * hidden
 	 * input[type=hidden]タグ生成
-	 * @param	String	name属性
-	 * 			String	値
-	 * @return	String	htmlタグ
+	 * @param string $name name属性
+	 * @param string $value 値
+	 * @return string HTML
 	 */
 	public function hidden( $name, $value ) {
-		$value = ( isset( $this->data[$name] ) )? $this->data[$name] : $value;
-		if ( is_array( $value ) )
+		$_value = $this->getValue( $name );
+		if ( !is_null( $_value ) ) {
+			$value = $_value;
+		}
+		if ( is_array( $value ) ) {
 			$value = $this->getZipValue( $name );
-		$_ret = sprintf( '<input type="hidden" name="%s" value="%s" />', esc_attr( $name ), esc_attr( $value ) );
-		return $_ret;
+		}
+		return sprintf( '<input type="hidden" name="%s" value="%s" />', esc_attr( $name ), esc_attr( $value ) );
 	}
 
 	/**
 	 * password
 	 * input[type=password]タグ生成
-	 * @param	String	name属性
-	 * 			Array	( 'size' =>, 'maxlength' =>, 'value' => )
-	 * @return	String	htmlタグ
+	 * @param string $name name属性
+	 * @param array $options
+	 * @return string HTML
 	 */
 	public function password( $name, $options = array() ) {
 		$defaults = array(
@@ -380,19 +407,21 @@ class MW_Form {
 			'value' => '',
 		);
 		$options = array_merge( $defaults, $options );
-		$value = ( isset( $this->data[$name] ) )? $this->data[$name] : $options['value'];
-		$_ret = sprintf( '<input type="password" name="%s" value="%s" size="%d" maxlength="%d" />',
+		$value = $this->getValue( $name );
+		if ( is_null( $value ) ) {
+			$value = $options['value'];
+		}
+		return sprintf( '<input type="password" name="%s" value="%s" size="%d" maxlength="%d" />',
 			esc_attr( $name ), esc_attr( $value ), esc_attr( $options['size'] ), esc_attr( $options['maxlength'] )
 		);
-		return $_ret;
 	}
 
 	/**
 	 * zip
 	 * 郵便番号フィールド生成
-	 * @param	String	name属性
-	 * @param   Array   $options
-	 * @return	String	htmlタグ
+	 * @param string $name name属性
+	 * @param array $options
+	 * @return string HTML
 	 */
 	public function zip( $name, $options = array() ) {
 		$defaults = array(
@@ -400,22 +429,21 @@ class MW_Form {
 		);
 		$options = array_merge( $defaults, $options );
 
-		$value = '';
+		$children = array();
 		$separator = '-';
-		if ( isset( $this->data[$name]['data'] ) ) {
-			if ( is_array( $this->data[$name]['data'] ) ) {
-				$value = $this->data[$name]['data'];
+		$value = $this->getValue( $name );
+		if ( !is_null( $value ) && is_array( $value ) && isset( $value['data'] ) ) {
+			if ( is_array( $value['data'] ) ) {
+				$children = $value['data'];
 			} else {
-				$value = explode( $separator, $this->data[$name]['data'] );
+				$children = explode( $separator, $value['data'] );
 			}
 		}
 
 		$values = array( '', '' );
-		if ( is_array( $value ) ) {
-			foreach ( $value as $key => $val ) {
-				if ( $key === 0 || $key === 1 ) {
-					$values[$key] = $val;
-				}
+		foreach ( $children as $key => $val ) {
+			if ( $key === 0 || $key === 1 ) {
+				$values[$key] = $val;
 			}
 		}
 
@@ -440,9 +468,9 @@ class MW_Form {
 	/**
 	 * tel
 	 * 電話番号フィールド生成
-	 * @param	String	name属性
-	 * @param   Array   $options
-	 * @return	String	htmlタグ
+	 * @param string $name name属性
+	 * @param array $options
+	 * @return string HTML
 	 */
 	public function tel( $name, $options = array() ) {
 		$defaults = array(
@@ -450,22 +478,21 @@ class MW_Form {
 		);
 		$options = array_merge( $defaults, $options );
 
-		$value = '';
+		$children = array();
 		$separator = '-';
-		if ( isset( $this->data[$name]['data'] ) ) {
-			if ( is_array( $this->data[$name]['data'] ) ) {
-				$value = $this->data[$name]['data'];
+		$value = $this->getValue( $name );
+		if ( !is_null( $value ) && is_array( $value ) && isset( $value['data'] ) ) {
+			if ( is_array( $value['data'] ) ) {
+				$children = $value['data'];
 			} else {
-				$value = explode( $separator, $this->data[$name]['data'] );
+				$children = explode( $separator, $value['data'] );
 			}
 		}
 
 		$values = array( '', '', '' );
-		if ( is_array( $value ) ) {
-			foreach ( $value as $key => $val ) {
-				if ( $key === 0 || $key === 1 || $key === 2 ) {
-					$values[$key] = $val;
-				}
+		foreach ( $children as $key => $val ) {
+			if ( $key === 0 || $key === 1 || $key === 2 ) {
+				$values[$key] = $val;
 			}
 		}
 
@@ -509,32 +536,40 @@ class MW_Form {
 			'placeholder' => '',
 		);
 		$options = array_merge( $defaults, $options );
-		$value = ( isset( $this->data[$name] ) )? $this->data[$name] : $options['value'];
-		$placeholder = ( !empty( $options['placeholder'] ) ) ? 'placeholder="' . esc_attr( $options['placeholder'] ) . '"' : '';
-		$_ret = sprintf( '<textarea name="%s" cols="%d" rows="%d" %s>%s</textarea>',
+		$value = $this->getValue( $name );
+		if ( is_null( $value ) ) {
+			$value = $options['value'];
+		}
+		$placeholder = '';
+		if ( !empty( $options['placeholder'] ) ) {
+			$placeholder = 'placeholder="' . esc_attr( $options['placeholder'] ) . '"';
+		}
+		return sprintf( '<textarea name="%s" cols="%d" rows="%d" %s>%s</textarea>',
 			esc_attr( $name ),
 			esc_attr( $options['cols'] ),
 			esc_attr( $options['rows'] ),
 			$placeholder,
 			esc_html( $value )
 		);
-		return $_ret;
 	}
 
 	/**
 	 * select
 	 * selectタグ生成
-	 * @param	String	name属性
-	 * 			Array	( キー => 値, … )
-	 * 			Array	( 'value' => )
-	 * @return	String	htmlタグ
+	 * @param string $name name属性
+	 * @param array $children
+	 * @param array $options
+	 * @return string HTML
 	 */
 	public function select( $name, $children = array(), $options = array() ) {
 		$defaults = array(
 			'value' => ''
 		);
 		$options = array_merge( $defaults, $options );
-		$value = ( isset( $this->data[$name] ) )? $this->data[$name] : $options['value'];
+		$value = $this->getValue( $name );
+		if ( is_null( $value ) ) {
+			$value = $options['value'];
+		}
 		$_ret = sprintf( '<select name="%s">', esc_attr( $name ) );
 		foreach ( $children as $key => $_value ) {
 			$selected = ( $key == $value )? ' selected="selected"' : '';
@@ -549,17 +584,20 @@ class MW_Form {
 	/**
 	 * radio
 	 * radioタグ生成
-	 * @param	String name属性
-	 * 			Array	( キー => 値, … )
-	 * 			Array	( 'value' => )
-	 * @return	String	htmlタグ
+	 * @param string $name name属性
+	 * @param array $children
+	 * @param array $options
+	 * @return string HTML
 	 */
 	public function radio( $name, $children = array(), $options = array() ) {
 		$defaults = array(
 			'value' => ''
 		);
 		$options = array_merge( $defaults, $options );
-		$value = ( isset( $this->data[$name] ) )? $this->data[$name] : $options['value'];
+		$value = $this->getValue( $name );
+		if ( is_null( $value ) ) {
+			$value = $options['value'];
+		}
 		$_ret = '';
 		foreach ( $children as $key => $_value ) {
 			$checked = ( $key == $value )? ' checked="checked"' : '';
@@ -573,11 +611,11 @@ class MW_Form {
 	/**
 	 * checkbox
 	 * checkboxタグ生成
-	 * @param	String	name属性
-	 * 			Array	( キー => 値, … )
-	 * 			Array	( 'value' => Mixed )
-	 * 			String	区切り文字
-	 * @return	String	htmlタグ
+	 * @param string $name name属性
+	 * @param array $children
+	 * @param array $options
+	 * @param string $separator 区切り文字
+	 * @return string HTML
 	 */
 	public function checkbox( $name, $children = array(), $options = array(), $separator = ',' ) {
 		$defaults = array(
@@ -585,9 +623,11 @@ class MW_Form {
 		);
 		$options = array_merge( $defaults, $options );
 
-		$value = $options['value'];
-		if ( isset( $this->data[$name]['data'] ) ) {
-			$value = $this->data[$name]['data'];
+		$value = $this->getValue( $name );
+		if ( is_array( $value ) && isset( $value['data'] ) ) {
+			$value = $value['data'];
+		} else {
+			$value = $options['value'];
 		}
 		if ( !is_array( $value ) ) {
 			$value = explode( $separator, $value );
@@ -606,35 +646,31 @@ class MW_Form {
 	/**
 	 * submit
 	 * submitボタン生成
-	 * @param	String	name属性
-	 * 			String	value属性
-	 * @return	String	submitボタン
+	 * @param string $name name属性
+	 * @param string $value value属性
+	 * @return string submitボタン
 	 */
 	public function submit( $name, $value ) {
-		$_ret = sprintf( '<input type="submit" name="%s" value="%s" />', esc_attr( $name ), esc_attr( $value ) );
-		return $_ret;
+		return sprintf( '<input type="submit" name="%s" value="%s" />', esc_attr( $name ), esc_attr( $value ) );
 	}
 
 	/**
 	 * button
 	 * ボタン生成
-	 * @param	String	name属性
-	 * 			String	value属性
-	 * @return	String	ボタン
+	 * @param string $name name属性
+	 * @param string $value value属性
+	 * @return string ボタン
 	 */
 	public function button( $name, $value ) {
-		$_ret = sprintf( '<input type="button" name="%s" value="%s" />', esc_attr( $name ), esc_attr( $value ) );
-		return $_ret;
+		return sprintf( '<input type="button" name="%s" value="%s" />', esc_attr( $name ), esc_attr( $value ) );
 	}
 
 	/**
 	 * datepicker
 	 * datepicker生成
-	 * @param	String	name属性
-	 * 			String	size属性
-	 * 			String	value属性
-	 * 			String	js	datepickerの引数
-	 * @return	String	ボタン
+	 * @param string $name name属性
+	 * @param string $options
+	 * @return string HTML
 	 */
 	public function datepicker( $name, $options = array() ) {
 		$defaults = array(
@@ -643,7 +679,10 @@ class MW_Form {
 			'value' => '',
 		);
 		$options = array_merge( $defaults, $options );
-		$value = ( isset( $this->data[$name] ) )? $this->data[$name] : $options['value'];
+		$value = $this->getValue( $name );
+		if ( is_null( $value ) ) {
+			$value = $options['value'];
+		}
 		$_ret = sprintf( '<input type="text" name="%s" value="%s" size="%d" />',
 			esc_attr( $name ), esc_attr( $value ), esc_attr( $options['size'] )
 		);
@@ -660,18 +699,17 @@ class MW_Form {
 	/**
 	 * file
 	 * input[type=file]タグ生成
-	 * @param	String	name属性
-	 * 			Array	( 'size' => )
-	 * @return	String	htmlタグ
+	 * @param string $name name属性
+	 * @param $options array
+	 * @return string HTML
 	 */
 	public function file( $name, $options = array() ) {
 		$defaults = array(
 			'size' => 60,
 		);
 		$options = array_merge( $defaults, $options );
-		$_ret = sprintf( '<input type="file" name="%s" size="%d" />',
+		return sprintf( '<input type="file" name="%s" size="%d" />',
 			esc_attr( $name ), esc_attr( $options['size'] )
 		);
-		return $_ret;
 	}
 }

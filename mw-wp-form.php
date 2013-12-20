@@ -247,7 +247,7 @@ class mw_wp_form {
 		$this->Session = MW_Session::start( $this->key );
 		// $_POSTがあるときは$_POST、無いときは$this->Session->getValues()
 		$_data = ( !empty( $_POST ) ) ? $_POST : $this->Session->getValues();
-		$this->Data = new MW_WP_Form_Data( $this->key );
+		$this->Data = MW_WP_Form_Data::getInstance( $this->key );
 		$this->Data->setValues( $_data );
 
 		// $_FILESがあるときは$this->dataに統合
@@ -264,10 +264,10 @@ class mw_wp_form {
 		}
 
 		// フォームオブジェクト生成
-		$this->Form = new MW_Form( $this->Data->getValues(), $this->key );
+		$this->Form = new MW_Form( $this->key );
 
 		// バリデーションオブジェクト生成
-		$this->Validation = new MW_Validation( $this->Data->getValues() );
+		$this->Validation = new MW_Validation( $this->key );
 		// バリデーション実行（Validation->dataに値がないと$Errorは返さない（true））
 		$this->apply_filters_mwform_validation();
 
@@ -529,7 +529,6 @@ class mw_wp_form {
 							$new_upload_file_url = MWF_Functions::filepath_to_url( $filepath );
 							$attachments[$key] = $filepath;
 							$this->Data->setValue( $key, $new_upload_file_url );
-							$this->Form = new MW_Form( $this->Data->getValues(), $this->key );
 						}
 					}
 					$Mail->attachments = $attachments;
@@ -918,6 +917,5 @@ class mw_wp_form {
 				$this->Data->pushValue( MWF_Config::UPLOAD_FILE_KEYS, $key );
 			}
 		}
-		$this->Form = new MW_Form( $this->Data->getValues(), $this->key );
 	}
 }

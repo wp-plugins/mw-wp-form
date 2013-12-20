@@ -3,11 +3,11 @@
  * Name: MW WP Form Data
  * URI: http://2inc.org
  * Description: mw_wp_form のデータ操作用
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : October 10, 2013
- * Modified: November 22, 2013
+ * Modified: December 19, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -26,15 +26,23 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 class mw_wp_form_data {
+	private static $Instance;
 	private $data;
 	private $Session;
 
 	/**
 	 * __construct
-	 * @param    String    $key    データのキー
+	 * @param string $key データのキー
 	 */
-	public function __construct( $key ) {
+	private function __construct( $key ) {
 		$this->Session = MW_Session::start( $key );
+	}
+
+	public static function getInstance( $key ) {
+		if ( is_null( self::$Instance ) ) {
+			self::$Instance = new self( $key );
+		}
+		return self::$Instance;
 	}
 
 	/**

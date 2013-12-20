@@ -3,11 +3,11 @@
  * Name: MW WP Form Admin Page
  * URI: http://2inc.org
  * Description: 管理画面クラス
- * Version: 1.7.1
+ * Version: 1.7.2
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : February 21, 2013
- * Modified: December 3, 2013
+ * Modified: December 20, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -464,6 +464,7 @@ class MW_WP_Form_Admin_Page {
 			'zip'          => '',
 			'tel'          => '',
 			'mail'         => '',
+			'url'         => '',
 			'date'         => '',
 			'eq'           => array(),
 			'between'      => array(),
@@ -494,6 +495,7 @@ class MW_WP_Form_Admin_Page {
 							<label><input type="checkbox" <?php checked( $value['zip'], 1 ); ?> name="<?php echo MWF_Config::NAME; ?>[validation][<?php echo $key; ?>][zip]" value="1" /><?php _e( 'Zip Code', MWF_Config::DOMAIN ); ?></label>
 							<label><input type="checkbox" <?php checked( $value['tel'], 1 ); ?> name="<?php echo MWF_Config::NAME; ?>[validation][<?php echo $key; ?>][tel]" value="1" /><?php _e( 'Tel', MWF_Config::DOMAIN ); ?></label>
 							<label><input type="checkbox" <?php checked( $value['mail'], 1 ); ?> name="<?php echo MWF_Config::NAME; ?>[validation][<?php echo $key; ?>][mail]" value="1" /><?php _e( 'E-mail', MWF_Config::DOMAIN ); ?></label>
+							<label><input type="checkbox" <?php checked( $value['url'], 1 ); ?> name="<?php echo MWF_Config::NAME; ?>[validation][<?php echo $key; ?>][url]" value="1" /><?php _e( 'URL', MWF_Config::DOMAIN ); ?></label>
 							<label><input type="checkbox" <?php checked( $value['date'], 1 ); ?> name="<?php echo MWF_Config::NAME; ?>[validation][<?php echo $key; ?>][date]" value="1" /><?php _e( 'Date', MWF_Config::DOMAIN ); ?></label>
 						</td>
 					</tr>

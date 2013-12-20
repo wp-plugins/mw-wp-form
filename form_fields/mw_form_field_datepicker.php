@@ -3,11 +3,11 @@
  * Name: MW Form Field Datepicker
  * URI: http://2inc.org
  * Description: datepickerを出力。
- * Version: 1.2.2
+ * Version: 1.2.3
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: December 3, 2013
+ * Modified: December 20, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)

@@ -51,8 +51,12 @@ Do you have questions or issues with MW WP Form? Use these support channels appr
 * Bug fix : 管理者宛メール本文入力欄のサイズ
 * Bug fix : WM_Form::zip, WM_Form::tel
 * Bug fix : MW_Validation::fileType, MW_Validation::fileSize
+* Bug fix : children が未指定でも mwform_choices フィルターフックの引数に空値が渡ってくるバグを修正
 * Change  : jquery.ui.css のプロトコル指定、バージョンを変更
+* Change  : データの持ち方を singleton に変更
 * Added   : mwform_validation_xxx フィルターフックに引数を追加（$data）
+* Added   : DB登録データ一覧で画像・ファイルカラムの項目は編集画面にリンク
+* Added   : URLバリデーション
 
 = 1.2.0 =
 * Added   : 電話番号、郵便番号フィールドはデフォルトで全角 -> 半角置換

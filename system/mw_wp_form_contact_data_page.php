@@ -3,11 +3,11 @@
  * Name: MW WP Form Contact Data Page
  * URI: http://2inc.org
  * Description: DB保存データを扱うクラス
- * Version: 1.0.3
+ * Version: 1.0.4
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : October 10, 2013
- * Modified: November 18, 2013
+ * Modified: December 20, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -261,13 +261,24 @@ class MW_WP_Form_Contact_Data_Page {
 	}
 	public function add_form_columns( $column, $post_id ) {
 		$post_custom_keys = get_post_custom_keys( $post_id );
+
+		// 前のバージョンでは MWF_Config::UPLOAD_FILE_KEYS を配列で保持していなかったので分岐させる
+		$_upload_file_keys = get_post_meta( $post_id, '_' . MWF_Config::UPLOAD_FILE_KEYS, true );
+		if ( is_array( $_upload_file_keys ) ) {
+			$upload_file_keys = $_upload_file_keys;
+		} else {
+			$upload_file_keys = get_post_custom_values( '_' . MWF_Config::UPLOAD_FILE_KEYS, $post->ID );
+		}
+
 		if ( $column == 'post_date' ) {
 			$post = get_post( $post_id );
 			echo esc_html( $post->post_date );
 		}
 		elseif ( !empty( $post_custom_keys ) && is_array( $post_custom_keys ) && in_array( $column, $post_custom_keys ) ) {
 			$post_meta = get_post_meta( $post_id, $column, true );
-			if ( $post_meta ) {
+			if ( in_array( $column, $upload_file_keys ) ) {
+				echo '<a href="' . admin_url( '/post.php?post=' ) . $post_meta . '&action=edit">' . $post_meta . '</a>';
+			} elseif ( $post_meta ) {
 				echo esc_html( $post_meta );
 			} else {
 				echo '&nbsp;';

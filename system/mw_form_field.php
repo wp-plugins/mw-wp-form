@@ -3,11 +3,11 @@
  * Name: MW Form Field
  * URI: http://2inc.org
  * Description: フォームフィールドの抽象クラス
- * Version: 1.3.2
+ * Version: 1.3.3
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: December 3, 2013
+ * Modified: December 20, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -146,18 +146,22 @@ abstract class mw_form_field {
 	/**
 	 * getChildren
 	 * 選択肢の配列を返す
-	 * @param	String	$_children
-	 * @return	Array	$children
+	 * @param string $_children
+	 * @return array $children
 	 */
 	protected function getChildren( $_children ) {
 		$children = array();
-		if ( !is_array( $_children ) )
+		if ( !empty( $_children) && !is_array( $_children ) ) {
 			$_children = explode( ',', $_children );
-		foreach ( $_children as $child ) {
-			$children[$child] = $child;
 		}
-		if ( $this->key )
+		if ( is_array( $_children ) ) {
+			foreach ( $_children as $child ) {
+				$children[$child] = $child;
+			}
+		}
+		if ( $this->key ) {
 			$children = apply_filters( 'mwform_choices_' . $this->key, $children, $this->atts );
+		}
 		return $children;
 	}
 
