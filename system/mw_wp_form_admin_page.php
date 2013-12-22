@@ -3,11 +3,11 @@
  * Name: MW WP Form Admin Page
  * URI: http://2inc.org
  * Description: 管理画面クラス
- * Version: 1.7.2
+ * Version: 1.7.3
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : February 21, 2013
- * Modified: December 20, 2013
+ * Modified: December 22, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -28,6 +28,7 @@
 class MW_WP_Form_Admin_Page {
 
 	private $postdata;
+	const SHORTCODE_BUTTON_NAME = 'mw_wp_form_button';
 
 	/**
 	 * __construct
@@ -36,10 +37,40 @@ class MW_WP_Form_Admin_Page {
 		add_action( 'admin_print_styles', array( $this, 'admin_style' ) );
 		add_action( 'admin_print_scripts', array( $this, 'admin_scripts' ) );
 		add_action( 'admin_head', array( $this, 'add_meta_box' ) );
+		add_action( 'admin_head', array( $this, 'add_tinymce' ) );
 		add_action( 'save_post', array( $this, 'save_post' ) );
 		add_action( 'admin_print_footer_scripts', array( $this, 'add_quicktag' ) );
 		add_action( 'current_screen', array( $this, 'current_screen' ) );
 		add_filter( 'default_content', array( $this, 'default_content' ) );
+	}
+
+	/**
+	 * add_tinymce
+	 */
+	public function add_tinymce() {
+		if ( get_user_option( 'rich_editing' ) == 'true' ) {
+			add_filter( 'mce_external_plugins', array( $this, 'add_tinymce_plugin' ) );
+			add_filter( 'mce_buttons', array( $this, 'add_tinymce_button' ) );
+		}
+	}
+
+	/**
+	 * add_tinymce_plugin
+	 * tinymceプラグインの読み込み
+	 * @return array $plugin tinymceプラグインのURL
+	 */
+	public function add_tinymce_plugin() {
+		$plugin[self::SHORTCODE_BUTTON_NAME] = plugins_url( '', __FILE__ ) . '/../js/editor_plugin.js.php';
+		return $plugin;
+	}
+
+	/**
+	 * add_tinymce_button
+	 * @return array $buttons
+	 */
+	public function add_tinymce_button( $buttons ) {
+		array_push( $buttons, 'separator', self::SHORTCODE_BUTTON_NAME );
+		return $buttons;
 	}
 
 	/**

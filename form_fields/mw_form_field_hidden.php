@@ -3,11 +3,11 @@
  * Name: MW Form Field Hidden
  * URI: http://2inc.org
  * Description: hiddenフィールドを出力。
- * Version: 1.3.2
+ * Version: 1.3.3
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: December 3, 2013
+ * Modified: December 22, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -28,9 +28,21 @@
 class mw_form_field_hidden extends mw_form_field {
 
 	/**
-	 * String $short_code_name
+	 * String $shortcode_name
 	 */
-	protected $short_code_name = 'mwform_hidden';
+	protected $shortcode_name = 'mwform_hidden';
+
+	/**
+	 * __construct
+	 */
+	public function __construct() {
+		parent::__construct();
+		$this->set_qtags(
+			$this->shortcode_name,
+			'Hidden',
+			$this->shortcode_name . ' name=""'
+		);
+	}
 
 	/**
 	 * setDefaults
@@ -70,18 +82,5 @@ class mw_form_field_hidden extends mw_form_field {
 			$echo_value = $value;
 		}
 		return $echo_value . $this->Form->hidden( $this->atts['name'], $value );
-	}
-
-	/**
-	 * add_qtags
-	 * QTags.addButton を出力
-	 */
-	protected function add_qtags() {
-		?>
-		'<?php echo $this->short_code_name; ?>',
-		'<?php _e( 'Hidden', MWF_Config::DOMAIN ); ?>',
-		'[<?php echo $this->short_code_name; ?> name=""]',
-		''
-		<?php
 	}
 }

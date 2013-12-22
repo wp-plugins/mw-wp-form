@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the MW WP Form package.
 msgid ""
 msgstr ""
-"Project-Id-Version: MW WP Form 1.2.0\n"
+"Project-Id-Version: MW WP Form 1.2.2\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/mw-wp-form\n"
-"POT-Creation-Date: 2013-12-11 03:57:57+00:00\n"
+"POT-Creation-Date: 2013-12-22 05:38:38+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -18,110 +18,41 @@ msgstr ""
 "X-Poedit-KeywordsList: __;_e\n"
 "X-Poedit-SearchPath-0: ..\n"
 
-#: form_fields/mw_form_field_akismet_error.php:68
-msgid "Akismet Error"
-msgstr ""
-
-#: form_fields/mw_form_field_back_button.php:42
-#: form_fields/mw_form_field_back_button.php:70
+#: form_fields/mw_form_field_back_button.php:54
 msgid "Back"
 msgstr ""
 
-#: form_fields/mw_form_field_button.php:72
-msgid "Button"
-msgstr ""
-
-#: form_fields/mw_form_field_checkbox.php:86
-msgid "Checkbox"
-msgstr ""
-
-#: form_fields/mw_form_field_confirm_button.php:42
-#: form_fields/mw_form_field_submit_button.php:44
+#: form_fields/mw_form_field_confirm_button.php:54
+#: form_fields/mw_form_field_submit_button.php:56
 msgid "Confirm"
 msgstr ""
 
-#: form_fields/mw_form_field_confirm_button.php:70
-msgid "Confirm Button"
-msgstr ""
-
-#: form_fields/mw_form_field_datepicker.php:106
-msgid "Datepicker"
-msgstr ""
-
-#: form_fields/mw_form_field_error.php:75
-msgid "Error Message"
-msgstr ""
-
-#: form_fields/mw_form_field_file.php:61 form_fields/mw_form_field_file.php:79
+#: form_fields/mw_form_field_file.php:75 form_fields/mw_form_field_file.php:96
 msgid "Uploaded."
 msgstr ""
 
-#: form_fields/mw_form_field_file.php:93
-msgid "File"
-msgstr ""
-
-#: form_fields/mw_form_field_hidden.php:82
-msgid "Hidden"
-msgstr ""
-
-#: form_fields/mw_form_field_image.php:93
-msgid "Image"
-msgstr ""
-
-#: form_fields/mw_form_field_password.php:83
-msgid "Password"
-msgstr ""
-
-#: form_fields/mw_form_field_radio.php:84
-msgid "Radio"
-msgstr ""
-
-#: form_fields/mw_form_field_select.php:84
-msgid "Select"
-msgstr ""
-
-#: form_fields/mw_form_field_submit.php:43
-#: form_fields/mw_form_field_submit_button.php:45
+#: form_fields/mw_form_field_submit.php:55
+#: form_fields/mw_form_field_submit_button.php:57
 msgid "Send"
 msgstr ""
 
-#: form_fields/mw_form_field_submit.php:72
-msgid "Submit Button"
+#: js/editor_plugin.js.php:20
+msgid "Shortcodes"
 msgstr ""
 
-#: form_fields/mw_form_field_submit_button.php:77
-msgid "Confirm &amp; Submit"
-msgstr ""
-
-#: form_fields/mw_form_field_tel.php:84 system/mw_wp_form_admin_page.php:495
-msgid "Tel"
-msgstr ""
-
-#: form_fields/mw_form_field_text.php:85
-msgid "Text"
-msgstr ""
-
-#: form_fields/mw_form_field_textarea.php:85
-msgid "Textarea"
-msgstr ""
-
-#: form_fields/mw_form_field_zip.php:84 system/mw_wp_form_admin_page.php:494
-msgid "Zip Code"
-msgstr ""
-
-#: mw-wp-form.php:413
+#: mw-wp-form.php:424
 msgid "Validation Object is not a MW Validation Class."
 msgstr ""
 
-#: system/mw_validation.php:74
+#: system/mw_validation.php:80
 msgid "This is required."
 msgstr ""
 
-#: system/mw_validation.php:94 system/mw_validation.php:114
+#: system/mw_validation.php:97 system/mw_validation.php:115
 msgid "Please enter."
 msgstr ""
 
-#: system/mw_validation.php:138
+#: system/mw_validation.php:137
 msgid "Please enter with a half-width alphabetic character."
 msgstr ""
 
@@ -129,19 +60,19 @@ msgstr ""
 msgid "Please enter with a half-width number."
 msgstr ""
 
-#: system/mw_validation.php:182
+#: system/mw_validation.php:183
 msgid "Please enter with a half-width alphanumeric character."
 msgstr ""
 
-#: system/mw_validation.php:204
+#: system/mw_validation.php:206
 msgid "Please enter with a Japanese Katakana."
 msgstr ""
 
-#: system/mw_validation.php:226
+#: system/mw_validation.php:229
 msgid "Please enter with a Japanese Hiragana."
 msgstr ""
 
-#: system/mw_validation.php:246
+#: system/mw_validation.php:248
 msgid "This is not the format of a zip code."
 msgstr ""
 
@@ -153,7 +84,7 @@ msgstr ""
 msgid "This is not the format of a mail address."
 msgstr ""
 
-#: system/mw_validation.php:325
+#: system/mw_validation.php:326
 msgid "This is not the format of a url."
 msgstr ""
 
@@ -165,257 +96,269 @@ msgstr ""
 msgid "The number of characters is invalid."
 msgstr ""
 
-#: system/mw_validation.php:410
+#: system/mw_validation.php:409
 msgid "The number of characters is a few."
 msgstr ""
 
-#: system/mw_validation.php:436
+#: system/mw_validation.php:434
 msgid "This value is invalid."
 msgstr ""
 
-#: system/mw_validation.php:460
+#: system/mw_validation.php:457
 msgid "This is not the format of a date."
 msgstr ""
 
-#: system/mw_validation.php:490
+#: system/mw_validation.php:486
 msgid "This file is invalid."
 msgstr ""
 
-#: system/mw_validation.php:520
+#: system/mw_validation.php:515
 msgid "This file size is too big."
 msgstr ""
 
-#: system/mw_validation.php:540
+#: system/mw_validation.php:534
 msgid "The contents which you input were judged with spam."
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:54
+#: system/mw_wp_form_admin_page.php:85
 msgid "Your contribution is needed for making this plugin better."
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:54
+#: system/mw_wp_form_admin_page.php:85
 msgid "Donate"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:96
+#: system/mw_wp_form_admin_page.php:127
 msgid "Add New Form"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:97
+#: system/mw_wp_form_admin_page.php:128
 msgid "Edit Form"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:98
+#: system/mw_wp_form_admin_page.php:129
 msgid "New Form"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:99
+#: system/mw_wp_form_admin_page.php:130
 msgid "View Form"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:100
+#: system/mw_wp_form_admin_page.php:131
 msgid "Search Forms"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:101
+#: system/mw_wp_form_admin_page.php:132
 msgid "No Forms found"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:102
+#: system/mw_wp_form_admin_page.php:133
 msgid "No Forms found in Trash"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:122
+#: system/mw_wp_form_admin_page.php:153
 msgid "Complete Message"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:129
+#: system/mw_wp_form_admin_page.php:160
 msgid "URL Options"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:136
+#: system/mw_wp_form_admin_page.php:167
 msgid "Validation Rule"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:143
+#: system/mw_wp_form_admin_page.php:174
 msgid "Form Key"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:150
+#: system/mw_wp_form_admin_page.php:181
 msgid "Automatic Reply Email Options"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:157
+#: system/mw_wp_form_admin_page.php:188
 msgid "Admin Email Options"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:164
+#: system/mw_wp_form_admin_page.php:195
 msgid "settings"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:283
+#: system/mw_wp_form_admin_page.php:314
 msgid "Copy and Paste this shortcode."
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:284
+#: system/mw_wp_form_admin_page.php:315
 msgid "The key to use with hook is "
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:298
+#: system/mw_wp_form_admin_page.php:329
 msgid "Activate Query string of post"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:299
+#: system/mw_wp_form_admin_page.php:330
 msgid ""
 "If this field is active, MW WP Form get query string. And get post data from "
 "query string \"post_id\". You can use $post's property in editor."
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:300
+#: system/mw_wp_form_admin_page.php:331
 msgid "Example: {ID}, {post_title}, {post_meta} etc..."
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:303
+#: system/mw_wp_form_admin_page.php:334
 msgid "Saving contact data in database"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:307
+#: system/mw_wp_form_admin_page.php:338
 msgid "Akismet Setting"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:322
+#: system/mw_wp_form_admin_page.php:353
 msgid "Input the key to use Akismet."
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:347 system/mw_wp_form_admin_page.php:389
+#: system/mw_wp_form_admin_page.php:378 system/mw_wp_form_admin_page.php:420
 msgid "Subject"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:351 system/mw_wp_form_admin_page.php:393
+#: system/mw_wp_form_admin_page.php:382 system/mw_wp_form_admin_page.php:424
 msgid "Sender"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:353 system/mw_wp_form_admin_page.php:358
-#: system/mw_wp_form_admin_page.php:386 system/mw_wp_form_admin_page.php:395
-#: system/mw_wp_form_admin_page.php:400
+#: system/mw_wp_form_admin_page.php:384 system/mw_wp_form_admin_page.php:389
+#: system/mw_wp_form_admin_page.php:417 system/mw_wp_form_admin_page.php:426
+#: system/mw_wp_form_admin_page.php:431
 msgid "If empty:"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:356 system/mw_wp_form_admin_page.php:398
+#: system/mw_wp_form_admin_page.php:387 system/mw_wp_form_admin_page.php:429
 msgid "From ( E-mail address )"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:361 system/mw_wp_form_admin_page.php:403
+#: system/mw_wp_form_admin_page.php:392 system/mw_wp_form_admin_page.php:434
 msgid "Ccontent"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:363 system/mw_wp_form_admin_page.php:405
+#: system/mw_wp_form_admin_page.php:394 system/mw_wp_form_admin_page.php:436
 msgid "{key} is converted form data."
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:366
+#: system/mw_wp_form_admin_page.php:397
 msgid "Automatic reply email"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:368
+#: system/mw_wp_form_admin_page.php:399
 msgid "Input the key to use as transmission to automatic reply email."
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:381
+#: system/mw_wp_form_admin_page.php:412
 msgid ""
 "If Admin Email Options is a blank, Automatic Replay Email Options is used as "
 "Admin Email Options."
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:384
+#: system/mw_wp_form_admin_page.php:415
 msgid "To ( E-mail address )"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:420
+#: system/mw_wp_form_admin_page.php:451
 msgid "Input Page URL"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:426
+#: system/mw_wp_form_admin_page.php:457
 msgid "Confirmation Page URL"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:432
+#: system/mw_wp_form_admin_page.php:463
 msgid "Complete Page URL"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:438
+#: system/mw_wp_form_admin_page.php:469
 msgid "Validation Error Page URL"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:477
+#: system/mw_wp_form_admin_page.php:509
 msgid "Add Validation rule"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:483
+#: system/mw_wp_form_admin_page.php:515
 msgid "The key which applies validation"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:487
+#: system/mw_wp_form_admin_page.php:519
 msgid "No empty"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:488
+#: system/mw_wp_form_admin_page.php:520
 msgid "No empty( with checkbox )"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:489
+#: system/mw_wp_form_admin_page.php:521
 msgid "Numeric"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:490
+#: system/mw_wp_form_admin_page.php:522
 msgid "Alphabet"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:491
+#: system/mw_wp_form_admin_page.php:523
 msgid "Alphabet and Numeric"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:492
+#: system/mw_wp_form_admin_page.php:524
 msgid "Japanese Katakana"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:493
+#: system/mw_wp_form_admin_page.php:525
 msgid "Japanese Hiragana"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:496
+#: system/mw_wp_form_admin_page.php:526
+msgid "Zip Code"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:527
+msgid "Tel"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:528
 msgid "E-mail"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:497
+#: system/mw_wp_form_admin_page.php:529
+msgid "URL"
+msgstr ""
+
+#: system/mw_wp_form_admin_page.php:530
 msgid "Date"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:501
+#: system/mw_wp_form_admin_page.php:534
 msgid "The key at same value"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:505
+#: system/mw_wp_form_admin_page.php:538
 msgid "The range of the number of characters"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:513
+#: system/mw_wp_form_admin_page.php:546
 msgid "The number of the minimum characters"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:517
+#: system/mw_wp_form_admin_page.php:550
 msgid "Permitted Extension"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:518
+#: system/mw_wp_form_admin_page.php:551
 msgid "Example:jpg or jpg,txt,…"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:521
+#: system/mw_wp_form_admin_page.php:554
 msgid "Permitted file size"
 msgstr ""
 
-#: system/mw_wp_form_admin_page.php:522
+#: system/mw_wp_form_admin_page.php:555
 msgid "bytes"
 msgstr ""
 
@@ -451,7 +394,7 @@ msgstr ""
 msgid "Registed Date"
 msgstr ""
 
-#: system/mw_wp_form_contact_data_page.php:329
+#: system/mw_wp_form_contact_data_page.php:340
 msgid "Memo"
 msgstr ""
 

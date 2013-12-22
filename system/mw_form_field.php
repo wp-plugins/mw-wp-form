@@ -3,11 +3,11 @@
  * Name: MW Form Field
  * URI: http://2inc.org
  * Description: フォームフィールドの抽象クラス
- * Version: 1.3.3
+ * Version: 1.3.4
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: December 20, 2013
+ * Modified: December 22, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -28,9 +28,9 @@
 abstract class mw_form_field {
 
 	/**
-	 * String $short_code_name
+	 * string $shortcode_name
 	 */
-	protected $short_code_name;
+	protected $shortcode_name;
 
 	/**
 	 * Form $Form
@@ -38,24 +38,34 @@ abstract class mw_form_field {
 	protected $Form;
 
 	/**
-	 * Array	$defaults	属性値等初期値
+	 * array $defaults 属性値等初期値
 	 */
 	protected $defaults = array();
 
 	/**
-	 * Array	$atts	属性値
+	 * array $atts 属性値
 	 */
 	protected $atts = array();
 
 	/**
-	 * Error	$Error	エラーオブジェクト
+	 * Error $Error エラーオブジェクト
 	 */
 	protected $Error;
 
 	/**
-	 * key	$key	フォーム識別子
+	 * string $key フォーム識別子
 	 */
 	protected $key;
+
+	/**
+	 * array $qtags qtagsの引数
+	 */
+	protected $qtags = array(
+		'id' => '',
+		'display' => '',
+		'arg1' => '',
+		'arg2' => '',
+	);
 
 	/**
 	 * __construct
@@ -64,6 +74,30 @@ abstract class mw_form_field {
 		$this->defaults = $this->setDefaults();
 		add_action( 'mwform_add_shortcode', array( $this, 'add_shortcode' ), 10, 4 );
 		add_action( 'mwform_add_qtags', array( $this, '_add_qtags' ) );
+	}
+
+	/**
+	 * get_qtags
+	 * @return array $qtags
+	 */
+	public function get_qtags() {
+		return $this->qtags;
+	}
+
+	/**
+	 * set_qtags
+	 * @param string $id
+	 * @param string $display
+	 * @param string $arg1 開始タグ（ショートコード）
+	 * @param string $arg2 終了タグ（ショートコード）
+	 */
+	protected function set_qtags( $id, $display, $arg1, $arg2 = '' ) {
+		$this->qtags = array(
+		'id' => $id,
+		'display' => __( $display, MWF_Config::DOMAIN ),
+		'arg1' => $arg1,
+		'arg2' => $arg2,
+		);
 	}
 
 	/**
@@ -126,16 +160,16 @@ abstract class mw_form_field {
 	 * 			String		$key
 	 */
 	public function add_shortcode( mw_form $Form, $viewFlg, mw_error $Error, $key ) {
-		if ( !empty( $this->short_code_name ) ) {
+		if ( !empty( $this->shortcode_name ) ) {
 			$this->Form = $Form;
 			$this->Error = $Error;
 			$this->key = $key;
 			switch( $viewFlg ) {
 				case 'input' :
-					add_shortcode( $this->short_code_name, array( $this, '_inputPage' ) );
+					add_shortcode( $this->shortcode_name, array( $this, '_inputPage' ) );
 					break;
 				case 'confirm' :
-					add_shortcode( $this->short_code_name, array( $this, '_confirmPage' ) );
+					add_shortcode( $this->shortcode_name, array( $this, '_confirmPage' ) );
 					break;
 				default :
 					exit( '$viewFlg is not right value.' );
@@ -166,14 +200,16 @@ abstract class mw_form_field {
 	}
 
 	/**
-	 * add_qtags
+	 * _add_qtags
 	 * QTags.addButton を出力
 	 */
-	abstract protected function add_qtags();
 	public function _add_qtags() {
 		?>
 		QTags.addButton(
-			<?php $this->add_qtags(); ?>
+			'<?php echo $this->qtags['id']; ?>',
+			'<?php echo $this->qtags['display']; ?>',
+			'[<?php echo $this->qtags['arg1']; ?>]',
+			'<?php echo $this->qtags['arg2']; ?>'
 		);
 		<?php
 	}

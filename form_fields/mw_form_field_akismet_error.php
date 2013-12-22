@@ -3,11 +3,11 @@
  * Name: MW Form Field Akismet Error
  * URI: http://2inc.org
  * Description: Akismetのエラーを出力。
- * Version: 1.1.2
+ * Version: 1.1.3
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : June 21, 2013
- * Modified: December 3, 2013
+ * Modified: December 22, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -28,9 +28,21 @@
 class mw_form_field_akismet_error extends mw_form_field {
 
 	/**
-	 * String $short_code_name
+	 * String $shortcode_name
 	 */
-	protected $short_code_name = 'mwform_akismet_error';
+	protected $shortcode_name = 'mwform_akismet_error';
+
+	/**
+	 * __construct
+	 */
+	public function __construct() {
+		parent::__construct();
+		$this->set_qtags(
+			$this->shortcode_name,
+			'Akismet Error',
+			$this->shortcode_name
+		);
+	}
 
 	/**
 	 * setDefaults
@@ -56,18 +68,5 @@ class mw_form_field_akismet_error extends mw_form_field {
 	 * @return	String	HTML
 	 */
 	protected function confirmPage() {
-	}
-
-	/**
-	 * add_qtags
-	 * QTags.addButton を出力
-	 */
-	protected function add_qtags() {
-		?>
-		'<?php echo $this->short_code_name; ?>',
-		'<?php _e( 'Akismet Error', MWF_Config::DOMAIN ); ?>',
-		'[<?php echo $this->short_code_name; ?>]',
-		''
-		<?php
 	}
 }

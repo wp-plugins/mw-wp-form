@@ -3,11 +3,11 @@
  * Name: MW Form Field Confirm Button
  * URI: http://2inc.org
  * Description: 確認ボタンを出力。
- * Version: 1.2.1
+ * Version: 1.2.2
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: December 26, 2013
+ * Modified: December 22, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -28,9 +28,21 @@
 class mw_form_field_confirm_button extends mw_form_field {
 
 	/**
-	 * String $short_code_name
+	 * String $shortcode_name
 	 */
-	protected $short_code_name = 'mwform_confirmButton';
+	protected $shortcode_name = 'mwform_confirmButton';
+
+	/**
+	 * __construct
+	 */
+	public function __construct() {
+		parent::__construct();
+		$this->set_qtags(
+			$this->shortcode_name,
+			'Confirm Button',
+			$this->shortcode_name
+		);
+	}
 
 	/**
 	 * setDefaults
@@ -58,18 +70,5 @@ class mw_form_field_confirm_button extends mw_form_field {
 	 * @return	String	HTML
 	 */
 	protected function confirmPage() {
-	}
-
-	/**
-	 * add_qtags
-	 * QTags.addButton を出力
-	 */
-	protected function add_qtags() {
-		?>
-		'<?php echo $this->short_code_name; ?>',
-		'<?php _e( 'Confirm Button', MWF_Config::DOMAIN ); ?>',
-		'[<?php echo $this->short_code_name; ?>]',
-		''
-		<?php
 	}
 }

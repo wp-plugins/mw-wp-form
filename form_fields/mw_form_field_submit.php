@@ -3,11 +3,11 @@
  * Name: MW Form Field Submit Button
  * URI: http://2inc.org
  * Description: 送信ボタンを出力。
- * Version: 1.2.2
+ * Version: 1.2.3
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: December 3, 2013
+ * Modified: December 22, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -28,9 +28,21 @@
 class mw_form_field_submit extends mw_form_field {
 
 	/**
-	 * String $short_code_name
+	 * String $shortcode_name
 	 */
-	protected $short_code_name = 'mwform_submit';
+	protected $shortcode_name = 'mwform_submit';
+
+	/**
+	 * __construct
+	 */
+	public function __construct() {
+		parent::__construct();
+		$this->set_qtags(
+			$this->shortcode_name,
+			'Submit Button',
+			$this->shortcode_name .' name="submit"'
+		);
+	}
 
 	/**
 	 * setDefaults
@@ -60,18 +72,5 @@ class mw_form_field_submit extends mw_form_field {
 	 */
 	protected function confirmPage() {
 		return $this->inputPage( $this->atts );
-	}
-
-	/**
-	 * add_qtags
-	 * QTags.addButton を出力
-	 */
-	protected function add_qtags() {
-		?>
-		'<?php echo $this->short_code_name; ?>',
-		'<?php _e( 'Submit Button', MWF_Config::DOMAIN ); ?>',
-		'[<?php echo $this->short_code_name; ?> name="submit"]',
-		''
-		<?php
 	}
 }

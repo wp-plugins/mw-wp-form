@@ -3,11 +3,11 @@
  * Name: MW Form Field Password
  * URI: http://2inc.org
  * Description: パスワードフィールドを出力。
- * Version: 1.2.2
+ * Version: 1.2.3
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: December 3, 2013
+ * Modified: December 22, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -28,9 +28,21 @@
 class mw_form_field_password extends mw_form_field {
 
 	/**
-	 * String $short_code_name
+	 * String $shortcode_name
 	 */
-	protected $short_code_name = 'mwform_password';
+	protected $shortcode_name = 'mwform_password';
+
+	/**
+	 * __construct
+	 */
+	public function __construct() {
+		parent::__construct();
+		$this->set_qtags(
+			$this->shortcode_name,
+			'Password',
+			$this->shortcode_name . ' name=""'
+		);
+	}
 
 	/**
 	 * setDefaults
@@ -71,18 +83,5 @@ class mw_form_field_password extends mw_form_field {
 	protected function confirmPage() {
 		$value = $this->Form->getValue( $this->atts['name'] );
 		return '*****' . $this->Form->hidden( $this->atts['name'], $value );
-	}
-
-	/**
-	 * add_qtags
-	 * QTags.addButton を出力
-	 */
-	protected function add_qtags() {
-		?>
-		'<?php echo $this->short_code_name; ?>',
-		'<?php _e( 'Password', MWF_Config::DOMAIN ); ?>',
-		'[<?php echo $this->short_code_name; ?> name=""]',
-		''
-		<?php
 	}
 }

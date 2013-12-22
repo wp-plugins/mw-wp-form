@@ -3,11 +3,11 @@
  * Name: MW Form Field Back Button
  * URI: http://2inc.org
  * Description: 戻るボタンを出力。
- * Version: 1.2.2
+ * Version: 1.2.3
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: December 3, 2013
+ * Modified: December 22, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -28,9 +28,21 @@
 class mw_form_field_back_button extends mw_form_field {
 
 	/**
-	 * String $short_code_name
+	 * String $shortcode_name
 	 */
-	protected $short_code_name = 'mwform_backButton';
+	protected $shortcode_name = 'mwform_backButton';
+
+	/**
+	 * __construct
+	 */
+	public function __construct() {
+		parent::__construct();
+		$this->set_qtags(
+			$this->shortcode_name,
+			'Back',
+			$this->shortcode_name
+		);
+	}
 
 	/**
 	 * setDefaults
@@ -58,18 +70,5 @@ class mw_form_field_back_button extends mw_form_field {
 	 */
 	protected function confirmPage() {
 		return $this->Form->submit( $this->Form->getBackButtonName(), $this->atts['value'] );
-	}
-
-	/**
-	 * add_qtags
-	 * QTags.addButton を出力
-	 */
-	protected function add_qtags() {
-		?>
-		'<?php echo $this->short_code_name; ?>',
-		'<?php _e( 'Back', MWF_Config::DOMAIN ); ?>',
-		'[<?php echo $this->short_code_name; ?>]',
-		''
-		<?php
 	}
 }
