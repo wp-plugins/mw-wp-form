@@ -3,7 +3,7 @@
  * Name: MW WP Form Admin Page
  * URI: http://2inc.org
  * Description: 管理画面クラス
- * Version: 1.7.3
+ * Version: 1.7.4
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : February 21, 2013
@@ -48,7 +48,7 @@ class MW_WP_Form_Admin_Page {
 	 * add_tinymce
 	 */
 	public function add_tinymce() {
-		if ( get_user_option( 'rich_editing' ) == 'true' ) {
+		if ( get_user_option( 'rich_editing' ) === 'true' && get_post_type() === MWF_Config::NAME ) {
 			add_filter( 'mce_external_plugins', array( $this, 'add_tinymce_plugin' ) );
 			add_filter( 'mce_buttons', array( $this, 'add_tinymce_button' ) );
 		}

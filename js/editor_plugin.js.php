@@ -35,7 +35,7 @@ header( 'Content-Type: text/javascript' );
 								'<?php echo $qtags['display']; ?>',
 								'<?php echo $qtags['arg1'] . $qtags['arg2']; ?>'
 							);
-							<?
+							<?php
 						}
 					}
 				}
