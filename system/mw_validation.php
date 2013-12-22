@@ -3,11 +3,11 @@
  * Name: MW Validation
  * URI: http://2inc.org
  * Description: バリデーションクラス
- * Version: 1.6.1
+ * Version: 1.6.2
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : July 20, 2012
- * Modified: December 19, 2013
+ * Modified: December 23, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -298,7 +298,7 @@ class MW_Validation {
 			if ( is_array( $value ) ) {
 				$value = implode( $this->getSeparatorValue( $key ), $value );
 			}
-			if ( !preg_match( '/^[^@]+@[^@^\.]+\.[^@^\.]+$/', $value ) ) {
+			if ( !preg_match( '/^[^@]+@([^@^\.]+\.)+[^@^\.]+$/', $value ) ) {
 				$defaults = array(
 					'message' => __( 'This is not the format of a mail address.', MWF_Config::DOMAIN )
 				);
