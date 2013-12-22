@@ -3,11 +3,11 @@
  * Name: MWF_Config
  * URI: http://2inc.org
  * Description: 設定ファイル
- * Version: 1.1
+ * Version: 1.1.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
- * Created: May 29, 2013
- * Modified: June, 21, 2013
+ * Created : May 29, 2013
+ * Modified: December, 19, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -50,6 +50,12 @@ class MWF_Config {
 	 * アップロードファイルを示す name属性 を保存する配列、メタデータの名前
 	 */
 	const UPLOAD_FILE_KEYS = 'mwf_upload_files';
+
+	/**
+	 * UPLOAD_FILES
+	 * $_FILES
+	 */
+	const UPLOAD_FILES = 'mwf_files';
 
 	/**
 	 * AKISMET
