@@ -3,11 +3,11 @@
  * Name: MW WP Form Contact Data Page
  * URI: http://2inc.org
  * Description: DB保存データを扱うクラス
- * Version: 1.0.4
+ * Version: 1.0.5
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : October 10, 2013
- * Modified: December 20, 2013
+ * Modified: December 26, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -267,7 +267,7 @@ class MW_WP_Form_Contact_Data_Page {
 		if ( is_array( $_upload_file_keys ) ) {
 			$upload_file_keys = $_upload_file_keys;
 		} else {
-			$upload_file_keys = get_post_custom_values( '_' . MWF_Config::UPLOAD_FILE_KEYS, $post->ID );
+			$upload_file_keys = get_post_custom_values( '_' . MWF_Config::UPLOAD_FILE_KEYS, $post_id );
 		}
 
 		if ( $column == 'post_date' ) {
@@ -276,7 +276,7 @@ class MW_WP_Form_Contact_Data_Page {
 		}
 		elseif ( !empty( $post_custom_keys ) && is_array( $post_custom_keys ) && in_array( $column, $post_custom_keys ) ) {
 			$post_meta = get_post_meta( $post_id, $column, true );
-			if ( in_array( $column, $upload_file_keys ) ) {
+			if ( is_array( $upload_file_keys ) && in_array( $column, $upload_file_keys ) ) {
 				echo '<a href="' . admin_url( '/post.php?post=' ) . $post_meta . '&action=edit">' . $post_meta . '</a>';
 			} elseif ( $post_meta ) {
 				echo esc_html( $post_meta );
