@@ -4,7 +4,7 @@ Donate link: http://www.amazon.co.jp/registry/wishlist/39ANKRNSTNW40
 Tags: plugin, form, confirm, preview, shortcode
 Requires at least: 3.4
 Tested up to: 3.8.0
-Stable tag: 1.2.4
+Stable tag: 1.2.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -47,8 +47,11 @@ Do you have questions or issues with MW WP Form? Use these support channels appr
 
 == Changelog ==
 
-= 1.2.4 =
+= 1.2.5 =
 * Added   : 管理者宛メールの複数人送信をサポート
+* Added   : mwform_error_message_html
+* Added   : mwform_error_message_wrapper
+* Buf fix : DB保存データ一覧表示画面 Noticeエラー
 
 = 1.2.4 =
 * Bug fix : メールアドレスバリデーションのバグを修正
