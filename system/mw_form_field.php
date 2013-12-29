@@ -3,11 +3,11 @@
  * Name: MW Form Field
  * URI: http://2inc.org
  * Description: フォームフィールドの抽象クラス
- * Version: 1.3.5
+ * Version: 1.3.6
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: December 26, 2013
+ * Modified: December 29, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -94,7 +94,7 @@ abstract class mw_form_field {
 	protected function set_qtags( $id, $display, $arg1, $arg2 = '' ) {
 		$this->qtags = array(
 		'id' => $id,
-		'display' => __( $display, MWF_Config::DOMAIN ),
+		'display' => $display,
 		'arg1' => $arg1,
 		'arg2' => $arg2,
 		);

@@ -3,11 +3,11 @@
  * Plugin Name: MW WP Form
  * Plugin URI: http://2inc.org/manual-mw-wp-form/
  * Description: MW WP Form can create mail form with a confirmation screen.
- * Version: 1.2.5
+ * Version: 1.2.6
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : September 25, 2012
- * Modified: December 24, 2013
+ * Modified: December 29, 2013
  * Text Domain: mw-wp-form
  * Domain Path: /languages/
  * License: GPL2
@@ -69,6 +69,7 @@ class mw_wp_form {
 		'complete_url' => '',
 		'validation_error_url' => '',
 		'validation' => array(),
+		'style' => '',
 	);
 
 	/**
@@ -116,8 +117,6 @@ class mw_wp_form {
 		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_wp_form_data.php' );
 		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_wp_form_file.php' );
 		add_action( 'get_header', array( $this, 'main' ) );
-		add_action( 'wp_print_styles', array( $this, 'original_style' ) );
-		add_action( 'wp_print_scripts', array( $this, 'original_script' ) );
 		add_action( 'parse_request', array( $this, 'remove_query_vars_from_post' ) );
 	}
 
@@ -193,6 +192,14 @@ class mw_wp_form {
 		$url = plugin_dir_url( __FILE__ );
 		wp_register_style( MWF_Config::DOMAIN, $url . 'css/style.css' );
 		wp_enqueue_style( MWF_Config::DOMAIN );
+
+		$style = $this->options_by_formkey['style'];
+		$styles = apply_filters( 'mwform_styles', array() );
+		if ( is_array( $styles ) && isset( $styles[$style] ) ) {
+			$css = $styles[$style];
+			wp_register_style( MWF_Config::DOMAIN . '_style', $css );
+			wp_enqueue_style( MWF_Config::DOMAIN . '_style' );
+		}
 	}
 
 	/**
@@ -324,6 +331,8 @@ class mw_wp_form {
 		add_shortcode( 'mwform', array( $this, '_mwform' ) );
 		add_shortcode( 'mwform_complete_message', array( $this, '_mwform_complete_message' ) );
 		add_action( 'wp_footer', array( $this->Data, 'clearValues' ) );
+		add_action( 'wp_print_styles', array( $this, 'original_style' ) );
+		add_action( 'wp_print_scripts', array( $this, 'original_script' ) );
 	}
 
 	/**

@@ -47,10 +47,13 @@ Do you have questions or issues with MW WP Form? Use these support channels appr
 
 == Changelog ==
 
+= 1.2.6 =
+* Added   : mwform_styles フィルターフック
+
 = 1.2.5 =
 * Added   : 管理者宛メールの複数人送信をサポート
-* Added   : mwform_error_message_html
-* Added   : mwform_error_message_wrapper
+* Added   : mwform_error_message_html フィルターフック
+* Added   : mwform_error_message_wrapper フィルターフック
 * Buf fix : DB保存データ一覧表示画面 Noticeエラー
 
 = 1.2.4 =

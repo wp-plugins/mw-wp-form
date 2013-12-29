@@ -3,11 +3,11 @@
  * Name: MW Form Field Error
  * URI: http://2inc.org
  * Description: エラーを出力。
- * Version: 1.2.3
+ * Version: 1.2.4
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: December 22, 2013
+ * Modified: December 29, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -39,7 +39,7 @@ class mw_form_field_error extends mw_form_field {
 		parent::__construct();
 		$this->set_qtags(
 			$this->shortcode_name,
-			'Error Message',
+			__( 'Error Message', MWF_Config::DOMAIN ),
 			$this->shortcode_name . ' keys=""'
 		);
 	}

@@ -3,11 +3,11 @@
  * Name: MW WP Form Admin Page
  * URI: http://2inc.org
  * Description: 管理画面クラス
- * Version: 1.7.4
+ * Version: 1.7.5
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : February 21, 2013
- * Modified: December 22, 2013
+ * Modified: December 29, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -27,6 +27,7 @@
  */
 class MW_WP_Form_Admin_Page {
 
+	private $styles = array();
 	private $postdata;
 	const SHORTCODE_BUTTON_NAME = 'mw_wp_form_button';
 
@@ -196,6 +197,16 @@ class MW_WP_Form_Admin_Page {
 				array( $this, 'settings' ),
 				MWF_Config::NAME, 'side'
 			);
+			// CSS
+			$this->styles = apply_filters( 'mwform_styles', $this->styles );
+			if ( $this->styles ) {
+				add_meta_box(
+					MWF_Config::NAME . '_styles',
+					__( 'Style setting', MWF_Config::DOMAIN ),
+					array( $this, 'add_style_option' ),
+					MWF_Config::NAME, 'side'
+				);
+			}
 		}
 	}
 
@@ -558,6 +569,24 @@ class MW_WP_Form_Admin_Page {
 			<!-- end .validation-content --></div>
 		<!-- end .validatioin-box --></div>
 		<?php endforeach; ?>
+		<?php
+	}
+
+	/**
+	 * add_style_option
+	 */
+	public function add_style_option() {
+		?>
+		<p>
+			<select name="<?php echo MWF_Config::NAME; ?>[style]">
+				<option value=""><?php _e( 'Select Style', MWF_Config::DOMAIN ); ?></option>
+				<?php foreach ( $this->styles as $style => $css ) : ?>
+				<option value="<?php echo esc_attr( $style ); ?>" <?php selected( $this->get_post_data( 'style' ), $style ); ?>>
+					<?php echo esc_html( $style ); ?>
+				</option>
+				<?php endforeach; ?>
+			</select>
+		</p>
 		<?php
 	}
 
