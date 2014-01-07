@@ -3,16 +3,16 @@
  * Plugin Name: MW WP Form
  * Plugin URI: http://2inc.org/manual-mw-wp-form/
  * Description: MW WP Form can create mail form with a confirmation screen.
- * Version: 1.2.6
+ * Version: 1.2.7
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : September 25, 2012
- * Modified: December 29, 2013
+ * Modified: January 7, 2014
  * Text Domain: mw-wp-form
  * Domain Path: /languages/
  * License: GPL2
  *
- * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
+ * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -116,7 +116,7 @@ class mw_wp_form {
 		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_validation.php' );
 		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_wp_form_data.php' );
 		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_wp_form_file.php' );
-		add_action( 'get_header', array( $this, 'main' ) );
+		add_filter( 'template_include', array( $this, 'main' ), 10000 );
 		add_action( 'parse_request', array( $this, 'remove_query_vars_from_post' ) );
 	}
 
@@ -215,9 +215,11 @@ class mw_wp_form {
 	/**
 	 * main
 	 * 表示画面でのプラグインの処理等。
+	 * @param string $template
+	 * @return string $template
 	 */
-	public function main() {
-		global $post, $template;
+	public function main( $template ) {
+		global $post;
 
 		// URL設定を取得
 		add_shortcode( 'mwform', array( $this, '_meta_mwform' ) );
@@ -248,7 +250,7 @@ class mw_wp_form {
 			 is_null( $this->confirm ) ||
 			 is_null( $this->complete ) ||
 			 is_null( $this->validation_error ) )
-			return;
+			return $template;
 
 		// セッション初期化
 		$this->Session = MW_Session::start( $this->key );
@@ -333,6 +335,7 @@ class mw_wp_form {
 		add_action( 'wp_footer', array( $this->Data, 'clearValues' ) );
 		add_action( 'wp_print_styles', array( $this, 'original_style' ) );
 		add_action( 'wp_print_scripts', array( $this, 'original_script' ) );
+		return $template;
 	}
 
 	/**

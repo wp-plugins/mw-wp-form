@@ -3,14 +3,14 @@
  * Name: MW WP Form File
  * URI: http://2inc.org
  * Description: Tempディレクトリ、ファイルアップロードの処理を行うクラス
- * Version: 1.0.3
+ * Version: 1.0.4
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : October 10, 2013
- * Modified: December 11, 2013
+ * Modified: January 7, 2014
  * License: GPL2
  *
- * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
+ * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -35,9 +35,9 @@ class MW_WP_Form_File {
 
 	/**
 	 * checkFileType
-	 * @param   String  アップロードされたファイルのパス
-	 *          String  ファイル名（未アップロード時の$_FILEの検査の場合、temp_nameは乱数になっているため）
-	 * @return  Boolean
+	 * @param string $filepath アップロードされたファイルのパス
+	 * @param string $filename ファイル名（未アップロード時の$_FILEの検査の場合、temp_nameは乱数になっているため）
+	 * @return boolean
 	 */
 	protected function checkFileType( $filepath, $filename = '' ) {
 		// WordPress( get_allowed_mime_types ) で許可されたファイルタイプ限定
@@ -72,6 +72,14 @@ class MW_WP_Form_File {
 				$wp_check_filetype['type'] = array(
 					'audio/mpeg',
 					'video/mpeg',
+				);
+				break;
+			case 'docx' :
+			case 'xlsx' :
+			case 'pptx' :
+				$wp_check_filetype['type'] = array(
+					$wp_check_filetype['type'],
+					'application/zip',
 				);
 				break;
 		}

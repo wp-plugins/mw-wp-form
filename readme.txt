@@ -4,7 +4,7 @@ Donate link: http://www.amazon.co.jp/registry/wishlist/39ANKRNSTNW40
 Tags: plugin, form, confirm, preview, shortcode
 Requires at least: 3.4
 Tested up to: 3.8.0
-Stable tag: 1.2.6
+Stable tag: 1.2.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -46,6 +46,10 @@ Do you have questions or issues with MW WP Form? Use these support channels appr
 1. screenshot-1.png
 
 == Changelog ==
+
+= 1.2.7 =
+* Added   : Support docx, xlsx, pptx upload.
+* Change  : Change main process hook from get_header to template_include.
 
 = 1.2.6 =
 * Added   : mwform_styles フィルターフック
