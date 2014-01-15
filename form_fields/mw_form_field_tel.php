@@ -3,11 +3,11 @@
  * Name: MW Form Field Tel
  * URI: http://2inc.org
  * Description: 電話番号フィールドを出力。
- * Version: 1.1
+ * Version: 1.2.4
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
- * Created: December 14, 2012
- * Modified: May 29, 2013
+ * Created : December 14, 2012
+ * Modified: December 29, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -28,9 +28,21 @@
 class mw_form_field_tel extends mw_form_field {
 
 	/**
-	 * String $short_code_name
+	 * string $shortcode_name
 	 */
-	protected $short_code_name = 'mwform_tel';
+	protected $shortcode_name = 'mwform_tel';
+
+	/**
+	 * __construct
+	 */
+	public function __construct() {
+		parent::__construct();
+		$this->set_qtags(
+			$this->shortcode_name,
+			__( 'Tel', MWF_Config::DOMAIN ),
+			$this->shortcode_name .' name=""'
+		);
+	}
 
 	/**
 	 * setDefaults
@@ -41,46 +53,36 @@ class mw_form_field_tel extends mw_form_field {
 		return array(
 			'name'       => '',
 			'show_error' => 'true',
+			'conv_half_alphanumeric' => 'true',
 		);
 	}
 
 	/**
 	 * inputPage
 	 * 入力ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function inputPage( $atts ) {
-		$_ret = $this->Form->tel( $atts['name'] );
-		if ( $atts['show_error'] !== 'false' )
-			$_ret .= $this->getError( $atts['name'] );
+	protected function inputPage() {
+		$conv_half_alphanumeric = false;
+		if ( $this->atts['conv_half_alphanumeric'] === 'true' ) {
+			$conv_half_alphanumeric = true;
+		}
+		$_ret = $this->Form->tel( $this->atts['name'], array( 'conv-half-alphanumeric' => $conv_half_alphanumeric ) );
+		if ( $this->atts['show_error'] !== 'false' )
+			$_ret .= $this->getError( $this->atts['name'] );
 		return $_ret;
 	}
 
 	/**
-	 * previewPage
+	 * confirmPage
 	 * 確認ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function previewPage( $atts ) {
-		$value = $this->Form->getTelValue( $atts['name'] );
+	protected function confirmPage() {
+		$value = $this->Form->getTelValue( $this->atts['name'] );
 		$_ret  = $value;
-		$_ret .= $this->Form->hidden( $atts['name'].'[data]', $value );
-		$_ret .= $this->Form->separator( $atts['name'] );
+		$_ret .= $this->Form->hidden( $this->atts['name'].'[data]', $value );
+		$_ret .= $this->Form->separator( $this->atts['name'] );
 		return $_ret;
-	}
-
-	/**
-	 * add_qtags
-	 * QTags.addButton を出力
-	 */
-	protected function add_qtags() {
-		?>
-		'<?php echo $this->short_code_name; ?>',
-		'<?php _e( 'Tel', MWF_Config::DOMAIN ); ?>',
-		'[<?php echo $this->short_code_name; ?> name=""]',
-		''
-		<?php
 	}
 }

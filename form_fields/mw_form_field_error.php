@@ -3,11 +3,11 @@
  * Name: MW Form Field Error
  * URI: http://2inc.org
  * Description: エラーを出力。
- * Version: 1.1
+ * Version: 1.2.4
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
- * Created: December 14, 2012
- * Modified: May 29, 2013
+ * Created : December 14, 2012
+ * Modified: December 29, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -28,9 +28,21 @@
 class mw_form_field_error extends mw_form_field {
 
 	/**
-	 * String $short_code_name
+	 * String $shortcode_name
 	 */
-	protected $short_code_name = 'mwform_error';
+	protected $shortcode_name = 'mwform_error';
+
+	/**
+	 * __construct
+	 */
+	public function __construct() {
+		parent::__construct();
+		$this->set_qtags(
+			$this->shortcode_name,
+			__( 'Error Message', MWF_Config::DOMAIN ),
+			$this->shortcode_name . ' keys=""'
+		);
+	}
 
 	/**
 	 * setDefaults
@@ -46,11 +58,10 @@ class mw_form_field_error extends mw_form_field {
 	/**
 	 * inputPage
 	 * 入力ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function inputPage( $atts ) {
-		$keys = explode( ',', $atts['keys'] );
+	protected function inputPage() {
+		$keys = explode( ',', $this->atts['keys'] );
 		$_ret = '';
 		foreach ( $keys as $key ) {
 			$_ret .= $this->getError( trim( $key ) );
@@ -59,24 +70,10 @@ class mw_form_field_error extends mw_form_field {
 	}
 
 	/**
-	 * previewPage
+	 * confirmPage
 	 * 確認ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function previewPage( $atts ) {
-	}
-
-	/**
-	 * add_qtags
-	 * QTags.addButton を出力
-	 */
-	protected function add_qtags() {
-		?>
-		'<?php echo $this->short_code_name; ?>',
-		'<?php _e( 'Error Message', MWF_Config::DOMAIN ); ?>',
-		'[<?php echo $this->short_code_name; ?> keys=""]',
-		''
-		<?php
+	protected function confirmPage() {
 	}
 }

@@ -3,11 +3,11 @@
  * Name: MW Form Field Password
  * URI: http://2inc.org
  * Description: パスワードフィールドを出力。
- * Version: 1.1
+ * Version: 1.2.4
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
- * Created: December 14, 2012
- * Modified: May 29, 2013
+ * Created : December 14, 2012
+ * Modified: December 29, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -28,9 +28,21 @@
 class mw_form_field_password extends mw_form_field {
 
 	/**
-	 * String $short_code_name
+	 * String $shortcode_name
 	 */
-	protected $short_code_name = 'mwform_password';
+	protected $shortcode_name = 'mwform_password';
+
+	/**
+	 * __construct
+	 */
+	public function __construct() {
+		parent::__construct();
+		$this->set_qtags(
+			$this->shortcode_name,
+			__( 'Password', MWF_Config::DOMAIN ),
+			$this->shortcode_name . ' name=""'
+		);
+	}
 
 	/**
 	 * setDefaults
@@ -50,41 +62,26 @@ class mw_form_field_password extends mw_form_field {
 	/**
 	 * inputPage
 	 * 入力ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function inputPage( $atts ) {
-		$_ret = $this->Form->password( $atts['name'], array(
-			'size'      => $atts['size'],
-			'maxlength' => $atts['maxlength'],
-			'value'     => $atts['value'],
+	protected function inputPage() {
+		$_ret = $this->Form->password( $this->atts['name'], array(
+			'size'      => $this->atts['size'],
+			'maxlength' => $this->atts['maxlength'],
+			'value'     => $this->atts['value'],
 		) );
-		if ( $atts['show_error'] !== 'false' )
-			$_ret .= $this->getError( $atts['name'] );
+		if ( $this->atts['show_error'] !== 'false' )
+			$_ret .= $this->getError( $this->atts['name'] );
 		return $_ret;
 	}
 
 	/**
-	 * previewPage
+	 * confirmPage
 	 * 確認ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function previewPage( $atts ) {
-		$value = $this->Form->getValue( $atts['name'] );
-		return '*****' . $this->Form->hidden( $atts['name'], $atts );
-	}
-
-	/**
-	 * add_qtags
-	 * QTags.addButton を出力
-	 */
-	protected function add_qtags() {
-		?>
-		'<?php echo $this->short_code_name; ?>',
-		'<?php _e( 'Password', MWF_Config::DOMAIN ); ?>',
-		'[<?php echo $this->short_code_name; ?> name=""]',
-		''
-		<?php
+	protected function confirmPage() {
+		$value = $this->Form->getValue( $this->atts['name'] );
+		return '*****' . $this->Form->hidden( $this->atts['name'], $value );
 	}
 }

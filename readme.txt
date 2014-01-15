@@ -1,10 +1,10 @@
 === MW WP Form ===
 Contributors: inc2734
-Donate link:
-Tags: plugin, form, confirm, preview
+Donate link: http://www.amazon.co.jp/registry/wishlist/39ANKRNSTNW40
+Tags: plugin, form, confirm, preview, shortcode
 Requires at least: 3.4
-Tested up to: 3.5
-Stable tag: 0.9.9
+Tested up to: 3.8.0
+Stable tag: 1.2.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -26,8 +26,7 @@ MW WP Form はショートコードを使って確認画面付きのメールフ
 * 同一URL・個別URLでの画面変遷が可能
 * 豊富なバリデーションルール
 
-http://2inc.org/manual-mw-wp-form/
-http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
+http://plugins.2inc.org/mw-wp-form/
 
 == Installation ==
 
@@ -35,7 +34,131 @@ http://2inc.org/blog/category/products/wordpress_plugins/mw-wp-form/
 1. Activate the plugin through the 'Plugins' menu in WordPress
 1. You can create a form by settings page.
 
+== Frequently Asked Questions ==
+
+Do you have questions or issues with MW WP Form? Use these support channels appropriately.
+
+1. [Official](http://plugins.2inc.org/mw-wp-form/)
+1. [Support Forum](http://wordpress.org/support/plugin/mw-wp-form)
+
+== Screenshots ==
+
+1. screenshot-1.png
+
 == Changelog ==
+
+= 1.2.8 =
+* Added   : 自動返信メール設定、管理者宛メール設定で本文の以外の項目にも{キー}を使用可能に
+
+= 1.2.7 =
+* Added   : Support docx, xlsx, pptx upload.
+* Change  : Change main process hook from get_header to template_include.
+
+= 1.2.6 =
+* Added   : mwform_styles フィルターフック
+
+= 1.2.5 =
+* Added   : 管理者宛メールの複数人送信をサポート
+* Added   : mwform_error_message_html フィルターフック
+* Added   : mwform_error_message_wrapper フィルターフック
+* Buf fix : DB保存データ一覧表示画面 Noticeエラー
+
+= 1.2.4 =
+* Bug fix : メールアドレスバリデーションのバグを修正
+
+= 1.2.3 =
+* Bug fix : ビジュアルエディタショートコードボタンがどの投稿タイプでもでてしまうバグを修正
+
+= 1.2.2 =
+* Added   : ビジュアルエディタにショートコード挿入ボタンを追加
+
+= 1.2.1 =
+* Bug fix : 管理者宛メール本文入力欄のサイズ
+* Bug fix : WM_Form::zip, WM_Form::tel
+* Bug fix : MW_Validation::fileType, MW_Validation::fileSize
+* Bug fix : children が未指定でも mwform_choices フィルターフックの引数に空値が渡ってくるバグを修正
+* Change  : jquery.ui.css のプロトコル指定、バージョンを変更
+* Change  : データの持ち方を singleton に変更
+* Added   : mwform_validation_xxx フィルターフックに引数を追加（$data）
+* Added   : DB登録データ一覧で画像・ファイルカラムの項目は編集画面にリンク
+* Added   : URLバリデーション
+
+= 1.2.0 =
+* Added   : 電話番号、郵便番号フィールドはデフォルトで全角 -> 半角置換
+* Added   : mwform_error_message_識別子 フィルターフック追加
+* Added   : ひらがな バリデーション項目を追加
+* Added   : テンプレートでもショートコード [mwform_formkey] を実行可能に
+* Added   : Support placeholder in input, textarea
+* Changed : MW_Form::previewPage() -> MW_Form::confirmPage()
+* Changed : [mwform_submitButton preview_value=""] -> [mwform_submitButton confirm_value=""]
+* Changed : [mwform preview=""] -> [mwform confirm=""]
+* Changed : [mwform_previewButton] -> [mwform_confirmButton]
+* Changed : URL引数を有効にする の場合のみURL引数が利用されるように変更（URL設定で利用されているものは除く）
+* Bug fix : 入力画面にpostしたときにhiddenフィールドの値がリセットされる（引き継がれない）バグを修正
+
+= 1.1.5 =
+* Bug fix : $MW_Mail->createBody()のバグ修正
+
+= 1.1.4 =
+* Changed : 設定を読み込むため際、無駄な do_shortcode() が行われないように修正
+* Bug fix : チェックボックスの値が送信されないバグ修正
+
+= 1.1.3 =
+* Deprecated: div.mw_wp_form_previewは次回のバージョンアップで削除予定（div.mw_wp_form_confirmに置換）
+* Deprecated: MW_Form::previewPage()は次回のバージョンアップで削除予定（MW_Form::confirmPage()に置換）
+* Deprecated: [mwform_submitButton]の引数preview_valueは次回のバージョンアップで削除予定（confirm_valueに置換）
+* Deprecated: [mwform]の引数previewは次回のバージョンアップで削除予定（confirmに置換）
+* Deprecated: [mwform_previewButton]は次回のバージョンアップで削除予定（[mwform_confirmButton]に置換）
+* Changed   : MW_Form::isPreview() -> MW_Form::isConfirm()
+* Changed   : MW_Form::getPreviewButtonName() -> MW_Form::getConfirmButtonName()
+* Added     : mwform_default_content フィルターフック
+* Added     : mwform_default_postdata フィルターフック
+
+= 1.1.2 =
+* Cahged : セッションまわりの処理をリファクタリング
+
+= 1.1.1 =
+* Bug fix: ダウンロードしたCSVに全件表示されないバグを修正
+
+= 1.1.0 =
+* Added  : mwform_value_識別子 フィルターフック追加
+* Added  : mwform_hidden の引数 echo を追加（ true or false ）
+* Added  : カタカナ バリデーション項目を追加
+* Cahged : 管理画面メニュー表示、設定保存の権限を変更（edit_pagesに統一）
+* Bug fix: 複数のMIMEタイプをとりえる拡張子を持つファイルのアップロードに対応（avi、mp3、mpg）
+
+= 1.0.4 =
+* Bug fix: 画像以外の添付ファイルがカスタムフィールドに表示されないバグを修正
+* Bug fix: 動画アップロード時にFatal Errorがでるバグを修正
+
+= 1.0.3 =
+* Added  : 管理画面に Donate link を追加
+
+= 1.0.2 =
+* Bug fix: シングルページのみ実行可能に変更（検索結果ページ等でリダイレクトしてしまうため）
+* Bug fix: URL引数有効 + 同一URL時にリダイレクトループが発生してしまうバグを修正
+
+= 1.0.1 =
+* Bug fix: DBに保存しないときに添付ファイルが送られてこない
+
+= 1.0.0 =
+* Added  : Donate link を追加
+* Added  : DB保存データにメモ欄追加
+* Cahged : ファイルアップロード用のディレクトリにアップロードするように変更専用
+* Cahged : 拡張子が偽造されたファイルの場合はアップロードしない（php5.3.0以上）
+* Cahged : 表示ページのURLに引数が付いている場合でも管理画面で設定したURLにリダイレクトしてしまわないように変更
+* Bug fix: 通常バリデーションは配列が来ることを想定していなかったため修正
+
+= 0.9.11 =
+* Bug fix: 添付ファイルが複数あり、かつDB保存の場合、管理画面で最後の画像しか表示されないバグを修正
+* Cahged : どのフィールドが画像かを示すメタデータの保存形式を配列に変更
+* Cahged : mw_form_field::inputPage、mw_form_field::previewPage の引数削除
+
+= 0.9.10 =
+* Bug fix: mwform_admin_mail_識別子、mwform_auto_mail_識別子フィルターフックの定義位置が逆だったのを修正
+* Bug fix: 添付ファイルが添付されないバグを修正（From Ver0.9.4）
+* Bug fix: Akismet Email、Akismet URL の設定が正しく行えなかったのを修正
+* Cahged : フォーム送信時は $_POST を WP Query に含めない
 
 = 0.9.9 =
 * Added  : mwform_csv_button_識別子 フィルターフック
