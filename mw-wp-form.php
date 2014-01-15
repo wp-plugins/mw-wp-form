@@ -7,7 +7,7 @@
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : September 25, 2012
- * Modified: January 7, 2014
+ * Modified: January 15, 2014
  * Text Domain: mw-wp-form
  * Domain Path: /languages/
  * License: GPL2
@@ -552,23 +552,25 @@ class mw_wp_form {
 			if ( $mailto = $this->options_by_formkey['mail_to'] )
 				$Mail->to = $mailto;
 			// 送信元を指定
-			$from = get_bloginfo( 'admin_email' );
-			if ( !empty( $this->options_by_formkey['admin_mail_from'] ) )
-				$from = $this->options_by_formkey['admin_mail_from'];
+			if ( !empty( $this->options_by_formkey['admin_mail_from'] ) ) {
+				$from = $this->parse_mail_content( $this->options_by_formkey['admin_mail_from'] );
+			}
+			if ( empty( $from ) ) {
+				$from = get_bloginfo( 'admin_email' );
+			}
 			$Mail->from = $from;
 			// 送信者を指定
-			$sender = get_bloginfo( 'name' );
-			if ( !empty( $this->options_by_formkey['admin_mail_sender'] ) )
-				$sender = $this->options_by_formkey['admin_mail_sender'];
+			if ( !empty( $this->options_by_formkey['admin_mail_sender'] ) ) {
+				$sender = $this->parse_mail_content( $this->options_by_formkey['admin_mail_sender'] );
+			}
+			if ( empty( $sender ) ) {
+				$sender = get_bloginfo( 'name' );
+			}
 			$Mail->sender = $sender;
 			// タイトルを指定
-			$Mail->subject = $admin_mail_subject;
+			$Mail->subject = $this->parse_mail_content( $admin_mail_subject );
 			// 本文を指定
-			$Mail->body = preg_replace_callback(
-				'/{(.+?)}/',
-				array( $this, 'create_mail_body' ),
-				$admin_mail_content
-			);
+			$Mail->body = $this->parse_mail_content( $admin_mail_content );
 		}
 
 		$filter_name = 'mwform_mail_' . $this->key;
@@ -584,16 +586,12 @@ class mw_wp_form {
 
 				// $this->insert_id を設定 ( save_mail_body で 使用 )
 				$this->insert_id = wp_insert_post( array(
-					'post_title' => $admin_mail_subject,
+					'post_title' => $Mail->subject,
 					'post_status' => 'publish',
 					'post_type' => MWF_Config::DBDATA . $this->options_by_formkey['post_id'],
 				) );
 				// 保存
-				preg_replace_callback(
-					'/{(.+?)}/',
-					array( $this, 'save_mail_body' ),
-					$admin_mail_content
-				);
+				$this->save_mail_body( $admin_mail_content );
 
 				// 添付ファイルをメディアに保存
 				if ( !empty( $this->insert_id ) ) {
@@ -625,23 +623,25 @@ class mw_wp_form {
 					// 送信先を指定
 					$Mail->to = $this->Data->getValue( $this->options_by_formkey['automatic_reply_email'] );
 					// 送信元を指定
-					$from = get_bloginfo( 'admin_email' );
-					if ( !empty( $this->options_by_formkey['mail_from'] ) )
-						$from = $this->options_by_formkey['mail_from'];
+					if ( !empty( $this->options_by_formkey['mail_from'] ) ) {
+						$from = $this->parse_mail_content( $this->options_by_formkey['mail_from'] );
+					}
+					if ( empty( $from ) ) {
+						$from = get_bloginfo( 'admin_email' );
+					}
 					$Mail->from = $from;
 					// 送信者を指定
-					$sender = get_bloginfo( 'name' );
-					if ( !empty( $this->options_by_formkey['mail_sender'] ) )
-						$sender = $this->options_by_formkey['mail_sender'];
+					if ( !empty( $this->options_by_formkey['mail_sender'] ) ) {
+						$sender = $this->parse_mail_content( $this->options_by_formkey['mail_sender'] );
+					}
+					if ( empty( $sender ) ) {
+						$sender = get_bloginfo( 'name' );
+					}
 					$Mail->sender = $sender;
 					// タイトルを指定
-					$Mail->subject = $this->options_by_formkey['mail_subject'];
+					$Mail->subject = $this->parse_mail_content( $this->options_by_formkey['mail_subject'] );
 					// 本文を指定
-					$Mail->body = preg_replace_callback(
-						'/{(.+?)}/',
-						array( $this, 'create_mail_body' ),
-						$this->options_by_formkey['mail_content']
-					);
+					$Mail->body = $this->parse_mail_content( $this->options_by_formkey['mail_content'] );
 					// 自動返信メールからは添付ファイルを削除
 					$Mail->attachments = array();
 
@@ -656,10 +656,19 @@ class mw_wp_form {
 	}
 
 	/**
-	 * create_mail_body
+	 * parse_mail_content
 	 * メール本文用に {name属性} を置換
+	 * @param string $value
+	 * @return string
 	 */
-	public function create_mail_body( $matches ) {
+	public function parse_mail_content( $value ) {
+		return preg_replace_callback(
+			'/{(.+?)}/',
+			array( $this, '_parse_mail_content' ),
+			$value
+		);
+	}
+	public function _parse_mail_content( $matches ) {
 		return $this->parse_mail_body( $matches, false );
 	}
 
@@ -667,7 +676,14 @@ class mw_wp_form {
 	 * save_mail_body
 	 * DB保存用に {name属性} を置換、保存
 	 */
-	public function save_mail_body( $matches ) {
+	public function save_mail_body( $value ) {
+		return preg_replace_callback(
+			'/{(.+?)}/',
+			array( $this, '_save_mail_body' ),
+			$value
+		);
+	}
+	public function _save_mail_body( $matches ) {
 		return $this->parse_mail_body( $matches, true );
 	}
 
