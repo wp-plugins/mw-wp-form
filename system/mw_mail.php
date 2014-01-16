@@ -3,11 +3,11 @@
  * Name: MW Mail
  * URI: http://2inc.org
  * Description: メールクラス
- * Version: 1.3.1
+ * Version: 1.3.4
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: July 20, 2012
- * Modified: August 6, 2013
+ * Modified: December 24, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -49,12 +49,15 @@ class MW_Mail {
 		add_filter( 'wp_mail_from_name', array( $this, 'set_mail_from_name' ) );
 		$to = explode( ',', $this->to );
 		if ( isset( $to[0] ) ) {
-			$to = trim( $to[0] );
-			wp_mail( $to, $subject, $body, $this->attachments );
-			remove_action( 'phpmailer_init', array( $this, 'set_return_path' ) );
-			remove_filter( 'wp_mail_from', array( $this, 'set_mail_from' ) );
-			remove_filter( 'wp_mail_from_name', array( $this, 'set_mail_from_name' ) );
+			foreach ( $to as $value ) {
+				$value = trim( $value );
+				$header = '';
+				wp_mail( $value, $subject, $body, $header, $this->attachments );
+			}
 		}
+		remove_action( 'phpmailer_init', array( $this, 'set_return_path' ) );
+		remove_filter( 'wp_mail_from', array( $this, 'set_mail_from' ) );
+		remove_filter( 'wp_mail_from_name', array( $this, 'set_mail_from_name' ) );
 	}
 	public function set_mail_from( $email ) {
 		return $this->from;
@@ -79,19 +82,21 @@ class MW_Mail {
 		);
 		$options = array_merge( $defaults, $options );
 		foreach( $array as $key => $value ) {
-			if ( in_array( $key, $options['exclude'] ) ) continue;
-			if ( isset( $value['separator'] ) && is_array( $value ) ) {
-				if ( isset( $value['data'] ) && is_array( $value['data'] ) ) {
+			if ( in_array( $key, $options['exclude'] ) )
+				continue;
+			if ( is_array( $value ) && isset( $value['separator'], $value['data'] ) ) {
+				$_value = '';
+				if ( is_array( $value['data'] ) ) {
 					foreach ( $value['data'] as $_val ) {
 						if ( !( $_val === '' || $_val === null ) ) {
-							$value = implode( $value['separator'], $value['data'] );
+							$_value = implode( $value['separator'], $value['data'] );
 							break;
 						}
-						$value = '';
 					}
 				} else {
-					continue;
+					$_value = $value['data'];
 				}
+				$value = $_value;
 			}
 			if ( $value )
 				$_ret .= sprintf( "▼%s\n%s\n\n", esc_html( $key ), esc_html( $value ) );
