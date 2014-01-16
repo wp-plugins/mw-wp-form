@@ -3,14 +3,14 @@
  * Name: MW Form Field TextArea
  * URI: http://2inc.org
  * Description: テキストエリアを出力。
- * Version: 1.2.4
+ * Version: 1.2.5
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: December 29, 2013
+ * Modified: January 15, 2013
  * License: GPL2
  *
- * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
+ * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -52,6 +52,7 @@ class mw_form_field_textarea extends mw_form_field {
 	protected function setDefaults() {
 		return array(
 			'name'        => '',
+			'id'          => '',
 			'cols'        => 50,
 			'rows'        => 5,
 			'value'       => '',
@@ -67,6 +68,7 @@ class mw_form_field_textarea extends mw_form_field {
 	 */
 	protected function inputPage() {
 		$_ret = $this->Form->textarea( $this->atts['name'], array(
+			'id' => $this->atts['id'],
 			'cols' => $this->atts['cols'],
 			'rows' => $this->atts['rows'],
 			'value' => $this->atts['value'],

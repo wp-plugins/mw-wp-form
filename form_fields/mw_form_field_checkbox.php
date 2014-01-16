@@ -3,14 +3,14 @@
  * Name: MW Form Field Checkbox
  * URI: http://2inc.org
  * Description: チェックボックスを出力。
- * Version: 1.2.4
+ * Version: 1.2.5
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: December 29, 2013
+ * Modified: January 15, 2013
  * License: GPL2
  *
- * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
+ * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -52,6 +52,7 @@ class mw_form_field_checkbox extends mw_form_field {
 	protected function setDefaults() {
 		return array(
 			'name'       => '',
+			'id'         => '',
 			'children'   => '',
 			'value'      => '',
 			'show_error' => 'true',
@@ -62,11 +63,12 @@ class mw_form_field_checkbox extends mw_form_field {
 	/**
 	 * inputPage
 	 * 入力ページでのフォーム項目を返す
-	 * @return	String	HTML
+	 * @return string HTML
 	 */
 	protected function inputPage() {
 		$children = $this->getChildren( $this->atts['children'] );
 		$_ret = $this->Form->checkbox( $this->atts['name'], $children, array(
+			'id'    => $this->atts['id'],
 			'value' => $this->atts['value'],
 		), $this->atts['separator'] );
 		if ( $this->atts['show_error'] !== 'false' )

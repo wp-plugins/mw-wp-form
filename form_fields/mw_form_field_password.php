@@ -3,14 +3,14 @@
  * Name: MW Form Field Password
  * URI: http://2inc.org
  * Description: パスワードフィールドを出力。
- * Version: 1.2.4
+ * Version: 1.2.5
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: December 29, 2013
+ * Modified: January 15, 2013
  * License: GPL2
  *
- * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
+ * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -52,9 +52,11 @@ class mw_form_field_password extends mw_form_field {
 	protected function setDefaults() {
 		return array(
 			'name'       => '',
+			'id'         => '',
 			'size'       => 60,
 			'maxlength'  => 255,
 			'value'      => '',
+			'placeholder' => '',
 			'show_error' => 'true',
 		);
 	}
@@ -66,9 +68,11 @@ class mw_form_field_password extends mw_form_field {
 	 */
 	protected function inputPage() {
 		$_ret = $this->Form->password( $this->atts['name'], array(
+			'id'        => $this->atts['id'],
 			'size'      => $this->atts['size'],
 			'maxlength' => $this->atts['maxlength'],
 			'value'     => $this->atts['value'],
+			'placeholder'     => $this->atts['placeholder'],
 		) );
 		if ( $this->atts['show_error'] !== 'false' )
 			$_ret .= $this->getError( $this->atts['name'] );

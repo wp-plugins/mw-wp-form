@@ -3,14 +3,14 @@
  * Name: MW Form
  * URI: http://2inc.org
  * Description: フォームクラス
- * Version: 1.3.9
+ * Version: 1.3.10
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : September 25, 2012
- * Modified: December 20, 2013
+ * Modified: January 16, 2013
  * License: GPL2
  *
- * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
+ * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -346,6 +346,7 @@ class MW_Form {
 	 */
 	public function text( $name, $options = array() ) {
 		$defaults = array(
+			'id' => '',
 			'size' => 60,
 			'maxlength' => 255,
 			'value' => '',
@@ -357,21 +358,20 @@ class MW_Form {
 		if ( is_null( $value ) ) {
 			$value = $options['value'];
 		}
-		$placeholder = '';
-		if ( !empty( $options['placeholder'] ) ) {
-			$placeholder = 'placeholder="' . esc_attr( $options['placeholder'] ) . '"';
-		}
+		$placeholder = $this->get_attr_placeholder( $options['placeholder'] );
 		$dataConvHalfAlphanumeric = null;
 		if ( $options['conv-half-alphanumeric'] === true ) {
 			$dataConvHalfAlphanumeric = 'data-conv-half-alphanumeric="true"';
 		}
-		return sprintf( '<input type="text" name="%s" value="%s" size="%d" maxlength="%d" %s %s />',
+		$id = $this->get_attr_id( $options['id'] );
+		return sprintf( '<input type="text" name="%s" value="%s" size="%d" maxlength="%d" %s %s %s />',
 			esc_attr( $name ),
 			esc_attr( $value ),
 			esc_attr( $options['size'] ),
 			esc_attr( $options['maxlength'] ),
 			$placeholder,
-			$dataConvHalfAlphanumeric
+			$dataConvHalfAlphanumeric,
+			$id
 		);
 	}
 
@@ -402,17 +402,26 @@ class MW_Form {
 	 */
 	public function password( $name, $options = array() ) {
 		$defaults = array(
+			'id' => '',
 			'size' => 60,
 			'maxlength' => 255,
 			'value' => '',
+			'placeholder' => '',
 		);
 		$options = array_merge( $defaults, $options );
 		$value = $this->getValue( $name );
 		if ( is_null( $value ) ) {
 			$value = $options['value'];
 		}
-		return sprintf( '<input type="password" name="%s" value="%s" size="%d" maxlength="%d" />',
-			esc_attr( $name ), esc_attr( $value ), esc_attr( $options['size'] ), esc_attr( $options['maxlength'] )
+		$placeholder = $this->get_attr_placeholder( $options['placeholder'] );
+		$id = $this->get_attr_id( $options['id'] );
+		return sprintf( '<input type="password" name="%s" value="%s" size="%d" maxlength="%d" %s %s />',
+			esc_attr( $name ),
+			esc_attr( $value ),
+			esc_attr( $options['size'] ),
+			esc_attr( $options['maxlength'] ),
+			$placeholder,
+			$id
 		);
 	}
 
@@ -530,6 +539,7 @@ class MW_Form {
 	 */
 	public function textarea( $name, $options = array() ) {
 		$defaults = array(
+			'id' => '',
 			'cols' => 50,
 			'rows' => 5,
 			'value' => '',
@@ -540,15 +550,14 @@ class MW_Form {
 		if ( is_null( $value ) ) {
 			$value = $options['value'];
 		}
-		$placeholder = '';
-		if ( !empty( $options['placeholder'] ) ) {
-			$placeholder = 'placeholder="' . esc_attr( $options['placeholder'] ) . '"';
-		}
-		return sprintf( '<textarea name="%s" cols="%d" rows="%d" %s>%s</textarea>',
+		$placeholder = $this->get_attr_placeholder( $options['placeholder'] );
+		$id = $this->get_attr_id( $options['id'] );
+		return sprintf( '<textarea name="%s" cols="%d" rows="%d" %s %s>%s</textarea>',
 			esc_attr( $name ),
 			esc_attr( $options['cols'] ),
 			esc_attr( $options['rows'] ),
 			$placeholder,
+			$id,
 			esc_html( $value )
 		);
 	}
@@ -563,6 +572,7 @@ class MW_Form {
 	 */
 	public function select( $name, $children = array(), $options = array() ) {
 		$defaults = array(
+			'id' => '',
 			'value' => ''
 		);
 		$options = array_merge( $defaults, $options );
@@ -570,7 +580,8 @@ class MW_Form {
 		if ( is_null( $value ) ) {
 			$value = $options['value'];
 		}
-		$_ret = sprintf( '<select name="%s">', esc_attr( $name ) );
+		$id = $this->get_attr_id( $options['id'] );
+		$_ret = sprintf( '<select name="%s" %s>', esc_attr( $name ), $id );
 		foreach ( $children as $key => $_value ) {
 			$selected = ( $key == $value )? ' selected="selected"' : '';
 			$_ret .= sprintf( '<option value="%s"%s>%s</option>',
@@ -591,6 +602,7 @@ class MW_Form {
 	 */
 	public function radio( $name, $children = array(), $options = array() ) {
 		$defaults = array(
+			'id' => '',
 			'value' => ''
 		);
 		$options = array_merge( $defaults, $options );
@@ -598,11 +610,21 @@ class MW_Form {
 		if ( is_null( $value ) ) {
 			$value = $options['value'];
 		}
+
+		$i = 0;
 		$_ret = '';
 		foreach ( $children as $key => $_value ) {
+			$i ++;
+			$id = $this->get_attr_id( $options['id'], $i );
+			$for = $this->get_attr_for( $options['id'], $i );
 			$checked = ( $key == $value )? ' checked="checked"' : '';
-			$_ret .= sprintf( '<label><input type="radio" name="%s" value="%s"%s />%s</label>',
-				esc_attr( $name ), esc_attr( $key ), $checked, esc_html( $_value )
+			$_ret .= sprintf( '<label %s><input type="radio" name="%s" value="%s"%s %s />%s</label>',
+				$for,
+				esc_attr( $name ),
+				esc_attr( $key ),
+				$checked,
+				$id,
+				esc_html( $_value )
 			);
 		}
 		return $_ret;
@@ -619,6 +641,7 @@ class MW_Form {
 	 */
 	public function checkbox( $name, $children = array(), $options = array(), $separator = ',' ) {
 		$defaults = array(
+			'id' => '',
 			'value' => array()
 		);
 		$options = array_merge( $defaults, $options );
@@ -632,11 +655,21 @@ class MW_Form {
 		if ( !is_array( $value ) ) {
 			$value = explode( $separator, $value );
 		}
+
+		$i = 0;
 		$_ret = '';
 		foreach ( $children as $key => $_value ) {
+			$i ++;
+			$id = $this->get_attr_id( $options['id'], $i );
+			$for = $this->get_attr_for( $options['id'], $i );
 			$checked = ( is_array( $value ) && in_array( $key, $value ) )? ' checked="checked"' : '';
-			$_ret .= sprintf( '<label><input type="checkbox" name="%s" value="%s"%s />%s</label>',
-				esc_attr( $name.'[data][]' ), esc_attr( $key ), $checked, esc_html( $_value )
+			$_ret .= sprintf( '<label %s><input type="checkbox" name="%s" value="%s"%s %s />%s</label>',
+				$for,
+				esc_attr( $name.'[data][]' ),
+				esc_attr( $key ),
+				$checked,
+				$id,
+				esc_html( $_value )
 			);
 		}
 		$_ret .= $this->separator( $name, $separator );
@@ -674,6 +707,7 @@ class MW_Form {
 	 */
 	public function datepicker( $name, $options = array() ) {
 		$defaults = array(
+			'id' => '',
 			'size' => 30,
 			'js' => '',
 			'value' => '',
@@ -683,8 +717,9 @@ class MW_Form {
 		if ( is_null( $value ) ) {
 			$value = $options['value'];
 		}
-		$_ret = sprintf( '<input type="text" name="%s" value="%s" size="%d" />',
-			esc_attr( $name ), esc_attr( $value ), esc_attr( $options['size'] )
+		$id = $this->get_attr_id( $options['id'] );
+		$_ret = sprintf( '<input type="text" name="%s" value="%s" size="%d" %s />',
+			esc_attr( $name ), esc_attr( $value ), esc_attr( $options['size'] ), $id
 		);
 		$_ret .= sprintf( '
 			<script type="text/javascript">
@@ -705,11 +740,57 @@ class MW_Form {
 	 */
 	public function file( $name, $options = array() ) {
 		$defaults = array(
+			'id' => '',
 			'size' => 60,
 		);
+		$id = $this->get_attr_id( $options['id'] );
 		$options = array_merge( $defaults, $options );
-		return sprintf( '<input type="file" name="%s" size="%d" />',
-			esc_attr( $name ), esc_attr( $options['size'] )
+		return sprintf( '<input type="file" name="%s" size="%d" %s />',
+			esc_attr( $name ), esc_attr( $options['size'] ), $id
 		);
+	}
+
+	/**
+	 * get_attr_id
+	 * ID属性を返す
+	 * @param string $id
+	 * @param string $suffix
+	 * @return string id="hoge"
+	 */
+	protected function get_attr_id( $id, $suffix = '' ) {
+		if ( !empty( $id ) ) {
+			if ( $suffix ) {
+				$id .= '-' . $suffix;
+			}
+			return 'id="' . esc_attr( $id ) . '"';
+		}
+	}
+
+	/**
+	 * get_attr_for
+	 * for属性を返す
+	 * @param string $id
+	 * @param string $suffix
+	 * @return string for="hoge"
+	 */
+	protected function get_attr_for( $id, $suffix = '' ) {
+		if ( !empty( $id ) ) {
+			if ( $suffix ) {
+				$id .= '-' . $suffix;
+			}
+			return 'for="' . esc_attr( $id ) . '"';
+		}
+	}
+
+	/**
+	 * get_attr_placeholder
+	 * placeholder属性を返す
+	 * @param string $placeholder
+	 * @return string placeholder="hoge"
+	 */
+	protected function get_attr_placeholder( $placeholder ) {
+		if ( !empty( $placeholder ) ) {
+			return 'placeholder="' . esc_attr( $placeholder ) . '"';
+		}
 	}
 }

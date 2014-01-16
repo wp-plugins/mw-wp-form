@@ -4,7 +4,7 @@ Donate link: http://www.amazon.co.jp/registry/wishlist/39ANKRNSTNW40
 Tags: plugin, form, confirm, preview, shortcode
 Requires at least: 3.4
 Tested up to: 3.8.0
-Stable tag: 1.3.0
+Stable tag: 1.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -46,6 +46,11 @@ Do you have questions or issues with MW WP Form? Use these support channels appr
 1. screenshot-1.png
 
 == Changelog ==
+
+= 1.3.1 =
+* Added   : Support attribute id in text, textarea, radio, checkbox, select, datepicker, file, image, password shortcode.
+* Added   : Support attribute placeholder in password shortcode.
+* Changed : Change dmin page sentence.
 
 = 1.3.0 =
 * Added   : 自動返信メール設定、管理者宛メール設定で本文の以外の項目にも{キー}を使用可能に

@@ -3,14 +3,14 @@
  * Name: MW Form Field Select
  * URI: http://2inc.org
  * Description: セレクトボックスを出力。
- * Version: 1.2.4
+ * Version: 1.2.5
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: December 29, 2013
+ * Modified: January 15, 2013
  * License: GPL2
  *
- * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
+ * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -52,6 +52,7 @@ class mw_form_field_select extends mw_form_field {
 	protected function setDefaults() {
 		return array(
 			'name'       => '',
+			'id'         => '',
 			'children'   => '',
 			'value'      => '',
 			'show_error' => 'true',
@@ -61,11 +62,12 @@ class mw_form_field_select extends mw_form_field {
 	/**
 	 * inputPage
 	 * 入力ページでのフォーム項目を返す
-	 * @return	String	HTML
+	 * @return string html
 	 */
 	protected function inputPage() {
 		$children = $this->getChildren( $this->atts['children'] );
 		$_ret = $this->Form->select( $this->atts['name'], $children, array(
+			'id'    => $this->atts['id'],
 			'value' => $this->atts['value'],
 		) );
 		if ( $this->atts['show_error'] !== 'false' )

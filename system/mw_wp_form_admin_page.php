@@ -3,14 +3,14 @@
  * Name: MW WP Form Admin Page
  * URI: http://2inc.org
  * Description: 管理画面クラス
- * Version: 1.7.5
+ * Version: 1.7.6
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : February 21, 2013
- * Modified: December 29, 2013
+ * Modified: January 15, 2013
  * License: GPL2
  *
- * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
+ * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -386,6 +386,9 @@ class MW_WP_Form_Admin_Page {
 		global $post;
 		?>
 		<p>
+			<?php _e( '{key} is converted form data.', MWF_Config::DOMAIN ); ?>
+		</p>
+		<p>
 			<b><?php _e( 'Subject', MWF_Config::DOMAIN ); ?></b><br />
 			<input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[mail_subject]" value="<?php echo esc_attr( $this->get_post_data( 'mail_subject' ) ); ?>" />
 		</p>
@@ -401,13 +404,12 @@ class MW_WP_Form_Admin_Page {
 		</p>
 		<p>
 			<b><?php _e( 'Ccontent', MWF_Config::DOMAIN ); ?></b><br />
-			<textarea name="<?php echo esc_attr( MWF_Config::NAME ); ?>[mail_content]" cols="30" rows="10"><?php echo esc_attr( $this->get_post_data( 'mail_content' ) ); ?></textarea><br />
-			<span class="mwf_note"><?php _e( '{key} is converted form data.', MWF_Config::DOMAIN ); ?></span>
+			<textarea name="<?php echo esc_attr( MWF_Config::NAME ); ?>[mail_content]" cols="30" rows="10"><?php echo esc_attr( $this->get_post_data( 'mail_content' ) ); ?></textarea>
 		</p>
 		<p>
 			<b><?php _e( 'Automatic reply email', MWF_Config::DOMAIN ); ?></b><br />
 			<input type="text" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[automatic_reply_email]" value="<?php echo esc_attr( $this->get_post_data( 'automatic_reply_email') ); ?>" /><br />
-			<span class="mwf_note"><?php _e( 'Input the key to use as transmission to automatic reply email.', MWF_Config::DOMAIN ); ?></span>
+			<span class="mwf_note"><?php _e( 'Input the key to use as transmission to automatic reply email. {} is unnecessary.', MWF_Config::DOMAIN ); ?></span>
 		</p>
 		<?php
 	}
@@ -419,6 +421,9 @@ class MW_WP_Form_Admin_Page {
 	public function add_admin_mail_options() {
 		global $post;
 		?>
+		<p>
+			<?php _e( '{key} is converted form data.', MWF_Config::DOMAIN ); ?>
+		</p>
 		<p>
 			<?php _e( 'If Admin Email Options is a blank, Automatic Replay Email Options is used as Admin Email Options.', MWF_Config::DOMAIN ); ?>
 		</p>
@@ -443,8 +448,7 @@ class MW_WP_Form_Admin_Page {
 		</p>
 		<p>
 			<b><?php _e( 'Ccontent', MWF_Config::DOMAIN ); ?></b><br />
-			<textarea name="<?php echo esc_attr( MWF_Config::NAME ); ?>[admin_mail_content]" cols="30" rows="10"><?php echo esc_attr( $this->get_post_data( 'admin_mail_content' ) ); ?></textarea><br />
-			<span class="mwf_note"><?php _e( '{key} is converted form data.', MWF_Config::DOMAIN ); ?></span>
+			<textarea name="<?php echo esc_attr( MWF_Config::NAME ); ?>[admin_mail_content]" cols="30" rows="10"><?php echo esc_attr( $this->get_post_data( 'admin_mail_content' ) ); ?></textarea>
 		</p>
 		<?php
 	}
