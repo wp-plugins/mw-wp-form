@@ -47,6 +47,10 @@ Do you have questions or issues with MW WP Form? Use these support channels appr
 
 == Changelog ==
 
+= 1.3.3 =
+* Buf fix : Fix param $rule in mwform_error_message_mw-wp-form-xxx filter hook.
+* Buf fix : Fix param $rule in mwform_error_message_html filter hook.
+
 = 1.3.2 =
 * Buf fix : Fix session has already started.
 

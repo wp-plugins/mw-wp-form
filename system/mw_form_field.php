@@ -3,14 +3,14 @@
  * Name: MW Form Field
  * URI: http://2inc.org
  * Description: フォームフィールドの抽象クラス
- * Version: 1.3.6
+ * Version: 1.3.7
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: December 29, 2013
+ * Modified: February 24, 2014
  * License: GPL2
  *
- * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
+ * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -111,6 +111,7 @@ abstract class mw_form_field {
 			$start_tag = '<span class="error">';
 			$end_tag   = '</span>';
 			foreach ( $this->Error->getError( $key ) as $rule => $error ) {
+				$rule = strtolower( $rule );
 				$error = apply_filters( 'mwform_error_message_' . $this->key, $error, $key, $rule );
 				$error_html = apply_filters( 'mwform_error_message_html',
 					$start_tag . esc_html( $error ) . $end_tag,
