@@ -60,7 +60,8 @@ span#formkey_field {
 /**
  * メール設定
  */
-#mw-wp-form_mail textarea {
+#mw-wp-form_mail textarea,
+#mw-wp-form_admin_mail textarea {
 	width: 100%;
 }
 
@@ -169,13 +170,16 @@ span#formkey_field {
 /**
  * DB保存データのカスタムフィールド
  */
-#mw-wp-form_custom_fields table {
+#mw-wp-form_custom_fields table,
+#mw-wp-form_data_custom_fields table {
 	border-top: #dfdfdf solid 1px;
 	border-right: #dfdfdf solid 1px;
 	width: 100%;
 }
 #mw-wp-form_custom_fields table th,
-#mw-wp-form_custom_fields table td {
+#mw-wp-form_custom_fields table td,
+#mw-wp-form_data_custom_fields table th,
+#mw-wp-form_data_custom_fields table td {
 	border-bottom: #dfdfdf solid 1px;
 	border-left: #dfdfdf solid 1px;
 	padding: 5px 10px;
@@ -183,9 +187,13 @@ span#formkey_field {
 	vertical-align: top;
 	width: 30%;
 }
-#mw-wp-form_custom_fields table td {
+#mw-wp-form_custom_fields table td,
+#mw-wp-form_data_custom_fields table td {
 	background-color: #fff;
 	width: 70%;
+}
+#mw-wp-form_data_custom_fields textarea {
+	width: 100%;
 }
 
 /**
@@ -208,5 +216,28 @@ span#formkey_field {
 	top: -34px;
 }
 #mw-wp-form_csv .button-primary {
+}
+
+/**
+ * 寄付ボタン
+ */
+.wp-admin li.donation {
+	color: #ffffe0;
+	display: block;
+	margin: -8px 0 0;
+	overflow: hidden;
+	zoom: 1;
+}
+.wp-admin li.donation div.donation {
+	background-color: #ffffe0;
+	border: #e6db55 solid 1px;
+	color: #000;
+	float: left;
+	padding: 0 10px;
+	margin: 0 -5px 10px 0;
+	border-radius: 3px;
+}
+.wp-admin li.donation div.donation p {
+	margin: 3px 0;
 }
 

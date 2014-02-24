@@ -3,11 +3,11 @@
  * Name: MW Form Field Hidden
  * URI: http://2inc.org
  * Description: hiddenフィールドを出力。
- * Version: 1.1
+ * Version: 1.3.4
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
- * Created: December 14, 2012
- * Modified: May 29, 2013
+ * Created : December 14, 2012
+ * Modified: December 29, 2013
  * License: GPL2
  *
  * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
@@ -28,9 +28,21 @@
 class mw_form_field_hidden extends mw_form_field {
 
 	/**
-	 * String $short_code_name
+	 * String $shortcode_name
 	 */
-	protected $short_code_name = 'mwform_hidden';
+	protected $shortcode_name = 'mwform_hidden';
+
+	/**
+	 * __construct
+	 */
+	public function __construct() {
+		parent::__construct();
+		$this->set_qtags(
+			$this->shortcode_name,
+			__( 'Hidden', MWF_Config::DOMAIN ),
+			$this->shortcode_name . ' name=""'
+		);
+	}
 
 	/**
 	 * setDefaults
@@ -41,40 +53,34 @@ class mw_form_field_hidden extends mw_form_field {
 		return array(
 			'name'  => '',
 			'value' => '',
+			'echo'  => 'false',
 		);
 	}
 
 	/**
 	 * inputPage
 	 * 入力ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function inputPage( $atts ) {
-		return $this->Form->hidden( $atts['name'], $atts['value'] );
+	protected function inputPage() {
+		$echo_value = '';
+		if ( $this->atts['echo'] === 'true' ) {
+			$echo_value = $this->atts['value'];
+		}
+		return $echo_value . $this->Form->hidden( $this->atts['name'], $this->atts['value'] );
 	}
 
 	/**
-	 * previewPage
+	 * confirmPage
 	 * 確認ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function previewPage( $atts ) {
-		$value = $this->Form->getValue( $atts['name'] );
-		return $this->Form->hidden( $atts['name'], $value );
-	}
-
-	/**
-	 * add_qtags
-	 * QTags.addButton を出力
-	 */
-	protected function add_qtags() {
-		?>
-		'<?php echo $this->short_code_name; ?>',
-		'<?php _e( 'Hidden', MWF_Config::DOMAIN ); ?>',
-		'[<?php echo $this->short_code_name; ?> name=""]',
-		''
-		<?php
+	protected function confirmPage() {
+		$value = $this->Form->getValue( $this->atts['name'] );
+		$echo_value = '';
+		if ( $this->atts['echo'] === 'true' ) {
+			$echo_value = $value;
+		}
+		return $echo_value . $this->Form->hidden( $this->atts['name'], $value );
 	}
 }
