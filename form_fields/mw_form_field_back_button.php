@@ -3,14 +3,14 @@
  * Name: MW Form Field Back Button
  * URI: http://2inc.org
  * Description: 戻るボタンを出力。
- * Version: 1.2.4
+ * Version: 1.3.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: December 29, 2013
+ * Modified: March 20, 2014
  * License: GPL2
  *
- * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
+ * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -70,5 +70,18 @@ class mw_form_field_back_button extends mw_form_field {
 	 */
 	protected function confirmPage() {
 		return $this->Form->submit( $this->Form->getBackButtonName(), $this->atts['value'] );
+	}
+
+	/**
+	 * add_mwform_tag_generator
+	 * フォームタグジェネレーター
+	 */
+	public function mwform_tag_generator_dialog() {
+		?>
+		<p>
+			<strong><?php _e( 'String on the button', MWF_Config::DOMAIN ); ?>(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<input type="text" name="value" />
+		</p>
+		<?php
 	}
 }

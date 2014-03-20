@@ -3,14 +3,14 @@
  * Name: MW Form Field Error
  * URI: http://2inc.org
  * Description: エラーを出力。
- * Version: 1.2.4
+ * Version: 1.3.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: December 29, 2013
+ * Modified: March 20, 2014
  * License: GPL2
  *
- * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
+ * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -75,5 +75,21 @@ class mw_form_field_error extends mw_form_field {
 	 * @return	String	HTML
 	 */
 	protected function confirmPage() {
+	}
+
+	/**
+	 * add_mwform_tag_generator
+	 * フォームタグジェネレーター
+	 */
+	public function mwform_tag_generator_dialog() {
+		?>
+		<p>
+			<strong><?php _e( 'name of the element which wants to display error', MWF_Config::DOMAIN ); ?></strong>
+			<textarea name="keys"></textarea>
+			<span class="mwf_note">
+				<?php _e( 'Input one line about one item.', MWF_Config::DOMAIN ); ?>
+			</span>
+		</p>
+		<?php
 	}
 }

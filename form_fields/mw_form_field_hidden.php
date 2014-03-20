@@ -3,14 +3,14 @@
  * Name: MW Form Field Hidden
  * URI: http://2inc.org
  * Description: hiddenフィールドを出力。
- * Version: 1.3.4
+ * Version: 1.4.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: December 29, 2013
+ * Modified: March 20, 2014
  * License: GPL2
  *
- * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
+ * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -82,5 +82,26 @@ class mw_form_field_hidden extends mw_form_field {
 			$echo_value = $value;
 		}
 		return $echo_value . $this->Form->hidden( $this->atts['name'], $value );
+	}
+
+	/**
+	 * add_mwform_tag_generator
+	 * フォームタグジェネレーター
+	 */
+	public function mwform_tag_generator_dialog() {
+		?>
+		<p>
+			<strong>name</strong>
+			<input type="text" name="name" />
+		</p>
+		<p>
+			<strong><?php _e( 'Default value', MWF_Config::DOMAIN ); ?>(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<input type="text" name="value" />
+		</p>
+		<p>
+			<strong><?php _e( 'Display', MWF_Config::DOMAIN ); ?></strong>
+			<input type="checkbox" name="echo" value="true" /> <?php _e( 'Display hidden value.', MWF_Config::DOMAIN ); ?>
+		</p>
+		<?php
 	}
 }

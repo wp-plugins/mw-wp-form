@@ -3,14 +3,14 @@
  * Name: MW Form Field Confirm Button
  * URI: http://2inc.org
  * Description: 確認ボタンを出力。
- * Version: 1.2.3
+ * Version: 1.3.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: December 29, 2013
+ * Modified: March 20, 2014
  * License: GPL2
  *
- * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
+ * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -70,5 +70,18 @@ class mw_form_field_confirm_button extends mw_form_field {
 	 * @return	String	HTML
 	 */
 	protected function confirmPage() {
+	}
+
+	/**
+	 * add_mwform_tag_generator
+	 * フォームタグジェネレーター
+	 */
+	public function mwform_tag_generator_dialog() {
+		?>
+		<p>
+			<strong><?php _e( 'Default value', MWF_Config::DOMAIN ); ?>(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<input type="text" name="value" />
+		</p>
+		<?php
 	}
 }

@@ -241,3 +241,49 @@ span#formkey_field {
 	margin: 3px 0;
 }
 
+/**
+ * .mwform-dialog
+ */
+.mwform-dialog {
+	display: none;
+	font-size: 12px;
+}
+.mwform-dialog form p {
+	margin: 0 0 10px;
+	padding: 0;
+}
+.mwform-dialog form p strong {
+	display: block;
+	font-weight: bold;
+	margin: 0 0 5px;
+}
+.mwform-dialog input[type="text"],
+.mwform-dialog textarea {
+	width: 100%;
+}
+
+.mwform-dialog table {
+	margin: 0;
+	width: 100%;
+}
+.mwform-dialog table th,
+.mwform-dialog table td {
+	font-weight: normal;
+	text-align: left;
+	vertical-align: top;
+	padding: 3px 8px;
+}
+.mwform-dialog table th {
+	width: 30%;
+}
+.mwform-dialog input[type="text"],
+.mwform-dialog textarea {
+	width: 100%;
+}
+.mwform-dialog textarea {
+	height: 100px;
+}
+.mwform-dialog .mwf_note {
+	display: block;
+}
+

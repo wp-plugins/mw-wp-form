@@ -3,11 +3,11 @@
  * Name: MW WP Form Admin Page
  * URI: http://2inc.org
  * Description: 管理画面クラス
- * Version: 1.7.6
+ * Version: 1.8.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : February 21, 2013
- * Modified: January 15, 2013
+ * Modified: March 20, 2014
  * License: GPL2
  *
  * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
@@ -35,14 +35,15 @@ class MW_WP_Form_Admin_Page {
 	 * __construct
 	 */
 	public function __construct() {
-		add_action( 'admin_print_styles', array( $this, 'admin_style' ) );
-		add_action( 'admin_print_scripts', array( $this, 'admin_scripts' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_style' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
 		add_action( 'admin_head', array( $this, 'add_meta_box' ) );
 		add_action( 'admin_head', array( $this, 'add_tinymce' ) );
 		add_action( 'save_post', array( $this, 'save_post' ) );
 		add_action( 'admin_print_footer_scripts', array( $this, 'add_quicktag' ) );
 		add_action( 'current_screen', array( $this, 'current_screen' ) );
 		add_filter( 'default_content', array( $this, 'default_content' ) );
+		add_action( 'edit_form_after_title', array( $this, 'add_tag_generator' ) );
 	}
 
 	/**
@@ -247,6 +248,11 @@ class MW_WP_Form_Admin_Page {
 			$url = plugin_dir_url( __FILE__ );
 			wp_register_script( MWF_Config::DOMAIN . '-admin', $url . '../js/admin.js' );
 			wp_enqueue_script( MWF_Config::DOMAIN . '-admin' );
+			wp_enqueue_script( 'jquery-ui-dialog' );
+
+			global $wp_scripts;
+			$ui = $wp_scripts->query( 'jquery-ui-core' );
+			wp_enqueue_style( 'jquery.ui', '//ajax.googleapis.com/ajax/libs/jqueryui/' . $ui->ver . '/themes/smoothness/jquery-ui.min.css', array(), $ui->ver );
 		}
 	}
 
@@ -603,6 +609,25 @@ class MW_WP_Form_Admin_Page {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * add_tag_generator
+	 * タグジェネレータを出力
+	 */
+	public function add_tag_generator() {
+		$post_type = get_post_type();
+		if ( $post_type !== MWF_Config::NAME )
+			return;
+		do_action( 'mwform_tag_generator_dialog' );
+		?>
+		<div class="add-mwform-btn">
+			<select>
+				<?php do_action( 'mwform_tag_generator_option' ); ?>
+			</select>
+			<span class="button"><?php _e( 'Add form tag', MWF_Config::DOMAIN ); ?></span>
+		</div>
+		<?php
 	}
 }
 ?>

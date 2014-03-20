@@ -3,11 +3,11 @@
  * Plugin Name: MW WP Form
  * Plugin URI: http://plugins.2inc.org/mw-wp-form/
  * Description: MW WP Form can create mail form with a confirmation screen.
- * Version: 1.3.3
+ * Version: 1.4.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : September 25, 2012
- * Modified: February 24, 2014
+ * Modified: March 20, 2014
  * Text Domain: mw-wp-form
  * Domain Path: /languages/
  * License: GPL2

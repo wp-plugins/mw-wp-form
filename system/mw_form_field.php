@@ -3,11 +3,11 @@
  * Name: MW Form Field
  * URI: http://2inc.org
  * Description: フォームフィールドの抽象クラス
- * Version: 1.3.7
+ * Version: 1.5.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: February 24, 2014
+ * Modified: March 20, 2014
  * License: GPL2
  *
  * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
@@ -74,6 +74,7 @@ abstract class mw_form_field {
 		$this->defaults = $this->setDefaults();
 		add_action( 'mwform_add_shortcode', array( $this, 'add_shortcode' ), 10, 4 );
 		add_action( 'mwform_add_qtags', array( $this, '_add_qtags' ) );
+		$this->_add_mwform_tag_generator();
 	}
 
 	/**
@@ -93,10 +94,10 @@ abstract class mw_form_field {
 	 */
 	protected function set_qtags( $id, $display, $arg1, $arg2 = '' ) {
 		$this->qtags = array(
-		'id' => $id,
-		'display' => $display,
-		'arg1' => $arg1,
-		'arg2' => $arg2,
+			'id' => $id,
+			'display' => $display,
+			'arg1' => $arg1,
+			'arg2' => $arg2,
 		);
 	}
 
@@ -222,6 +223,45 @@ abstract class mw_form_field {
 			'[<?php echo $this->qtags['arg1']; ?>]',
 			'<?php echo $this->qtags['arg2']; ?>'
 		);
+		<?php
+	}
+
+	/**
+	 * _add_mwform_tag_generator
+	 * フォームタグジェネレータのタグ選択肢とダイアログを設定
+	 */
+	protected function _add_mwform_tag_generator() {
+		add_action( 'mwform_tag_generator_dialog', array( $this, 'add_mwform_tag_generator' ) );
+		add_action( 'mwform_tag_generator_option', array( $this, 'mwform_tag_generator_option' ) );
+	}
+
+	/**
+	 * add_mwform_tag_generator
+	 * タグジェネレータのダイアログ枠を出力
+	 */
+	public function add_mwform_tag_generator() {
+		?>
+		<div id="dialog-<?php echo esc_attr( $this->shortcode_name ); ?>" class="mwform-dialog" title="<?php echo esc_attr( $this->shortcode_name ); ?>">
+			<form>
+				<?php $this->mwform_tag_generator_dialog(); ?>
+			</form>
+		</div>
+		<?php
+	}
+
+	/**
+	 * add_mwform_tag_generator
+	 * タグジェネレータのダイアログを出力。各フォーム項目クラスでオーバーライド
+	 */
+	protected function mwform_tag_generator_dialog() {}
+
+	/**
+	 * mwform_tag_generator_option
+	 * フォームタグ挿入ボタンのセレクトボックスに選択項目を追加
+	 */
+	public function mwform_tag_generator_option() {
+		?>
+		<option value="<?php echo esc_attr( $this->shortcode_name ); ?>"><?php echo esc_attr( $this->qtags['display'] ); ?></option>
 		<?php
 	}
 }

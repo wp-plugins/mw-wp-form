@@ -3,11 +3,11 @@
  * Name: MW Form Field Select
  * URI: http://2inc.org
  * Description: セレクトボックスを出力。
- * Version: 1.2.5
+ * Version: 1.3.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: January 15, 2013
+ * Modified: March 20, 2014
  * License: GPL2
  *
  * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
@@ -86,5 +86,37 @@ class mw_form_field_select extends mw_form_field {
 		$_ret  = $value;
 		$_ret .= $this->Form->hidden( $this->atts['name'], $value );
 		return $_ret;
+	}
+
+	/**
+	 * add_mwform_tag_generator
+	 * フォームタグジェネレーター
+	 */
+	public function mwform_tag_generator_dialog() {
+		?>
+		<p>
+			<strong>name</strong>
+			<input type="text" name="name" />
+		</p>
+		<p>
+			<strong>id(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<input type="text" name="id" />
+		</p>
+		<p>
+			<strong><?php _e( 'Choices', MWF_Config::DOMAIN ); ?>(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<textarea name="children"></textarea>
+			<span class="mwf_note">
+				<?php _e( 'Input one line about one item.', MWF_Config::DOMAIN ); ?>
+			</span>
+		</p>
+		<p>
+			<strong><?php _e( 'Default value', MWF_Config::DOMAIN ); ?>(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<input type="text" name="value" />
+		</p>
+		<p>
+			<strong><?php _e( 'Dsiplay error', MWF_Config::DOMAIN ); ?></strong>
+			<input type="checkbox" name="show_error" value="false" /> <?php _e( 'Don\'t display error.', MWF_Config::DOMAIN ); ?>
+		</p>
+		<?php
 	}
 }

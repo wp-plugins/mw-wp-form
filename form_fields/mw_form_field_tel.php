@@ -3,14 +3,14 @@
  * Name: MW Form Field Tel
  * URI: http://2inc.org
  * Description: 電話番号フィールドを出力。
- * Version: 1.2.4
+ * Version: 1.3.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: December 29, 2013
+ * Modified: March 20, 2014
  * License: GPL2
  *
- * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
+ * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -84,5 +84,26 @@ class mw_form_field_tel extends mw_form_field {
 		$_ret .= $this->Form->hidden( $this->atts['name'].'[data]', $value );
 		$_ret .= $this->Form->separator( $this->atts['name'] );
 		return $_ret;
+	}
+
+	/**
+	 * add_mwform_tag_generator
+	 * フォームタグジェネレーター
+	 */
+	public function mwform_tag_generator_dialog() {
+		?>
+		<p>
+			<strong>name</strong>
+			<input type="text" name="name" />
+		</p>
+		<p>
+			<strong><?php _e( 'Dsiplay error', MWF_Config::DOMAIN ); ?></strong>
+			<input type="checkbox" name="show_error" value="false" /> <?php _e( 'Don\'t display error.', MWF_Config::DOMAIN ); ?>
+		</p>
+		<p>
+			<strong><?php _e( 'Convert half alphanumeric', MWF_Config::DOMAIN ); ?></strong>
+			<input type="checkbox" name="conv_half_alphanumeric" value="false" /> <?php _e( 'Don\'t Convert.', MWF_Config::DOMAIN ); ?>
+		</p>
+		<?php
 	}
 }

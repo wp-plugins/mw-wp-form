@@ -4,14 +4,14 @@
  * URI: http://2inc.org
  * Description: サブミットボタンを出力。
  * Description: 確認ボタンと送信ボタンを自動出力。
- * Version: 1.2.4
+ * Version: 1.3.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: December 29, 2013
+ * Modified: March 20, 2014
  * License: GPL2
  *
- * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
+ * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -77,5 +77,26 @@ class mw_form_field_submit_button extends mw_form_field {
 	 */
 	protected function confirmPage() {
 		return $this->Form->submit( $this->atts['name'], $this->atts['submit_value'] );
+	}
+
+	/**
+	 * add_mwform_tag_generator
+	 * フォームタグジェネレーター
+	 */
+	public function mwform_tag_generator_dialog() {
+		?>
+		<p>
+			<strong>name</strong>
+			<input type="text" name="name" />
+		</p>
+		<p>
+			<strong><?php _e( 'String on the confirm button', MWF_Config::DOMAIN ); ?></strong>
+			<input type="text" name="confirm_value" />
+		</p>
+		<p>
+			<strong><?php _e( 'String on the submit button', MWF_Config::DOMAIN ); ?></strong>
+			<input type="text" name="submit_value" />
+		</p>
+		<?php
 	}
 }

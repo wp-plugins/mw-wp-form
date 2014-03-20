@@ -3,11 +3,11 @@
  * Name: MW Form Field TextArea
  * URI: http://2inc.org
  * Description: テキストエリアを出力。
- * Version: 1.2.5
+ * Version: 1.3.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: January 15, 2013
+ * Modified: March 20, 2014
  * License: GPL2
  *
  * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
@@ -89,5 +89,42 @@ class mw_form_field_textarea extends mw_form_field {
 		$_ret  = nl2br( $value );
 		$_ret .= $this->Form->hidden( $this->atts['name'], $value );
 		return $_ret;
+	}
+
+	/**
+	 * add_mwform_tag_generator
+	 * フォームタグジェネレーター
+	 */
+	public function mwform_tag_generator_dialog() {
+		?>
+		<p>
+			<strong>name</strong>
+			<input type="text" name="name" />
+		</p>
+		<p>
+			<strong>id(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<input type="text" name="id" />
+		</p>
+		<p>
+			<strong>cols(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<input type="text" name="cols" />
+		</p>
+		<p>
+			<strong>rows(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<input type="text" name="rows" />
+		</p>
+		<p>
+			<strong><?php _e( 'Default value', MWF_Config::DOMAIN ); ?>(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<input type="text" name="value" />
+		</p>
+		<p>
+			<strong>placeholder(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<input type="text" name="placeholder" />
+		</p>
+		<p>
+			<strong><?php _e( 'Dsiplay error', MWF_Config::DOMAIN ); ?></strong>
+			<input type="checkbox" name="show_error" value="false" /> <?php _e( 'Don\'t display error.', MWF_Config::DOMAIN ); ?>
+		</p>
+		<?php
 	}
 }
