@@ -3,14 +3,14 @@
  * Name: MW Form Field Hidden
  * URI: http://2inc.org
  * Description: hiddenフィールドを出力。
- * Version: 1.1
+ * Version: 1.4.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
- * Created: December 14, 2012
- * Modified: May 29, 2013
+ * Created : December 14, 2012
+ * Modified: March 20, 2014
  * License: GPL2
  *
- * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
+ * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -28,9 +28,21 @@
 class mw_form_field_hidden extends mw_form_field {
 
 	/**
-	 * String $short_code_name
+	 * String $shortcode_name
 	 */
-	protected $short_code_name = 'mwform_hidden';
+	protected $shortcode_name = 'mwform_hidden';
+
+	/**
+	 * __construct
+	 */
+	public function __construct() {
+		parent::__construct();
+		$this->set_qtags(
+			$this->shortcode_name,
+			__( 'Hidden', MWF_Config::DOMAIN ),
+			$this->shortcode_name . ' name=""'
+		);
+	}
 
 	/**
 	 * setDefaults
@@ -41,40 +53,55 @@ class mw_form_field_hidden extends mw_form_field {
 		return array(
 			'name'  => '',
 			'value' => '',
+			'echo'  => 'false',
 		);
 	}
 
 	/**
 	 * inputPage
 	 * 入力ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function inputPage( $atts ) {
-		return $this->Form->hidden( $atts['name'], $atts['value'] );
+	protected function inputPage() {
+		$echo_value = '';
+		if ( $this->atts['echo'] === 'true' ) {
+			$echo_value = $this->atts['value'];
+		}
+		return $echo_value . $this->Form->hidden( $this->atts['name'], $this->atts['value'] );
 	}
 
 	/**
-	 * previewPage
+	 * confirmPage
 	 * 確認ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function previewPage( $atts ) {
-		$value = $this->Form->getValue( $atts['name'] );
-		return $this->Form->hidden( $atts['name'], $value );
+	protected function confirmPage() {
+		$value = $this->Form->getValue( $this->atts['name'] );
+		$echo_value = '';
+		if ( $this->atts['echo'] === 'true' ) {
+			$echo_value = $value;
+		}
+		return $echo_value . $this->Form->hidden( $this->atts['name'], $value );
 	}
 
 	/**
-	 * add_qtags
-	 * QTags.addButton を出力
+	 * add_mwform_tag_generator
+	 * フォームタグジェネレーター
 	 */
-	protected function add_qtags() {
+	public function mwform_tag_generator_dialog() {
 		?>
-		'<?php echo $this->short_code_name; ?>',
-		'<?php _e( 'Hidden', MWF_Config::DOMAIN ); ?>',
-		'[<?php echo $this->short_code_name; ?> name=""]',
-		''
+		<p>
+			<strong>name</strong>
+			<input type="text" name="name" />
+		</p>
+		<p>
+			<strong><?php _e( 'Default value', MWF_Config::DOMAIN ); ?>(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<input type="text" name="value" />
+		</p>
+		<p>
+			<strong><?php _e( 'Display', MWF_Config::DOMAIN ); ?></strong>
+			<input type="checkbox" name="echo" value="true" /> <?php _e( 'Display hidden value.', MWF_Config::DOMAIN ); ?>
+		</p>
 		<?php
 	}
 }

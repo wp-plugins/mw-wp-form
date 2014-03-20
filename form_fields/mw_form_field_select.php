@@ -3,14 +3,14 @@
  * Name: MW Form Field Select
  * URI: http://2inc.org
  * Description: セレクトボックスを出力。
- * Version: 1.1
+ * Version: 1.3.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
- * Created: December 14, 2012
- * Modified: May 29, 2013
+ * Created : December 14, 2012
+ * Modified: March 20, 2014
  * License: GPL2
  *
- * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
+ * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -28,9 +28,21 @@
 class mw_form_field_select extends mw_form_field {
 
 	/**
-	 * String $short_code_name
+	 * String $shortcode_name
 	 */
-	protected $short_code_name = 'mwform_select';
+	protected $shortcode_name = 'mwform_select';
+
+	/**
+	 * __construct
+	 */
+	public function __construct() {
+		parent::__construct();
+		$this->set_qtags(
+			$this->shortcode_name,
+			__( 'Select', MWF_Config::DOMAIN ),
+			$this->shortcode_name . ' name="" children=""'
+		);
+	}
 
 	/**
 	 * setDefaults
@@ -40,6 +52,7 @@ class mw_form_field_select extends mw_form_field {
 	protected function setDefaults() {
 		return array(
 			'name'       => '',
+			'id'         => '',
 			'children'   => '',
 			'value'      => '',
 			'show_error' => 'true',
@@ -49,43 +62,61 @@ class mw_form_field_select extends mw_form_field {
 	/**
 	 * inputPage
 	 * 入力ページでのフォーム項目を返す
-	 * @param	Array	$atts
-	 * @return	String	HTML
+	 * @return string html
 	 */
-	protected function inputPage( $atts ) {
-		$children = $this->getChildren( $atts['children'] );
-		$_ret = $this->Form->select( $atts['name'], $children, array(
-			'value' => $atts['value'],
+	protected function inputPage() {
+		$children = $this->getChildren( $this->atts['children'] );
+		$_ret = $this->Form->select( $this->atts['name'], $children, array(
+			'id'    => $this->atts['id'],
+			'value' => $this->atts['value'],
 		) );
-		if ( $atts['show_error'] !== 'false' )
-			$_ret .= $this->getError( $atts['name'] );
+		if ( $this->atts['show_error'] !== 'false' )
+			$_ret .= $this->getError( $this->atts['name'] );
 		return $_ret;
 	}
 
 	/**
-	 * previewPage
+	 * confirmPage
 	 * 確認ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function previewPage( $atts ) {
-		$children = $this->getChildren( $atts['children'] );
-		$value = $this->Form->getSelectedValue( $atts['name'], $children );
+	protected function confirmPage() {
+		$children = $this->getChildren( $this->atts['children'] );
+		$value = $this->Form->getSelectedValue( $this->atts['name'], $children );
 		$_ret  = $value;
-		$_ret .= $this->Form->hidden( $atts['name'], $value );
+		$_ret .= $this->Form->hidden( $this->atts['name'], $value );
 		return $_ret;
 	}
 
 	/**
-	 * add_qtags
-	 * QTags.addButton を出力
+	 * add_mwform_tag_generator
+	 * フォームタグジェネレーター
 	 */
-	protected function add_qtags() {
+	public function mwform_tag_generator_dialog() {
 		?>
-		'<?php echo $this->short_code_name; ?>',
-		'<?php _e( 'Select', MWF_Config::DOMAIN ); ?>',
-		'[<?php echo $this->short_code_name; ?> name="" children=""]',
-		''
+		<p>
+			<strong>name</strong>
+			<input type="text" name="name" />
+		</p>
+		<p>
+			<strong>id(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<input type="text" name="id" />
+		</p>
+		<p>
+			<strong><?php _e( 'Choices', MWF_Config::DOMAIN ); ?>(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<textarea name="children"></textarea>
+			<span class="mwf_note">
+				<?php _e( 'Input one line about one item.', MWF_Config::DOMAIN ); ?>
+			</span>
+		</p>
+		<p>
+			<strong><?php _e( 'Default value', MWF_Config::DOMAIN ); ?>(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<input type="text" name="value" />
+		</p>
+		<p>
+			<strong><?php _e( 'Dsiplay error', MWF_Config::DOMAIN ); ?></strong>
+			<input type="checkbox" name="show_error" value="false" /> <?php _e( 'Don\'t display error.', MWF_Config::DOMAIN ); ?>
+		</p>
 		<?php
 	}
 }

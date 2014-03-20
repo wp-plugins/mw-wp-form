@@ -3,14 +3,14 @@
  * Name: MW Session
  * URI: http://2inc.org
  * Description: セッションクラス
- * Version: 1.2
+ * Version: 1.2.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
- * Created: July 17, 2012
- * Modified: May 29, 2013
+ * Created : July 17, 2012
+ * Modified: January 29, 2013
  * License: GPL2
  *
- * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
+ * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -38,11 +38,11 @@ class MW_Session {
 	/**
 	 * start
 	 * インスタンス化
-	 * @param	String	擬似セッション名
-	 * @return	Session	Sessionオブジェクト
+	 * @param string 擬似セッション名
+	 * @return Session Sessionオブジェクト
 	 */
 	public static function start( $name ) {
-		if ( self::$session == null ){
+		if ( self::$session == null && !isset( $_SESSION ) ){
 			session_name( self::$sessionName );
 			session_set_cookie_params( 0, '/' );
 			session_start();

@@ -3,14 +3,14 @@
  * Name: MW Form Field Akismet Error
  * URI: http://2inc.org
  * Description: Akismetのエラーを出力。
- * Version: 1.0
+ * Version: 1.2.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
- * Created: June 21, 2013
- * Modified:
+ * Created : June 21, 2013
+ * Modified: March 20, 2014
  * License: GPL2
  *
- * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
+ * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -28,9 +28,21 @@
 class mw_form_field_akismet_error extends mw_form_field {
 
 	/**
-	 * String $short_code_name
+	 * String $shortcode_name
 	 */
-	protected $short_code_name = 'mwform_akismet_error';
+	protected $shortcode_name = 'mwform_akismet_error';
+
+	/**
+	 * __construct
+	 */
+	public function __construct() {
+		parent::__construct();
+		$this->set_qtags(
+			$this->shortcode_name,
+			__( 'Akismet Error', MWF_Config::DOMAIN ),
+			$this->shortcode_name
+		);
+	}
 
 	/**
 	 * setDefaults
@@ -44,32 +56,17 @@ class mw_form_field_akismet_error extends mw_form_field {
 	/**
 	 * inputPage
 	 * 入力ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function inputPage( $atts ) {
+	protected function inputPage() {
 		return '<div class="akismet_error">' . $this->getError( MWF_Config::AKISMET ) . '</div>';
 	}
 
 	/**
-	 * previewPage
+	 * confirmPage
 	 * 確認ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function previewPage( $atts ) {
-	}
-
-	/**
-	 * add_qtags
-	 * QTags.addButton を出力
-	 */
-	protected function add_qtags() {
-		?>
-		'<?php echo $this->short_code_name; ?>',
-		'<?php _e( 'Akismet Error', MWF_Config::DOMAIN ); ?>',
-		'[<?php echo $this->short_code_name; ?>]',
-		''
-		<?php
+	protected function confirmPage() {
 	}
 }
