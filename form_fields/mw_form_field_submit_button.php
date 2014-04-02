@@ -4,14 +4,14 @@
  * URI: http://2inc.org
  * Description: サブミットボタンを出力。
  * Description: 確認ボタンと送信ボタンを自動出力。
- * Version: 1.1.1
+ * Version: 1.3.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
- * Created: December 14, 2012
- * Modified: July 28, 2013
+ * Created : December 14, 2012
+ * Modified: March 20, 2014
  * License: GPL2
  *
- * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
+ * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -29,9 +29,21 @@
 class mw_form_field_submit_button extends mw_form_field {
 
 	/**
-	 * String $short_code_name
+	 * String $shortcode_name
 	 */
-	protected $short_code_name = 'mwform_submitButton';
+	protected $shortcode_name = 'mwform_submitButton';
+
+	/**
+	 * __construct
+	 */
+	public function __construct() {
+		parent::__construct();
+		$this->set_qtags(
+			$this->shortcode_name,
+			__( 'Confirm &amp; Submit', MWF_Config::DOMAIN ),
+			$this->shortcode_name
+		);
+	}
 
 	/**
 	 * setDefaults
@@ -41,7 +53,7 @@ class mw_form_field_submit_button extends mw_form_field {
 	protected function setDefaults() {
 		return array(
 			'name' => '',
-			'preview_value' => __( 'Confirm', MWF_Config::DOMAIN ),
+			'confirm_value' => __( 'Confirm', MWF_Config::DOMAIN ),
 			'submit_value'  => __( 'Send', MWF_Config::DOMAIN ),
 		);
 	}
@@ -49,36 +61,42 @@ class mw_form_field_submit_button extends mw_form_field {
 	/**
 	 * inputPage
 	 * 入力ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function inputPage( $atts ) {
-		if ( !empty( $atts['preview_value'] ) ) {
-			return $this->Form->submit( $this->Form->getPreviewButtonName(), $atts['preview_value'] );
+	protected function inputPage() {
+		if ( !empty( $this->atts['confirm_value'] ) ) {
+			return $this->Form->submit( $this->Form->getConfirmButtonName(), $this->atts['confirm_value'] );
 		}
-		return $this->Form->submit( $atts['name'], $atts['submit_value'] );
+		return $this->Form->submit( $this->atts['name'], $this->atts['submit_value'] );
 	}
 
 	/**
-	 * previewPage
+	 * confirmPage
 	 * 確認ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function previewPage( $atts ) {
-		return $this->Form->submit( $atts['name'], $atts['submit_value'] );
+	protected function confirmPage() {
+		return $this->Form->submit( $this->atts['name'], $this->atts['submit_value'] );
 	}
 
 	/**
-	 * add_qtags
-	 * QTags.addButton を出力
+	 * add_mwform_tag_generator
+	 * フォームタグジェネレーター
 	 */
-	protected function add_qtags() {
+	public function mwform_tag_generator_dialog() {
 		?>
-		'<?php echo $this->short_code_name; ?>',
-		'<?php _e( 'Confirm &amp; Submit', MWF_Config::DOMAIN ); ?>',
-		'[<?php echo $this->short_code_name; ?>]',
-		''
+		<p>
+			<strong>name</strong>
+			<input type="text" name="name" />
+		</p>
+		<p>
+			<strong><?php _e( 'String on the confirm button', MWF_Config::DOMAIN ); ?></strong>
+			<input type="text" name="confirm_value" />
+		</p>
+		<p>
+			<strong><?php _e( 'String on the submit button', MWF_Config::DOMAIN ); ?></strong>
+			<input type="text" name="submit_value" />
+		</p>
 		<?php
 	}
 }
