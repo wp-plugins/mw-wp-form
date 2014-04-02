@@ -3,14 +3,14 @@
  * Name: MW WP Form Contact Data Page
  * URI: http://2inc.org
  * Description: DB保存データを扱うクラス
- * Version: 1.0.5
+ * Version: 1.0.6
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : October 10, 2013
- * Modified: December 26, 2013
+ * Modified: April 2, 2014
  * License: GPL2
  *
- * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
+ * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -37,13 +37,14 @@ class MW_WP_Form_Contact_Data_Page {
 	public function __construct() {
 		$this->POST_DATA_NAME = '_' . MWF_Config::NAME . '_data';
 		add_action( 'init', array( $this, 'register_post_type' ) );
-		add_action( 'admin_print_styles', array( $this, 'admin_style' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_style' ) );
 		add_action( 'admin_head', array( $this, 'cpt_public_false' ) );
 		add_action( 'admin_head', array( $this, 'add_forms_columns' ) );
 		add_action( 'admin_head', array( $this, 'add_meta_box' ) );
 		add_action( 'save_post', array( $this, 'save_post' ) );
 		add_action( 'in_admin_footer', array( $this, 'add_csv_download_button' ) );
 		add_action( 'wp_loaded', array( $this, 'csv_download' ) );
+		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
 	}
 
 	/**
@@ -64,8 +65,8 @@ class MW_WP_Form_Contact_Data_Page {
 		$post_type = get_post_type();
 		if ( in_array( $post_type, $this->form_post_type ) ) {
 			$url = plugin_dir_url( __FILE__ );
-			wp_register_style( MWF_Config::DOMAIN.'-admin', $url.'../css/admin.css' );
-			wp_enqueue_style( MWF_Config::DOMAIN.'-admin' );
+			wp_register_style( MWF_Config::DOMAIN . '-admin', $url . '../css/admin.css' );
+			wp_enqueue_style( MWF_Config::DOMAIN . '-admin' );
 		}
 	}
 
@@ -98,7 +99,7 @@ class MW_WP_Form_Contact_Data_Page {
 				'capability_type' => 'page',
 				'public' => false,
 				'show_ui' => true,
-				'show_in_menu' => 'edit.php?post_type=' . MWF_Config::NAME,
+				'show_in_menu' => false,
 				'supports' => array( 'title' ),
 			) );
 			$this->form_post_type[] = $post_type;
@@ -354,7 +355,7 @@ class MW_WP_Form_Contact_Data_Page {
 			return $post_ID;
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
 			return $post_ID;
-		if ( !current_user_can( 'edit_pages' ) )
+		if ( !current_user_can( MWF_Config::CAPABILITY ) )
 			return $post_ID;
 
 		// 保存可能なキー
@@ -365,5 +366,110 @@ class MW_WP_Form_Contact_Data_Page {
 				$data[$key] = $_POST[$this->POST_DATA_NAME][$key];
 		}
 		update_post_meta( $post_ID, $this->POST_DATA_NAME, $data, $this->postdata );
+	}
+
+	/**
+	 * admin_menu
+	 * 問い合わせデータ閲覧ページへのメニューを追加
+	 */
+	public function admin_menu() {
+		if ( empty( $this->form_post_type ) )
+			return;
+
+		add_submenu_page(
+			'edit.php?post_type=' . MWF_Config::NAME,
+			__( 'Inquiry data', MWF_Config::DOMAIN ),  // ページタイトル
+			__( 'Inquiry data', MWF_Config::DOMAIN ),  // メニュー名
+			MWF_Config::CAPABILITY, // 権限
+			MWF_Config::NAME . '-save-data', // 画面のパス
+			array( $this, 'inquiry_data_page' ) // 表示用の関数
+		);
+	}
+
+	/**
+	 * inquiry_data_page
+	 * 問い合わせデータ閲覧ページを表示
+	 */
+	public function inquiry_data_page() {
+		?>
+		<div class="wrap">
+			<h2><?php _e( 'Inquiry data', MWF_Config::DOMAIN ); ?></h2>
+			<p>
+				<?php _e( 'You can see the inquiry data that are saved in the database by clicking on the link below.', MWF_Config::DOMAIN ); ?>
+			</p>
+			<table class="wp-list-table widefat fixed" cellspacing="0">
+				<thead>
+					<th class="<?php echo MWF_Config::NAME; ?>-table-title"><?php _e( 'Form title', MWF_Config::DOMAIN ); ?></th>
+					<th class="<?php echo MWF_Config::NAME; ?>-table-count"><?php _e( 'The number of inquiries', MWF_Config::DOMAIN ); ?></th>
+					<th class="<?php echo MWF_Config::NAME; ?>-table-date"><?php _e( 'Updated date', MWF_Config::DOMAIN ); ?></th>
+					<th class="<?php echo MWF_Config::NAME; ?>-table-date"><?php _e( 'Created date', MWF_Config::DOMAIN ); ?></th>
+				</thead>
+				<tbody>
+					<?php $i = 0; foreach ( $this->form_post_type as $post_type ) : $i ++; ?>
+					<?php $post_type_object = get_post_type_object( $post_type ); ?>
+					<tr <?php if ( $i % 2 == 1 ) echo 'class="alternate"'; ?>>
+						<td class="<?php echo MWF_Config::NAME; ?>-table-title"><?php echo esc_html( $post_type_object->labels->singular_name ) ; ?></td>
+						<td class="<?php echo MWF_Config::NAME; ?>-table-count"><a href="edit.php?post_type=<?php echo esc_attr( $post_type ); ?>"><?php echo esc_html( $this->get_count( $post_type ) ) ?> <?php _e( 'cases', MWF_Config::DOMAIN ); ?></a></td>
+						<td class="<?php echo MWF_Config::NAME; ?>-table-date"><?php echo esc_html( $this->get_modified_datetime( $post_type ) ); ?></td>
+						<td class="<?php echo MWF_Config::NAME; ?>-table-date"><?php echo esc_html( $this->get_created_datetime( $post_type ) ); ?></td>
+					</tr>
+				<?php endforeach; ?>
+				</tbody>
+			</table>
+		<!-- end .wrap --></div>
+		<?php
+	}
+
+	/**
+	 * get_count
+	 * @param string $post_type 投稿タイプ名
+	 * @return numeric 投稿数
+	 */
+	private function get_count( $post_type ) {
+		global $wpdb;
+		$count = $wpdb->prepare(
+			"SELECT count(*) FROM $wpdb->posts WHERE post_type = '%s'",
+			$post_type
+		);
+		return number_format( $wpdb->get_var( $count ) );
+	}
+
+	/**
+	 * get_created_datetime
+	 * フォームの作成日時を取得
+	 * @param string $post_type 投稿タイプ名
+	 * @return string 作成日
+	 */
+	private function get_created_datetime( $post_type ) {
+		global $post;
+		$post_id = preg_replace( '/^mwf_(.+?)$/', '$1', $post_type );
+		$post = get_post( $post_id );
+		$post_date = get_the_date();
+		wp_reset_postdata();
+		return $post_date;
+	}
+
+	/**
+	 * get_modified_datetime
+	 * 問い合わせデータの最新保存日を取得
+	 * @param string $post_type 投稿タイプ名
+	 * @return string 問い合わせデータの最新保存日
+	 */
+	private function get_modified_datetime( $post_type ) {
+		global $post;
+		$inquiry_posts = get_posts( array(
+			'post_type' => $post_type,
+			'posts_per_page' => 1,
+			'orderby' => 'modified',
+		) );
+
+		$modified_datetime = '';
+		foreach ( $inquiry_posts as $post ) {
+			setup_postdata( $post );
+			$modified_datetime = get_the_modified_date();
+			break;
+		}
+		wp_reset_postdata();
+		return $modified_datetime;
 	}
 }

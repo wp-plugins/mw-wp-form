@@ -287,3 +287,11 @@ span#formkey_field {
 	display: block;
 }
 
+/**
+ * .mw-wp-form-table
+ */
+.mw-wp-form-table-count,
+.mw-wp-form-table-date {
+	width: 20%;
+}
+

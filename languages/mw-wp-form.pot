@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MW WP Form 1.4.0\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/mw-wp-form\n"
-"POT-Creation-Date: 2014-03-20 14:55:13+00:00\n"
+"POT-Creation-Date: 2014-04-02 13:45:53+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -37,7 +37,7 @@ msgstr ""
 #: form_fields/mw_form_field_button.php:88
 #: form_fields/mw_form_field_checkbox.php:104
 #: form_fields/mw_form_field_checkbox.php:108
-#: form_fields/mw_form_field_checkbox.php:117
+#: form_fields/mw_form_field_checkbox.php:115
 #: form_fields/mw_form_field_confirm_button.php:82
 #: form_fields/mw_form_field_datepicker.php:126
 #: form_fields/mw_form_field_datepicker.php:130
@@ -55,10 +55,10 @@ msgstr ""
 #: form_fields/mw_form_field_password.php:119
 #: form_fields/mw_form_field_radio.php:102
 #: form_fields/mw_form_field_radio.php:106
-#: form_fields/mw_form_field_radio.php:115
+#: form_fields/mw_form_field_radio.php:113
 #: form_fields/mw_form_field_select.php:102
 #: form_fields/mw_form_field_select.php:106
-#: form_fields/mw_form_field_select.php:115
+#: form_fields/mw_form_field_select.php:113
 #: form_fields/mw_form_field_submit.php:88
 #: form_fields/mw_form_field_text.php:105
 #: form_fields/mw_form_field_text.php:109
@@ -87,45 +87,45 @@ msgstr ""
 msgid "Choices"
 msgstr ""
 
-#: form_fields/mw_form_field_checkbox.php:112
-#: form_fields/mw_form_field_error.php:91
-#: form_fields/mw_form_field_radio.php:110
-#: form_fields/mw_form_field_select.php:110
+#: form_fields/mw_form_field_checkbox.php:111
+#: form_fields/mw_form_field_error.php:90
+#: form_fields/mw_form_field_radio.php:109
+#: form_fields/mw_form_field_select.php:109
 msgid "Input one line about one item."
 msgstr ""
 
-#: form_fields/mw_form_field_checkbox.php:117
+#: form_fields/mw_form_field_checkbox.php:115
 #: form_fields/mw_form_field_confirm_button.php:82
 #: form_fields/mw_form_field_datepicker.php:138
 #: form_fields/mw_form_field_hidden.php:98
 #: form_fields/mw_form_field_password.php:115
-#: form_fields/mw_form_field_radio.php:115
-#: form_fields/mw_form_field_select.php:115
+#: form_fields/mw_form_field_radio.php:113
+#: form_fields/mw_form_field_select.php:113
 #: form_fields/mw_form_field_text.php:117
 #: form_fields/mw_form_field_textarea.php:117
 msgid "Default value"
 msgstr ""
 
-#: form_fields/mw_form_field_checkbox.php:121
+#: form_fields/mw_form_field_checkbox.php:119
 #: form_fields/mw_form_field_datepicker.php:142
 #: form_fields/mw_form_field_file.php:125
 #: form_fields/mw_form_field_image.php:126
 #: form_fields/mw_form_field_password.php:123
-#: form_fields/mw_form_field_radio.php:119
-#: form_fields/mw_form_field_select.php:119
+#: form_fields/mw_form_field_radio.php:117
+#: form_fields/mw_form_field_select.php:117
 #: form_fields/mw_form_field_tel.php:100 form_fields/mw_form_field_text.php:125
 #: form_fields/mw_form_field_textarea.php:125
 #: form_fields/mw_form_field_zip.php:100
 msgid "Dsiplay error"
 msgstr ""
 
-#: form_fields/mw_form_field_checkbox.php:122
+#: form_fields/mw_form_field_checkbox.php:120
 #: form_fields/mw_form_field_datepicker.php:143
 #: form_fields/mw_form_field_file.php:126
 #: form_fields/mw_form_field_image.php:127
 #: form_fields/mw_form_field_password.php:124
-#: form_fields/mw_form_field_radio.php:120
-#: form_fields/mw_form_field_select.php:120
+#: form_fields/mw_form_field_radio.php:118
+#: form_fields/mw_form_field_select.php:118
 #: form_fields/mw_form_field_tel.php:101 form_fields/mw_form_field_text.php:126
 #: form_fields/mw_form_field_textarea.php:126
 #: form_fields/mw_form_field_zip.php:101
@@ -278,43 +278,43 @@ msgstr ""
 msgid "This is not the format of a tel number."
 msgstr ""
 
-#: system/mw_validation.php:303
+#: system/mw_validation.php:304
 msgid "This is not the format of a mail address."
 msgstr ""
 
-#: system/mw_validation.php:326
+#: system/mw_validation.php:327
 msgid "This is not the format of a url."
 msgstr ""
 
-#: system/mw_validation.php:346
+#: system/mw_validation.php:347
 msgid "This is not in agreement."
 msgstr ""
 
-#: system/mw_validation.php:372
+#: system/mw_validation.php:373
 msgid "The number of characters is invalid."
 msgstr ""
 
-#: system/mw_validation.php:409
+#: system/mw_validation.php:410
 msgid "The number of characters is a few."
 msgstr ""
 
-#: system/mw_validation.php:434
+#: system/mw_validation.php:435
 msgid "This value is invalid."
 msgstr ""
 
-#: system/mw_validation.php:457
+#: system/mw_validation.php:458
 msgid "This is not the format of a date."
 msgstr ""
 
-#: system/mw_validation.php:486
+#: system/mw_validation.php:487
 msgid "This file is invalid."
 msgstr ""
 
-#: system/mw_validation.php:515
+#: system/mw_validation.php:516
 msgid "This file size is too big."
 msgstr ""
 
-#: system/mw_validation.php:534
+#: system/mw_validation.php:535
 msgid "The contents which you input were judged with spam."
 msgstr ""
 
@@ -407,7 +407,7 @@ msgid "Example: {ID}, {post_title}, {post_meta} etc..."
 msgstr ""
 
 #: system/mw_wp_form_admin_page.php:351
-msgid "Saving contact data in database"
+msgid "Saving inquiry data in database"
 msgstr ""
 
 #: system/mw_wp_form_admin_page.php:355
@@ -560,40 +560,70 @@ msgstr ""
 msgid "Add form tag"
 msgstr ""
 
-#: system/mw_wp_form_contact_data_page.php:92
+#: system/mw_wp_form_contact_data_page.php:93
 msgid "Edit "
 msgstr ""
 
-#: system/mw_wp_form_contact_data_page.php:93
+#: system/mw_wp_form_contact_data_page.php:94
 msgid "View"
 msgstr ""
 
-#: system/mw_wp_form_contact_data_page.php:94
+#: system/mw_wp_form_contact_data_page.php:95
 msgid "Search"
 msgstr ""
 
-#: system/mw_wp_form_contact_data_page.php:95
+#: system/mw_wp_form_contact_data_page.php:96
 msgid "No data found"
 msgstr ""
 
-#: system/mw_wp_form_contact_data_page.php:96
+#: system/mw_wp_form_contact_data_page.php:97
 msgid "No data found in Trash"
 msgstr ""
 
-#: system/mw_wp_form_contact_data_page.php:137
+#: system/mw_wp_form_contact_data_page.php:138
 msgid "CSV Download"
 msgstr ""
 
-#: system/mw_wp_form_contact_data_page.php:225
+#: system/mw_wp_form_contact_data_page.php:226
 msgid "Custom Fields"
 msgstr ""
 
-#: system/mw_wp_form_contact_data_page.php:249
+#: system/mw_wp_form_contact_data_page.php:250
 msgid "Registed Date"
 msgstr ""
 
-#: system/mw_wp_form_contact_data_page.php:340
+#: system/mw_wp_form_contact_data_page.php:341
 msgid "Memo"
+msgstr ""
+
+#: system/mw_wp_form_contact_data_page.php:381
+#: system/mw_wp_form_contact_data_page.php:382
+#: system/mw_wp_form_contact_data_page.php:396
+msgid "Inquiry data"
+msgstr ""
+
+#: system/mw_wp_form_contact_data_page.php:398
+msgid "You can see the inquiry data that are saved in the database by clicking on the link below."
+msgstr ""
+
+#: system/mw_wp_form_contact_data_page.php:402
+msgid "Form title"
+msgstr ""
+
+#: system/mw_wp_form_contact_data_page.php:403
+msgid "The number of inquiries"
+msgstr ""
+
+#: system/mw_wp_form_contact_data_page.php:404
+msgid "Updated date"
+msgstr ""
+
+#: system/mw_wp_form_contact_data_page.php:405
+msgid "Created date"
+msgstr ""
+
+#: system/mw_wp_form_contact_data_page.php:412
+msgid "cases"
 msgstr ""
 
 #: system/mw_wp_form_file.php:152

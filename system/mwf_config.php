@@ -3,14 +3,14 @@
  * Name: MWF_Config
  * URI: http://2inc.org
  * Description: 設定ファイル
- * Version: 1.1.1
+ * Version: 1.2.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : May 29, 2013
- * Modified: December, 19, 2013
+ * Modified: April, 2, 2014
  * License: GPL2
  *
- * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
+ * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -62,4 +62,10 @@ class MWF_Config {
 	 * akismetのエラーを格納するValidationのキー
 	 */
 	const AKISMET = 'mwf_akismet';
+
+	/**
+	 * CAPABILITY
+	 * 権限
+	 */
+	const CAPABILITY = 'edit_pages';
 }

@@ -3,11 +3,11 @@
  * Name: MW WP Form Admin Page
  * URI: http://2inc.org
  * Description: 管理画面クラス
- * Version: 1.8.0
+ * Version: 1.8.2
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : February 21, 2013
- * Modified: March 20, 2014
+ * Modified: April 2, 2014
  * License: GPL2
  *
  * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
@@ -269,7 +269,7 @@ class MW_WP_Form_Admin_Page {
 			return $post_ID;
 		if ( !wp_verify_nonce( $_POST[MWF_Config::NAME . '_nonce'], MWF_Config::NAME ) )
 			return $post_ID;
-		if ( !current_user_can( 'edit_pages' ) )
+		if ( !current_user_can( MWF_Config::CAPABILITY ) )
 			return $post_ID;
 
 		$data = $_POST[MWF_Config::NAME];
@@ -348,7 +348,7 @@ class MW_WP_Form_Admin_Page {
 			<?php _e( 'Example: {ID}, {post_title}, {post_meta} etc...', MWF_Config::DOMAIN ); ?></span>
 		</p>
 		<p>
-			<label><input type="checkbox" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[usedb]" value="1" <?php checked( $this->get_post_data( 'usedb' ), 1 ); ?> /> <?php _e( 'Saving contact data in database', MWF_Config::DOMAIN ); ?></label>
+			<label><input type="checkbox" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[usedb]" value="1" <?php checked( $this->get_post_data( 'usedb' ), 1 ); ?> /> <?php _e( 'Saving inquiry data in database', MWF_Config::DOMAIN ); ?></label>
 		</p>
 		<table border="0" cellpadding="0" cellspacing="0" class="akismet">
 			<tr>
