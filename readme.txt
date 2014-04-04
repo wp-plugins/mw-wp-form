@@ -47,6 +47,12 @@ Do you have questions or issues with MW WP Form? Use these support channels appr
 
 == Changelog ==
 
+= 1.4.2 =
+* Deleted : Delete qtags.
+* Bug fix : Fix inquiery data are not saved when admin mail content is empty.
+* Added   : Add filter_hook mwform_admin_mail_raw_mw-wp-form-xxx.
+* Added   : Add filter_hook mwform_auto_mail_raw_mw-wp-form-xxx.
+
 = 1.4.1 =
 * Changed : Changed flow to read saving inquiry data.
 * Bug fix : Fix tel validation.

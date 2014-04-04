@@ -3,11 +3,11 @@
  * Name: MW Form Field
  * URI: http://2inc.org
  * Description: フォームフィールドの抽象クラス
- * Version: 1.5.0
+ * Version: 1.6.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: March 20, 2014
+ * Modified: April 4, 2014
  * License: GPL2
  *
  * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
@@ -73,16 +73,7 @@ abstract class mw_form_field {
 	public function __construct() {
 		$this->defaults = $this->setDefaults();
 		add_action( 'mwform_add_shortcode', array( $this, 'add_shortcode' ), 10, 4 );
-		add_action( 'mwform_add_qtags', array( $this, '_add_qtags' ) );
 		$this->_add_mwform_tag_generator();
-	}
-
-	/**
-	 * get_qtags
-	 * @return array $qtags
-	 */
-	public function get_qtags() {
-		return $this->qtags;
 	}
 
 	/**
@@ -209,21 +200,6 @@ abstract class mw_form_field {
 			$children = apply_filters( 'mwform_choices_' . $this->key, $children, $this->atts );
 		}
 		return $children;
-	}
-
-	/**
-	 * _add_qtags
-	 * QTags.addButton を出力
-	 */
-	public function _add_qtags() {
-		?>
-		QTags.addButton(
-			'<?php echo $this->qtags['id']; ?>',
-			'<?php echo $this->qtags['display']; ?>',
-			'[<?php echo $this->qtags['arg1']; ?>]',
-			'<?php echo $this->qtags['arg2']; ?>'
-		);
-		<?php
 	}
 
 	/**
