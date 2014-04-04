@@ -7,7 +7,7 @@
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : September 25, 2012
- * Modified: April 3, 2014
+ * Modified: April 4, 2014
  * Text Domain: mw-wp-form
  * Domain Path: /languages/
  * License: GPL2
@@ -537,7 +537,6 @@ class mw_wp_form {
 			if ( !empty( $this->options_by_formkey['admin_mail_sender'] ) )
 				$admin_mail_sender = $this->options_by_formkey['admin_mail_sender'];
 
-			// TODO: $sender と $from をなくしたので自動返信のところは調整が必要
 			// 送信先を指定
 			$Mail_raw->to = $admin_mail_to;
 			// 送信元を指定
@@ -578,13 +577,6 @@ class mw_wp_form {
 				return;
 
 			$Mail = $this->parse_mail_object( $Mail_raw );
-			/*
-			$Mail->from = $this->parse_mail_content( $Mail_raw->from );
-			$Mail->sender = $this->parse_mail_content( $Mail_raw->sender );
-			$Mail->subject = $this->parse_mail_content( $Mail_raw->subject );
-			$Mail->body = $this->parse_mail_content( $Mail_raw->body );
-			$Mail->attachments = $Mail_raw->attachments;
-			*/
 		}
 
 		$filter_name = 'mwform_mail_' . $this->key;
@@ -667,13 +659,6 @@ class mw_wp_form {
 						return;
 
 					$Mail = $this->parse_mail_object( $Mail_raw );
-					/*
-					$Mail->from = $this->parse_mail_content( $Mail_raw->from );
-					$Mail->sender = $this->parse_mail_content( $Mail_raw->sender );
-					$Mail->subject = $this->parse_mail_content( $Mail_raw->subject );
-					$Mail->body = $this->parse_mail_content( $Mail_raw->body );
-					$Mail->attachments = $Mail_raw->attachments;
-					*/
 
 					$filter_name = 'mwform_auto_mail_' . $this->key;
 					$Mail = apply_filters( $filter_name, $Mail, $this->Data->getValues() );
