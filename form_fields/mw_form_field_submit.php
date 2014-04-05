@@ -3,14 +3,14 @@
  * Name: MW Form Field Submit Button
  * URI: http://2inc.org
  * Description: 送信ボタンを出力。
- * Version: 1.1.1
+ * Version: 1.4.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
- * Created: December 14, 2012
- * Modified: July 28, 2013
+ * Created : December 14, 2012
+ * Modified: April 5, 2014
  * License: GPL2
  *
- * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
+ * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -28,9 +28,16 @@
 class mw_form_field_submit extends mw_form_field {
 
 	/**
-	 * String $short_code_name
+	 * set_names
+	 * shortcode_name、display_nameを定義。各子クラスで上書きする。
+	 * @return array shortcode_name, display_name
 	 */
-	protected $short_code_name = 'mwform_submit';
+	protected function set_names() {
+		return array(
+			'shortcode_name' => 'mwform_submit',
+			'display_name' => __( 'Submit Button', MWF_Config::DOMAIN ),
+		);
+	}
 
 	/**
 	 * setDefaults
@@ -47,33 +54,35 @@ class mw_form_field_submit extends mw_form_field {
 	/**
 	 * inputPage
 	 * 入力ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function inputPage( $atts ) {
-		return $this->Form->submit( $atts['name'], $atts['value'] );
+	protected function inputPage() {
+		return $this->Form->submit( $this->atts['name'], $this->atts['value'] );
 	}
 
 	/**
-	 * previewPage
+	 * confirmPage
 	 * 確認ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function previewPage( $atts ) {
-		return $this->inputPage( $atts );
+	protected function confirmPage() {
+		return $this->inputPage( $this->atts );
 	}
 
 	/**
-	 * add_qtags
-	 * QTags.addButton を出力
+	 * add_mwform_tag_generator
+	 * フォームタグジェネレーター
 	 */
-	protected function add_qtags() {
+	public function mwform_tag_generator_dialog() {
 		?>
-		'<?php echo $this->short_code_name; ?>',
-		'<?php _e( 'Submit Button', MWF_Config::DOMAIN ); ?>',
-		'[<?php echo $this->short_code_name; ?> name="submit"]',
-		''
+		<p>
+			<strong>name</strong>
+			<input type="text" name="name" />
+		</p>
+		<p>
+			<strong><?php _e( 'String on the button', MWF_Config::DOMAIN ); ?>(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<input type="text" name="value" />
+		</p>
 		<?php
 	}
 }

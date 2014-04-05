@@ -1,16 +1,16 @@
 <?php
 /**
- * Name: MW Form Field Preview Button
+ * Name: MW Form Field Confirm Button
  * URI: http://2inc.org
  * Description: 確認ボタンを出力。
- * Version: 1.1.3
+ * Version: 1.4.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
- * Created: December 14, 2012
- * Modified: August 6, 2013
+ * Created : December 14, 2012
+ * Modified: April 5, 2014
  * License: GPL2
  *
- * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
+ * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -25,12 +25,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-class mw_form_field_preview_button extends mw_form_field {
+class mw_form_field_confirm_button extends mw_form_field {
 
 	/**
-	 * String $short_code_name
+	 * set_names
+	 * shortcode_name、display_nameを定義。各子クラスで上書きする。
+	 * @return array shortcode_name, display_name
 	 */
-	protected $short_code_name = 'mwform_previewButton';
+	protected function set_names() {
+		return array(
+			'shortcode_name' => 'mwform_confirmButton',
+			'display_name' => __( 'Confirm Button', MWF_Config::DOMAIN ),
+		);
+	}
 
 	/**
 	 * setDefaults
@@ -46,32 +53,30 @@ class mw_form_field_preview_button extends mw_form_field {
 	/**
 	 * inputPage
 	 * 入力ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function inputPage( $atts ) {
-		return $this->Form->submit( $this->Form->getPreviewButtonName(), $atts['value'] );
+	protected function inputPage() {
+		return $this->Form->submit( $this->Form->getConfirmButtonName(), $this->atts['value'] );
 	}
 
 	/**
-	 * previewPage
+	 * confirmPage
 	 * 確認ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function previewPage( $atts ) {
+	protected function confirmPage() {
 	}
 
 	/**
-	 * add_qtags
-	 * QTags.addButton を出力
+	 * add_mwform_tag_generator
+	 * フォームタグジェネレーター
 	 */
-	protected function add_qtags() {
+	public function mwform_tag_generator_dialog() {
 		?>
-		'<?php echo $this->short_code_name; ?>',
-		'<?php _e( 'Confirm Button', MWF_Config::DOMAIN ); ?>',
-		'[<?php echo $this->short_code_name; ?>]',
-		''
+		<p>
+			<strong><?php _e( 'Default value', MWF_Config::DOMAIN ); ?>(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<input type="text" name="value" />
+		</p>
 		<?php
 	}
 }
