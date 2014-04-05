@@ -795,7 +795,9 @@ class mw_wp_form {
 		}
 		wp_reset_postdata();
 		$_ret = do_shortcode( $_ret );
-		$_ret = wpautop( $_ret );
+		if ( has_filter( 'the_content', 'wpautop' ) ) {
+			$_ret = wpautop( $_ret );
+		}
 		return $_ret;
 	}
 
