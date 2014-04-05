@@ -3,14 +3,14 @@
  * Name: MW Form Field Password
  * URI: http://2inc.org
  * Description: パスワードフィールドを出力。
- * Version: 1.1
+ * Version: 1.4.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
- * Created: December 14, 2012
- * Modified: May 29, 2013
+ * Created : December 14, 2012
+ * Modified: April 5, 2014
  * License: GPL2
  *
- * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
+ * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -28,9 +28,16 @@
 class mw_form_field_password extends mw_form_field {
 
 	/**
-	 * String $short_code_name
+	 * set_names
+	 * shortcode_name、display_nameを定義。各子クラスで上書きする。
+	 * @return array shortcode_name, display_name
 	 */
-	protected $short_code_name = 'mwform_password';
+	protected function set_names() {
+		return array(
+			'shortcode_name' => 'mwform_password',
+			'display_name' => __( 'Password', MWF_Config::DOMAIN ),
+		);
+	}
 
 	/**
 	 * setDefaults
@@ -40,9 +47,11 @@ class mw_form_field_password extends mw_form_field {
 	protected function setDefaults() {
 		return array(
 			'name'       => '',
+			'id'         => '',
 			'size'       => 60,
 			'maxlength'  => 255,
 			'value'      => '',
+			'placeholder' => '',
 			'show_error' => 'true',
 		);
 	}
@@ -50,41 +59,65 @@ class mw_form_field_password extends mw_form_field {
 	/**
 	 * inputPage
 	 * 入力ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function inputPage( $atts ) {
-		$_ret = $this->Form->password( $atts['name'], array(
-			'size'      => $atts['size'],
-			'maxlength' => $atts['maxlength'],
-			'value'     => $atts['value'],
+	protected function inputPage() {
+		$_ret = $this->Form->password( $this->atts['name'], array(
+			'id'        => $this->atts['id'],
+			'size'      => $this->atts['size'],
+			'maxlength' => $this->atts['maxlength'],
+			'value'     => $this->atts['value'],
+			'placeholder'     => $this->atts['placeholder'],
 		) );
-		if ( $atts['show_error'] !== 'false' )
-			$_ret .= $this->getError( $atts['name'] );
+		if ( $this->atts['show_error'] !== 'false' )
+			$_ret .= $this->getError( $this->atts['name'] );
 		return $_ret;
 	}
 
 	/**
-	 * previewPage
+	 * confirmPage
 	 * 確認ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function previewPage( $atts ) {
-		$value = $this->Form->getValue( $atts['name'] );
-		return '*****' . $this->Form->hidden( $atts['name'], $atts );
+	protected function confirmPage() {
+		$value = $this->Form->getValue( $this->atts['name'] );
+		return '*****' . $this->Form->hidden( $this->atts['name'], $value );
 	}
 
 	/**
-	 * add_qtags
-	 * QTags.addButton を出力
+	 * add_mwform_tag_generator
+	 * フォームタグジェネレーター
 	 */
-	protected function add_qtags() {
+	public function mwform_tag_generator_dialog() {
 		?>
-		'<?php echo $this->short_code_name; ?>',
-		'<?php _e( 'Password', MWF_Config::DOMAIN ); ?>',
-		'[<?php echo $this->short_code_name; ?> name=""]',
-		''
+		<p>
+			<strong>name</strong>
+			<input type="text" name="name" />
+		</p>
+		<p>
+			<strong>id(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<input type="text" name="id" />
+		</p>
+		<p>
+			<strong>size(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<input type="text" name="size" />
+		</p>
+		<p>
+			<strong>maxlength(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<input type="text" name="maxlength" />
+		</p>
+		<p>
+			<strong><?php _e( 'Default value', MWF_Config::DOMAIN ); ?>(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<input type="text" name="value" />
+		</p>
+		<p>
+			<strong>placeholder(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<input type="text" name="placeholder" />
+		</p>
+		<p>
+			<strong><?php _e( 'Dsiplay error', MWF_Config::DOMAIN ); ?></strong>
+			<input type="checkbox" name="show_error" value="false" /> <?php _e( 'Don\'t display error.', MWF_Config::DOMAIN ); ?>
+		</p>
 		<?php
 	}
 }

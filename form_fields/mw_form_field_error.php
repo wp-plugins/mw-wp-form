@@ -3,14 +3,14 @@
  * Name: MW Form Field Error
  * URI: http://2inc.org
  * Description: エラーを出力。
- * Version: 1.1
+ * Version: 1.4.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
- * Created: December 14, 2012
- * Modified: May 29, 2013
+ * Created : December 14, 2012
+ * Modified: April 5, 2014
  * License: GPL2
  *
- * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
+ * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -28,9 +28,16 @@
 class mw_form_field_error extends mw_form_field {
 
 	/**
-	 * String $short_code_name
+	 * set_names
+	 * shortcode_name、display_nameを定義。各子クラスで上書きする。
+	 * @return array shortcode_name, display_name
 	 */
-	protected $short_code_name = 'mwform_error';
+	protected function set_names() {
+		return array(
+			'shortcode_name' => 'mwform_error',
+			'display_name' => __( 'Error Message', MWF_Config::DOMAIN ),
+		);
+	}
 
 	/**
 	 * setDefaults
@@ -46,11 +53,10 @@ class mw_form_field_error extends mw_form_field {
 	/**
 	 * inputPage
 	 * 入力ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function inputPage( $atts ) {
-		$keys = explode( ',', $atts['keys'] );
+	protected function inputPage() {
+		$keys = explode( ',', $this->atts['keys'] );
 		$_ret = '';
 		foreach ( $keys as $key ) {
 			$_ret .= $this->getError( trim( $key ) );
@@ -59,24 +65,26 @@ class mw_form_field_error extends mw_form_field {
 	}
 
 	/**
-	 * previewPage
+	 * confirmPage
 	 * 確認ページでのフォーム項目を返す
-	 * @param	Array	$atts
 	 * @return	String	HTML
 	 */
-	protected function previewPage( $atts ) {
+	protected function confirmPage() {
 	}
 
 	/**
-	 * add_qtags
-	 * QTags.addButton を出力
+	 * add_mwform_tag_generator
+	 * フォームタグジェネレーター
 	 */
-	protected function add_qtags() {
+	public function mwform_tag_generator_dialog() {
 		?>
-		'<?php echo $this->short_code_name; ?>',
-		'<?php _e( 'Error Message', MWF_Config::DOMAIN ); ?>',
-		'[<?php echo $this->short_code_name; ?> keys=""]',
-		''
+		<p>
+			<strong><?php _e( 'name of the element which wants to display error', MWF_Config::DOMAIN ); ?></strong>
+			<textarea name="keys"></textarea>
+			<span class="mwf_note">
+				<?php _e( 'Input one line about one item.', MWF_Config::DOMAIN ); ?>
+			</span>
+		</p>
 		<?php
 	}
 }
