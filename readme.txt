@@ -1,10 +1,10 @@
 === MW WP Form ===
 Contributors: inc2734
 Donate link: http://www.amazon.co.jp/registry/wishlist/39ANKRNSTNW40
-Tags: plugin, form, confirm, preview, shortcode
+Tags: plugin, form, confirm, preview, shortcode, mail
 Requires at least: 3.4
-Tested up to: 3.8.0
-Stable tag: 1.4.1
+Tested up to: 3.8.1
+Stable tag: 1.5.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -14,8 +14,8 @@ MW WP Form can create mail form with a confirmation screen using shortcode.
 
 MW WP Form can create mail form with a confirmation screen using shortcode.
 
-* Form created using short codes
-* Using confirmation page.
+* Form created using shortcodes
+* Using confirmation page
 * The page changes by the same URL or individual URL are possible.
 * Many validation rules
 
@@ -26,7 +26,14 @@ MW WP Form はショートコードを使って確認画面付きのメールフ
 * 同一URL・個別URLでの画面変遷が可能
 * 豊富なバリデーションルール
 
+= Official =
+
 http://plugins.2inc.org/mw-wp-form/
+
+= Contributors =
+
+* [Takashi Kitajima](http://2inc.org) ( [inc2734](http://profiles.wordpress.org/inc2734) )
+* [Ryujiro Yamamoto](http://webcre-archive.com) ( [ryu263](http://profiles.wordpress.org/ryu263) )
 
 == Installation ==
 
@@ -47,11 +54,13 @@ Do you have questions or issues with MW WP Form? Use these support channels appr
 
 == Changelog ==
 
-= 1.4.2 =
-* Deleted : Delete qtags.
-* Bug fix : Fix inquiery data are not saved when admin mail content is empty.
-* Added   : Add filter_hook mwform_admin_mail_raw_mw-wp-form-xxx.
-* Added   : Add filter_hook mwform_auto_mail_raw_mw-wp-form-xxx.
+= 1.5.0 =
+* Deleted   : Delete qtags.
+* Bug fix   : Fix inquiery data are not saved when admin mail content is empty.
+* Bug fix   : Fix bug that don't start a new line.
+* Added     : Add filter_hook mwform_admin_mail_raw_mw-wp-form-xxx.
+* Added     : Add filter_hook mwform_auto_mail_raw_mw-wp-form-xxx.
+* Deprecated: Deprecated mw_form_field::set_qtags()
 
 = 1.4.1 =
 * Changed : Changed flow to read saving inquiry data.
@@ -70,7 +79,7 @@ Do you have questions or issues with MW WP Form? Use these support channels appr
 = 1.3.1 =
 * Added   : Support attribute id in text, textarea, radio, checkbox, select, datepicker, file, image, password shortcode.
 * Added   : Support attribute placeholder in password shortcode.
-* Changed : Change dmin page sentence.
+* Changed : Change admin page sentence.
 
 = 1.3.0 =
 * Added   : 自動返信メール設定、管理者宛メール設定で本文の以外の項目にも{キー}を使用可能に

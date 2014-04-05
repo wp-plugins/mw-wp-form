@@ -3,14 +3,14 @@
  * Name: MWF Functions
  * URI: http://2inc.org
  * Description: 関数
- * Version: 1.1.0
+ * Version: 1.2.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
- * Created: May 29, 2013
- * Modified:December 19, 2013
+ * Created : May 29, 2013
+ * Modified:April 5, 2014
  * License: GPL2
  *
- * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
+ * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -70,5 +70,34 @@ class MWF_Functions {
 			$filepath
 		);
 		return $fileurl;
+	}
+
+	/**
+	 * deprecated_message
+	 * 古いメソッドを使った場合にエラーを出力
+	 * @param string $function_name メソッド名
+	 * @param string $new_function 代替のメソッド名
+	 */
+	public static function deprecated_message( $function_name, $new_function = '' ) {
+		global $mwform_deprecated_message;
+		$mwform_deprecated_message .= '<div class="' . esc_attr( MWF_Config::NAME ) . '-deprecated-message">';
+		$mwform_deprecated_message .= sprintf( 'MW WP Form dosen\'t support "%s" already. ', $function_name );
+		if ( $new_function ) {
+			$mwform_deprecated_message .= sprintf( 'You should use "%s". ', $new_function );
+		}
+		$debug_backtrace = debug_backtrace();
+		array_shift( $debug_backtrace );
+		foreach ( $debug_backtrace as $value ) {
+			$mwform_deprecated_message .= sprintf( '%s line %d', @$value['file'], @$value['line'] );
+			break;
+		}
+		$mwform_deprecated_message .= '</div>';
+		add_filter( 'the_content', 'MWF_Functions::_deprecated_message' );
+	}
+	public static function _deprecated_message( $content ) {
+		global $mwform_deprecated_message;
+		$content = $mwform_deprecated_message . $content;
+		unset( $mwform_deprecated_message );
+		return $content;
 	}
 }

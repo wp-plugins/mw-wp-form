@@ -3,11 +3,11 @@
  * Plugin Name: MW WP Form
  * Plugin URI: http://plugins.2inc.org/mw-wp-form/
  * Description: MW WP Form can create mail form with a confirmation screen.
- * Version: 1.4.2
+ * Version: 1.5.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : September 25, 2012
- * Modified: April 4, 2014
+ * Modified: April 5, 2014
  * Text Domain: mw-wp-form
  * Domain Path: /languages/
  * License: GPL2
@@ -341,16 +341,7 @@ class mw_wp_form {
 	/**
 	 * _meta_mwform
 	 * [mwform〜]を解析し、プロパティを設定
-	 * @param	Array	( input, confirm complete, key )
-	 * @example
-	 * 		同一画面変遷の場合
-	 * 			[mwform key="hoge"]〜[/mwform]
-	 * 		別ページ画面変遷の場合
-	 * 			確認画面ありの場合
-	 * 				入力画面 : [mwform confirm="/form_confirm/" key="hoge"]〜[/mwform]
-	 * 				確認画面 : [mwform input="/form_input/" complete="/form_complete/" key="hoge"]〜[/mwform]
-	 * 			確認画面なしの場合
-	 * 				入力画面 : [mwform complete="/form_complete/" key="hoge"]〜[/mwform]
+	 * @param array $atts
 	 */
 	public function _meta_mwform( $atts ) {
 		$atts = shortcode_atts( array(
@@ -403,13 +394,6 @@ class mw_wp_form {
 	 * apply_filters_mwform_validation
 	 * バリデーション用フィルタ。フィルタの実行結果としてValidationオブジェクトが返ってこなければエラー
 	 * 各バリデーションメソッドの詳細は /system/mw_validation.php を参照
-	 * @example
-	 * 		// hoge識別子のフォームのバリデーションを行う場合
-	 * 		add_filters( 'mwform_validation_hoge', 'mwform_validation_hoge' );
-	 * 		function mwform_validation_hoge( $v ) {
-	 * 			$v->setRule( 'key', 'noEmpty' );
-	 * 			return $V;
-	 * 		}
 	 */
 	protected function apply_filters_mwform_validation() {
 		$filterName = 'mwform_validation_' . $this->key;
@@ -498,19 +482,6 @@ class mw_wp_form {
 	/**
 	 * apply_filters_mwform_mail
 	 * メール送信フィルター
-	 * @example
-	 * 		// hoge識別子のフォームのメール送信を行う場合
-	 * 		// $dataにフォームから送信された内容が配列で格納されている。
-	 * 		add_filters( 'mwform_mail_hoge', 'mwform_mail_hoge', 10, 2 );
-	 * 		function mwform_mail_hoge( $m, $data ) {
-	 * 			$m->to = $data['your_email'];	// 宛先
-	 * 			$m->from = 'inc@2inc.org';		// 送信元
-	 * 			$m->sender = 'kitajima'			// 送信者
-	 * 			$m->subject = '送信ありがとうございます。';		// 題名
-	 * 			$m->body = '本文';							// 本文
-	 * 			$m->send();						// 送信
-	 *			return $m;
-	 * 		}
 	 */
 	protected function apply_filters_mwform_mail() {
 		$Mail = new MW_Mail();
@@ -816,13 +787,15 @@ class mw_wp_form {
 
 		// 入力画面・確認画面
 		if ( $this->viewFlg == 'input' || $this->viewFlg == 'confirm' ) {
-			$_ret = do_shortcode( '[mwform]' . get_the_content() . '[/mwform]' );
+			$_ret ='[mwform]' . get_the_content() . '[/mwform]';
 		}
 		// 完了画面
 		elseif( $this->viewFlg == 'complete' ) {
-			$_ret = do_shortcode( '[mwform_complete_message]' . $this->options_by_formkey['complete_message'] . '[/mwform_complete_message]' );
+			$_ret = '[mwform_complete_message]' . $this->options_by_formkey['complete_message'] . '[/mwform_complete_message]';
 		}
 		wp_reset_postdata();
+		$_ret = do_shortcode( $_ret );
+		$_ret = wpautop( $_ret );
 		return $_ret;
 	}
 
@@ -923,10 +896,7 @@ class mw_wp_form {
 
 	/**
 	 * _mwform_complete_message
-	 * 完了後のメッセージ。同一ページで画面変遷したときだけ実行する
-	 * @example
-	 * 		[mwform …]〜[/mwform]
-	 * 		[mwform_complete_message]ここに完了後に表示するメッセージ[/mwform_complete_message]
+	 * 完了後のメッセージ。
 	 */
 	public function _mwform_complete_message( $atts, $content = '' ) {
 		if ( $this->viewFlg == 'complete' ) {

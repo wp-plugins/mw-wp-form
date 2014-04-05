@@ -33,6 +33,11 @@ abstract class mw_form_field {
 	protected $shortcode_name;
 
 	/**
+	 * string $display_name
+	 */
+	protected $display_name;
+
+	/**
 	 * Form $Form
 	 */
 	protected $Form;
@@ -71,9 +76,27 @@ abstract class mw_form_field {
 	 * __construct
 	 */
 	public function __construct() {
+		$this->_set_names();
 		$this->defaults = $this->setDefaults();
 		add_action( 'mwform_add_shortcode', array( $this, 'add_shortcode' ), 10, 4 );
 		$this->_add_mwform_tag_generator();
+	}
+
+	/**
+	 * set_names
+	 * shortcode_name、display_nameを定義。各子クラスで上書きする。
+	 * @return array shortcode_name, display_name
+	 */
+	protected function set_names() {
+		return array(
+			'shortcode_name' => $this->shortcode_name,
+			'display_name' => $this->display_name,
+		);
+	}
+	private function _set_names() {
+		$args = $this->set_names();
+		$this->shortcode_name = $args['shortcode_name'];
+		$this->display_name = $args['display_name'];
 	}
 
 	/**
@@ -84,6 +107,7 @@ abstract class mw_form_field {
 	 * @param string $arg2 終了タグ（ショートコード）
 	 */
 	protected function set_qtags( $id, $display, $arg1, $arg2 = '' ) {
+		MWF_Functions::deprecated_message( 'mw_form_field::set_qtags', 'mw_form_field::set_names' );
 		$this->qtags = array(
 			'id' => $id,
 			'display' => $display,
@@ -236,8 +260,11 @@ abstract class mw_form_field {
 	 * フォームタグ挿入ボタンのセレクトボックスに選択項目を追加
 	 */
 	public function mwform_tag_generator_option() {
+		$display_name = $this->qtags['display'];
+		if ( $this->display_name )
+			$display_name = $this->display_name;
 		?>
-		<option value="<?php echo esc_attr( $this->shortcode_name ); ?>"><?php echo esc_attr( $this->qtags['display'] ); ?></option>
+		<option value="<?php echo esc_attr( $this->shortcode_name ); ?>"><?php echo esc_attr( $display_name ); ?></option>
 		<?php
 	}
 }
