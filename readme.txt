@@ -4,7 +4,7 @@ Donate link: http://www.amazon.co.jp/registry/wishlist/39ANKRNSTNW40
 Tags: plugin, form, confirm, preview, shortcode, mail
 Requires at least: 3.4
 Tested up to: 3.8.1
-Stable tag: 1.5.1
+Stable tag: 1.5.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -53,6 +53,12 @@ Do you have questions or issues with MW WP Form? Use these support channels appr
 1. screenshot-1.png
 
 == Changelog ==
+
+= 1.5.3 =
+* Bug fix : Fixed a bug where <br> is added in textarea.
+
+= 1.5.2 =
+* Bug fix : Datapicker starting a new line.
 
 = 1.5.1 =
 * Bug fix : Fix wpautop bug.
