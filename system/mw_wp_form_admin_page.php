@@ -3,11 +3,11 @@
  * Name: MW WP Form Admin Page
  * URI: http://2inc.org
  * Description: 管理画面クラス
- * Version: 1.9.0
+ * Version: 1.9.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : February 21, 2013
- * Modified: April 4, 2014
+ * Modified: April 17, 2014
  * License: GPL2
  *
  * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
@@ -379,7 +379,7 @@ class MW_WP_Form_Admin_Page {
 			<span class="mwf_note"><?php _e( 'If empty:', MWF_Config::DOMAIN ); ?> <?php bloginfo( 'admin_email' ); ?></span>
 		</p>
 		<p>
-			<b><?php _e( 'Ccontent', MWF_Config::DOMAIN ); ?></b><br />
+			<b><?php _e( 'Content', MWF_Config::DOMAIN ); ?></b><br />
 			<textarea name="<?php echo esc_attr( MWF_Config::NAME ); ?>[mail_content]" cols="30" rows="10"><?php echo esc_attr( $this->get_post_data( 'mail_content' ) ); ?></textarea>
 		</p>
 		<p>
@@ -423,7 +423,7 @@ class MW_WP_Form_Admin_Page {
 			<span class="mwf_note"><?php _e( 'If empty:', MWF_Config::DOMAIN ); ?> <?php bloginfo( 'admin_email' ); ?></span>
 		</p>
 		<p>
-			<b><?php _e( 'Ccontent', MWF_Config::DOMAIN ); ?></b><br />
+			<b><?php _e( 'Content', MWF_Config::DOMAIN ); ?></b><br />
 			<textarea name="<?php echo esc_attr( MWF_Config::NAME ); ?>[admin_mail_content]" cols="30" rows="10"><?php echo esc_attr( $this->get_post_data( 'admin_mail_content' ) ); ?></textarea>
 		</p>
 		<?php
