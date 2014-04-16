@@ -3,11 +3,11 @@
  * Name: MW Form
  * URI: http://2inc.org
  * Description: フォームクラス
- * Version: 1.3.10
+ * Version: 1.3.11
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : September 25, 2012
- * Modified: January 16, 2013
+ * Modified: April 5, 2014
  * License: GPL2
  *
  * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
@@ -721,13 +721,13 @@ class MW_Form {
 		$_ret = sprintf( '<input type="text" name="%s" value="%s" size="%d" %s />',
 			esc_attr( $name ), esc_attr( $value ), esc_attr( $options['size'] ), $id
 		);
-		$_ret .= sprintf( '
-			<script type="text/javascript">
+		$_ret .= sprintf(
+			'<script type="text/javascript">
 			jQuery( function( $ ) {
 				$("input[name=\'%s\']").datepicker({%s});
 			} );
-			</script>
-		', esc_html( $name ), $options['js'] );
+			</script>'
+		, esc_html( $name ), $options['js'] );
 		return $_ret;
 	}
 

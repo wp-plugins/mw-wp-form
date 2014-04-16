@@ -3,7 +3,7 @@
  * Name: MW Form Field Text
  * URI: http://2inc.org
  * Description: テキストフィールドを出力。
- * Version: 1.4.0
+ * Version: 1.4.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
@@ -53,6 +53,7 @@ class mw_form_field_text extends mw_form_field {
 			'value'       => '',
 			'placeholder' => '',
 			'show_error'  => 'true',
+			'conv_half_alphanumeric' => 'false',
 		);
 	}
 
@@ -62,12 +63,17 @@ class mw_form_field_text extends mw_form_field {
 	 * @return string html
 	 */
 	protected function inputPage() {
+		$conv_half_alphanumeric = false;
+		if ( $this->atts['conv_half_alphanumeric'] === 'true' ) {
+			$conv_half_alphanumeric = true;
+		}
 		$_ret = $this->Form->text( $this->atts['name'], array(
 			'id'        => $this->atts['id'],
 			'size'      => $this->atts['size'],
 			'maxlength' => $this->atts['maxlength'],
 			'value'     => $this->atts['value'],
 			'placeholder'     => $this->atts['placeholder'],
+			'conv-half-alphanumeric' => $conv_half_alphanumeric,
 		) );
 		if ( $this->atts['show_error'] !== 'false' )
 			$_ret .= $this->getError( $this->atts['name'] );
@@ -119,6 +125,10 @@ class mw_form_field_text extends mw_form_field {
 		<p>
 			<strong><?php _e( 'Dsiplay error', MWF_Config::DOMAIN ); ?></strong>
 			<input type="checkbox" name="show_error" value="false" /> <?php _e( 'Don\'t display error.', MWF_Config::DOMAIN ); ?>
+		</p>
+		<p>
+			<strong><?php _e( 'Convert half alphanumeric', MWF_Config::DOMAIN ); ?></strong>
+			<input type="checkbox" name="conv_half_alphanumeric" value="true" /> <?php _e( 'Convert.', MWF_Config::DOMAIN ); ?>
 		</p>
 		<?php
 	}
