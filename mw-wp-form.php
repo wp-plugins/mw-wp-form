@@ -3,11 +3,11 @@
  * Plugin Name: MW WP Form
  * Plugin URI: http://plugins.2inc.org/mw-wp-form/
  * Description: MW WP Form can create mail form with a confirmation screen.
- * Version: 1.5.1
+ * Version: 1.5.5
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : September 25, 2012
- * Modified: April 5, 2014
+ * Modified: April 18, 2014
  * Text Domain: mw-wp-form
  * Domain Path: /languages/
  * License: GPL2
@@ -333,8 +333,8 @@ class mw_wp_form {
 		add_shortcode( 'mwform', array( $this, '_mwform' ) );
 		add_shortcode( 'mwform_complete_message', array( $this, '_mwform_complete_message' ) );
 		add_action( 'wp_footer', array( $this->Data, 'clearValues' ) );
-		add_action( 'wp_print_styles', array( $this, 'original_style' ) );
-		add_action( 'wp_print_scripts', array( $this, 'original_script' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'original_style' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'original_script' ) );
 		return $template;
 	}
 
@@ -787,17 +787,22 @@ class mw_wp_form {
 
 		// 入力画面・確認画面
 		if ( $this->viewFlg == 'input' || $this->viewFlg == 'confirm' ) {
-			$_ret ='[mwform]' . get_the_content() . '[/mwform]';
+			$content = get_the_content();
+			if ( has_filter( 'the_content', 'wpautop' ) ) {
+				$content = wpautop( $content );
+			}
+			$_ret ='[mwform]' . $content . '[/mwform]';
 		}
 		// 完了画面
 		elseif( $this->viewFlg == 'complete' ) {
-			$_ret = '[mwform_complete_message]' . $this->options_by_formkey['complete_message'] . '[/mwform_complete_message]';
+			$content = $this->options_by_formkey['complete_message'];
+			if ( has_filter( 'the_content', 'wpautop' ) ) {
+				$content = wpautop( $content );
+			}
+			$_ret = '[mwform_complete_message]' . $content . '[/mwform_complete_message]';
 		}
 		wp_reset_postdata();
 		$_ret = do_shortcode( $_ret );
-		if ( has_filter( 'the_content', 'wpautop' ) ) {
-			$_ret = wpautop( $_ret );
-		}
 		return $_ret;
 	}
 
