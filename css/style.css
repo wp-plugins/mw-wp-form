@@ -23,5 +23,5 @@
 
 .mwform-file-delete {
 	cursor: pointer;
-	display: none;
+	visibility: hidden;
 }

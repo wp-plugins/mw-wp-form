@@ -3,11 +3,11 @@
  * Name: MW Form
  * URI: http://2inc.org
  * Description: フォームクラス
- * Version: 1.3.12
+ * Version: 1.3.13
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : September 25, 2012
- * Modified: April 18, 2014
+ * Modified: April 19, 2014
  * License: GPL2
  *
  * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
@@ -741,7 +741,7 @@ class MW_Form {
 	public function file( $name, $options = array() ) {
 		$defaults = array(
 			'id' => '',
-			'size' => 60,
+			'size' => 20,
 		);
 		$id = $this->get_attr_id( $options['id'] );
 		$options = array_merge( $defaults, $options );
