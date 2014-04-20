@@ -3,11 +3,11 @@
  * Name: MW Form Field TextArea
  * URI: http://2inc.org
  * Description: テキストエリアを出力。
- * Version: 1.4.0
+ * Version: 1.4.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: April 5, 2014
+ * Modified: April 8, 2014
  * License: GPL2
  *
  * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
@@ -81,7 +81,7 @@ class mw_form_field_textarea extends mw_form_field {
 	 */
 	protected function confirmPage() {
 		$value = $this->Form->getValue( $this->atts['name'] );
-		$_ret  = nl2br( $value );
+		$_ret  = nl2br( esc_html( $value ) );
 		$_ret .= $this->Form->hidden( $this->atts['name'], $value );
 		return $_ret;
 	}

@@ -3,11 +3,11 @@
  * Name: MW Form
  * URI: http://2inc.org
  * Description: フォームクラス
- * Version: 1.3.10
+ * Version: 1.3.13
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : September 25, 2012
- * Modified: January 16, 2013
+ * Modified: April 19, 2014
  * License: GPL2
  *
  * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
@@ -721,13 +721,13 @@ class MW_Form {
 		$_ret = sprintf( '<input type="text" name="%s" value="%s" size="%d" %s />',
 			esc_attr( $name ), esc_attr( $value ), esc_attr( $options['size'] ), $id
 		);
-		$_ret .= sprintf( '
-			<script type="text/javascript">
+		$_ret .= sprintf(
+			'<script type="text/javascript">
 			jQuery( function( $ ) {
 				$("input[name=\'%s\']").datepicker({%s});
 			} );
-			</script>
-		', esc_html( $name ), $options['js'] );
+			</script>'
+		, esc_html( $name ), $options['js'] );
 		return $_ret;
 	}
 
@@ -741,11 +741,11 @@ class MW_Form {
 	public function file( $name, $options = array() ) {
 		$defaults = array(
 			'id' => '',
-			'size' => 60,
+			'size' => 20,
 		);
 		$id = $this->get_attr_id( $options['id'] );
 		$options = array_merge( $defaults, $options );
-		return sprintf( '<input type="file" name="%s" size="%d" %s />',
+		return sprintf( '<input type="file" name="%s" size="%d" %s /><span data-mwform-file-delete="%1$s" class="mwform-file-delete">&times;</span>',
 			esc_attr( $name ), esc_attr( $options['size'] ), $id
 		);
 	}
