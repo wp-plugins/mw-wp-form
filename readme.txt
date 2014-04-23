@@ -54,6 +54,13 @@ Do you have questions or issues with MW WP Form? Use these support channels appr
 
 == Changelog ==
 
+= 1.6.0 =
+* Changed : Redirection flow has changed.
+* Changed : If querystring setting is set and don't get post from querystring, return empty.
+* Added   : If querystring setting isn't set, {xxx} ( e.g. {post_title} ) get post property from the now post.
+* Added   : Repeat submitting is blocked.
+* Bug fix : Fix translation mistake in admin page.
+
 = 1.5.6 =
 * Bug fix : Fix Selected file reset button bug in Firefox.
 * Changed : Change file field's default size attribute.

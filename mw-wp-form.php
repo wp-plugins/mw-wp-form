@@ -3,11 +3,11 @@
  * Plugin Name: MW WP Form
  * Plugin URI: http://plugins.2inc.org/mw-wp-form/
  * Description: MW WP Form can create mail form with a confirmation screen.
- * Version: 1.5.6
+ * Version: 1.6.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : September 25, 2012
- * Modified: April 19, 2014
+ * Modified: April 22, 2014
  * Text Domain: mw-wp-form
  * Domain Path: /languages/
  * License: GPL2
@@ -284,7 +284,7 @@ class mw_wp_form {
 		$this->File = new MW_WP_Form_File();
 
 		// 入力画面（戻る）のとき
-		if ( $this->Form->isInput() ) {
+		if ( $this->Form->isBack() ) {
 			$this->redirect( $this->input );
 		}
 		// 確認画面のとき
@@ -327,6 +327,28 @@ class mw_wp_form {
 				} else {
 					$this->redirect( $this->input );
 				}
+			}
+		} else {
+			// 完了 or 確認画面 or エラーURLが設定済みで
+			// 完了 or 確認画面 or エラーに直接アクセスした場合、
+			// 入力画面に戻れれば戻る。戻れない場合はトップに戻す
+			$REQUEST_URI = $this->parse_url( $_SERVER['REQUEST_URI'] );
+			$check_urls = array(
+				$this->confirm,
+				$this->complete,
+			);
+			$back_url = ( $this->input ) ? $this->input : home_url();
+			foreach ( $check_urls as $check_url ) {
+				if ( $REQUEST_URI === $check_url ) {
+					$this->Data->clearValues();
+					$this->redirect( $back_url );
+				}
+			}
+			$this->redirect( $this->input );
+
+			if ( $this->Validation->check() && $REQUEST_URI == $this->validation_error ) {
+				$this->Data->clearValues();
+				$this->redirect( $back_url );
 			}
 		}
 		add_shortcode( 'mwform_formkey', array( $this, '_mwform_formkey' ) );
@@ -822,9 +844,9 @@ class mw_wp_form {
 			if ( isset( $this->options_by_formkey['querystring'] ) )
 				$querystring = $this->options_by_formkey['querystring'];
 			if ( !empty( $querystring ) ) {
-				$content = preg_replace_callback( '/{(.+?)}/', array( $this, 'get_post_property' ), $content );
+				$content = preg_replace_callback( '/{(.+?)}/', array( $this, 'get_post_property_from_querystring' ), $content );
 			} else {
-				$content = preg_replace( '/{(.+?)}/', '', $content );
+				$content = preg_replace_callback( '/{(.+?)}/', array( $this, 'get_post_property_from_this' ), $content );
 			}
 
 			$upload_file_keys = $this->Form->getValue( MWF_Config::UPLOAD_FILE_KEYS );
@@ -877,23 +899,47 @@ class mw_wp_form {
 	}
 
 	/**
-	 * get_post_property
+	 * get_post_property_from_querystring
 	 * 引数 post_id が有効の場合、投稿情報を取得するために preg_replace_callback から呼び出される。
 	 * @param	Array	$matches
 	 * @return	String
 	 */
-	public function get_post_property( $matches ) {
+	public function get_post_property_from_querystring( $matches ) {
 		if ( isset( $this->options_by_formkey['querystring'] ) )
 			$querystring = $this->options_by_formkey['querystring'];
 		if ( !empty( $querystring ) && isset( $_GET['post_id'] ) && MWF_Functions::is_numeric( $_GET['post_id'] ) ) {
 			$_post = get_post( $_GET['post_id'] );
 			if ( empty( $_post->ID ) )
-				return $matches[0];
+				return;
 			if ( isset( $_post->$matches[1] ) ) {
 				return $_post->$matches[1];
 			} else {
 				// post_meta の処理
 				$pm = get_post_meta( $_post->ID, $matches[1], true );
+				if ( !empty( $pm ) )
+					return $pm;
+			}
+		}
+		return;
+	}
+
+	/**
+	 * get_post_property_from_this
+	 * 引数 post_id が無効の場合、投稿情報を取得するために preg_replace_callback から呼び出される。
+	 * @param	Array	$matches
+	 * @return	String
+	 */
+	public function get_post_property_from_this( $matches ) {
+		global $post;
+		if ( !is_singular() )
+			return;
+		$post_id = get_the_ID();
+		if ( isset( $post->ID ) && MWF_Functions::is_numeric( $post->ID ) ) {
+			if ( isset( $post->$matches[1] ) ) {
+				return $post->$matches[1];
+			} else {
+				// post_meta の処理
+				$pm = get_post_meta( $post->ID, $matches[1], true );
 				if ( !empty( $pm ) )
 					return $pm;
 			}

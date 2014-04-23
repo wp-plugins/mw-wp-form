@@ -437,7 +437,7 @@ class MW_WP_Form_Admin_Page {
 		global $post;
 		?>
 		<input type="hidden" name="<?php echo esc_attr( MWF_Config::NAME ); ?>_nonce" value="<?php echo wp_create_nonce( MWF_Config::NAME ); ?>" />
-		<table border="0" cellpadding="0" cellspacing="0">
+		<table border="0" cellpadding="0" cellspacing="4">
 			<tr>
 				<th><?php _e( 'Input Page URL', MWF_Config::DOMAIN ); ?></th>
 				<td>
@@ -463,6 +463,9 @@ class MW_WP_Form_Admin_Page {
 				</td>
 			</tr>
 		</table>
+		<p class="description">
+			<?php _e( 'This urls are the redirection urls at the time of button press. When URL setting is empty, The page redirect on the same page.', MWF_Config::DOMAIN ); ?>
+		</p>
 		<?php
 	}
 

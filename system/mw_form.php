@@ -3,11 +3,11 @@
  * Name: MW Form
  * URI: http://2inc.org
  * Description: フォームクラス
- * Version: 1.3.13
+ * Version: 1.3.14
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : September 25, 2012
- * Modified: April 19, 2014
+ * Modified: April 22, 2014
  * License: GPL2
  *
  * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
@@ -74,7 +74,7 @@ class MW_Form {
 	public function __construct( $key = '' ) {
 		$this->Data = MW_WP_Form_Data::getInstance( $key );
 		if ( $key ) {
-			$this->key = $key . '_token';
+			$this->key = $key . '_key';
 		}
 		$this->Session = MW_Session::start( $this->key );
 		$this->modeCheck = $this->modeCheck();
@@ -133,6 +133,17 @@ class MW_Form {
 	}
 
 	/**
+	 * isBack
+	 * 入力画面（戻る）かどうか
+	 * @return bool
+	 */
+	public function isBack() {
+		if ( $this->modeCheck === 'back' )
+			return true;
+		return false;
+	}
+
+	/**
 	 * modeCheck
 	 * 表示画面判定
 	 * @return string input || confirm || complete
@@ -141,7 +152,7 @@ class MW_Form {
 		$backButton = $this->getValue( $this->backButton );
 		$confirmButton = $this->getValue( $this->confirmButton );
 		if ( isset( $backButton ) ) {
-			return 'input';
+			return 'back';
 		} elseif ( isset( $confirmButton ) ) {
 			return 'confirm';
 		} elseif ( !isset( $confirmButton ) && !isset( $backButton ) && $this->check() ) {

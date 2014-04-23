@@ -31,5 +31,13 @@ jQuery( function( $ ) {
 		file_delete.closest( '[data-mwform-file-delete="' + name + '"]' ).css( 'visibility', 'visible' );
 	} );
 
+	var mw_wp_form_button_no_click = true;
+	$( '.mw_wp_form input[type="submit"]' ).click( function() {
+		if ( mw_wp_form_button_no_click ) {
+			mw_wp_form_button_no_click = false;
+		} else {
+			$( this ).prop( 'disabled', true );
+		}
+	} );
 } );
 
