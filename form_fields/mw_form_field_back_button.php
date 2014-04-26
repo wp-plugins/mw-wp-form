@@ -74,7 +74,7 @@ class mw_form_field_back_button extends mw_form_field {
 	public function mwform_tag_generator_dialog() {
 		?>
 		<p>
-			<strong><?php _e( 'String on the button', MWF_Config::DOMAIN ); ?>(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<strong><?php esc_html_e( 'String on the button', MWF_Config::DOMAIN ); ?>(<?php esc_html_e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
 			<input type="text" name="value" />
 		</p>
 		<?php

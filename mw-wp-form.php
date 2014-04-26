@@ -3,11 +3,11 @@
  * Plugin Name: MW WP Form
  * Plugin URI: http://plugins.2inc.org/mw-wp-form/
  * Description: MW WP Form can create mail form with a confirmation screen.
- * Version: 1.5.1
+ * Version: 1.6.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : September 25, 2012
- * Modified: April 5, 2014
+ * Modified: April 22, 2014
  * Text Domain: mw-wp-form
  * Domain Path: /languages/
  * License: GPL2
@@ -262,8 +262,12 @@ class mw_wp_form {
 		// $_FILESがあるときは$this->dataに統合
 		$files = array();
 		foreach ( $_FILES as $key => $file ) {
-			if ( $file['error'] == UPLOAD_ERR_OK && is_uploaded_file( $file['tmp_name'] ) ) {
-				$this->Data->setValue( $key, $file['name'] );
+			if ( !isset( $_POST[$key] ) ) {
+				if ( $file['error'] == UPLOAD_ERR_OK && is_uploaded_file( $file['tmp_name'] ) ) {
+					$this->Data->setValue( $key, $file['name'] );
+				} else {
+					$this->Data->setValue( $key, '' );
+				}
 				$files[$key] = $file;
 			}
 		}
@@ -284,7 +288,7 @@ class mw_wp_form {
 		$this->File = new MW_WP_Form_File();
 
 		// 入力画面（戻る）のとき
-		if ( $this->Form->isInput() ) {
+		if ( $this->Form->isBack() ) {
 			$this->redirect( $this->input );
 		}
 		// 確認画面のとき
@@ -312,7 +316,7 @@ class mw_wp_form {
 					$this->Data->clearValue( $this->Form->getTokenName() );
 
 					// 手動フォーム対応
-					$REQUEST_URI = $this->parse_url( $_SERVER['REQUEST_URI'] );
+					$REQUEST_URI = $this->parse_url( $this->get_request_uri() );
 					$input = $this->parse_url( $this->input );
 					$complete = $this->parse_url( $this->complete );
 					if ( !$this->options_by_formkey && $REQUEST_URI !== $complete && $input !== $complete ) {
@@ -328,13 +332,35 @@ class mw_wp_form {
 					$this->redirect( $this->input );
 				}
 			}
+		} else {
+			// 完了 or 確認画面 or エラーURLが設定済みで
+			// 完了 or 確認画面 or エラーに直接アクセスした場合、
+			// 入力画面に戻れれば戻る。戻れない場合はトップに戻す
+			$REQUEST_URI = $this->parse_url( $this->get_request_uri() );
+			$check_urls = array(
+				$this->confirm,
+				$this->complete,
+			);
+			$back_url = ( $this->input ) ? $this->input : home_url();
+			foreach ( $check_urls as $check_url ) {
+				if ( $REQUEST_URI === $check_url ) {
+					$this->Data->clearValues();
+					$this->redirect( $back_url );
+				}
+			}
+			$this->redirect( $this->input );
+
+			if ( $this->Validation->check() && $REQUEST_URI == $this->validation_error ) {
+				$this->Data->clearValues();
+				$this->redirect( $back_url );
+			}
 		}
 		add_shortcode( 'mwform_formkey', array( $this, '_mwform_formkey' ) );
 		add_shortcode( 'mwform', array( $this, '_mwform' ) );
 		add_shortcode( 'mwform_complete_message', array( $this, '_mwform_complete_message' ) );
 		add_action( 'wp_footer', array( $this->Data, 'clearValues' ) );
-		add_action( 'wp_print_styles', array( $this, 'original_style' ) );
-		add_action( 'wp_print_scripts', array( $this, 'original_script' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'original_style' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'original_script' ) );
 		return $template;
 	}
 
@@ -417,7 +443,7 @@ class mw_wp_form {
 
 		$this->Validation = apply_filters( $filterName, $this->Validation, $this->Data->getValues() );
 		if ( !is_a( $this->Validation, 'MW_Validation' ) ) {
-			exit( __( 'Validation Object is not a MW Validation Class.', MWF_Config::DOMAIN ) );
+			exit( esc_html__( 'Validation Object is not a MW Validation Class.', MWF_Config::DOMAIN ) );
 		}
 	}
 
@@ -724,20 +750,45 @@ class mw_wp_form {
 	 * @param	String	リダイレクトURL
 	 */
 	private function redirect( $url ) {
-		$redirect = ( empty( $url ) ) ? $_SERVER['REQUEST_URI'] : $url;
+		$redirect = ( empty( $url ) ) ? $this->get_request_uri() : $url;
 		$redirect = $this->parse_url( $redirect );
-		$REQUEST_URI = $this->parse_url( $_SERVER['REQUEST_URI'] );
+		$REQUEST_URI = $this->parse_url( $this->get_request_uri() );
 		if ( !empty( $_POST ) || $redirect != $REQUEST_URI ) {
+			$redirect = wp_sanitize_redirect( $redirect );
+			$redirect = wp_validate_redirect( $redirect, home_url() );
 			wp_redirect( $redirect );
 			exit();
 		}
 	}
 
 	/**
+	 * get_request_uri
+	 * $_SERVER['REQUEST_URI'] を http:// からはじまるURLに変換する
+	 * @return string URL
+	 */
+	protected function get_request_uri() {
+		$_REQUEST_URI = $_SERVER['REQUEST_URI'];
+		if ( !preg_match( '/^https?:\/\//', $_REQUEST_URI ) ) {
+			$REQUEST_URI = home_url() . $_REQUEST_URI;
+			$parse_url = parse_url( home_url() );
+			// サブディレクトリ型の場合
+			if ( !empty( $parse_url['path'] ) ) {
+				$pettern = preg_quote( $parse_url['path'], '/' );
+				if ( preg_match( '/^' . $pettern . '/', $_REQUEST_URI ) ) {
+					$REQUEST_URI = preg_replace( '/' . $pettern . '$/', $_REQUEST_URI, home_url() );
+				}
+			}
+		} else {
+			$REQUEST_URI = $_REQUEST_URI;
+		}
+		return $REQUEST_URI;
+	}
+
+	/**
 	 * parse_url
 	 * http:// からはじまるURLに変換する
-	 * @param	String	URL
-	 * @return	String	URL
+	 * @param string URL
+	 * @return string URL
 	 */
 	protected function parse_url( $url ) {
 		if ( empty( $url ) )
@@ -751,8 +802,7 @@ class mw_wp_form {
 			parse_str( $reg[1], $query_string );
 		}
 		if ( !preg_match( '/^https?:\/\//', $url ) ) {
-			$protocol = ( is_ssl() ) ? 'https://' : 'http://';
-			$home_url = untrailingslashit( $protocol . $_SERVER['HTTP_HOST'] );
+			$home_url = home_url();
 			$url = $home_url . $url;
 		}
 		$url = preg_replace( '/([^:])\/+/', '$1/', $url );
@@ -787,17 +837,22 @@ class mw_wp_form {
 
 		// 入力画面・確認画面
 		if ( $this->viewFlg == 'input' || $this->viewFlg == 'confirm' ) {
-			$_ret ='[mwform]' . get_the_content() . '[/mwform]';
+			$content = get_the_content();
+			if ( has_filter( 'the_content', 'wpautop' ) ) {
+				$content = wpautop( $content );
+			}
+			$_ret ='[mwform]' . $content . '[/mwform]';
 		}
 		// 完了画面
 		elseif( $this->viewFlg == 'complete' ) {
-			$_ret = '[mwform_complete_message]' . $this->options_by_formkey['complete_message'] . '[/mwform_complete_message]';
+			$content = $this->options_by_formkey['complete_message'];
+			if ( has_filter( 'the_content', 'wpautop' ) ) {
+				$content = wpautop( $content );
+			}
+			$_ret = '[mwform_complete_message]' . $content . '[/mwform_complete_message]';
 		}
 		wp_reset_postdata();
 		$_ret = do_shortcode( $_ret );
-		if ( has_filter( 'the_content', 'wpautop' ) ) {
-			$_ret = wpautop( $_ret );
-		}
 		return $_ret;
 	}
 
@@ -817,9 +872,9 @@ class mw_wp_form {
 			if ( isset( $this->options_by_formkey['querystring'] ) )
 				$querystring = $this->options_by_formkey['querystring'];
 			if ( !empty( $querystring ) ) {
-				$content = preg_replace_callback( '/{(.+?)}/', array( $this, 'get_post_property' ), $content );
+				$content = preg_replace_callback( '/{(.+?)}/', array( $this, 'get_post_property_from_querystring' ), $content );
 			} else {
-				$content = preg_replace( '/{(.+?)}/', '', $content );
+				$content = preg_replace_callback( '/{(.+?)}/', array( $this, 'get_post_property_from_this' ), $content );
 			}
 
 			$upload_file_keys = $this->Form->getValue( MWF_Config::UPLOAD_FILE_KEYS );
@@ -872,23 +927,47 @@ class mw_wp_form {
 	}
 
 	/**
-	 * get_post_property
+	 * get_post_property_from_querystring
 	 * 引数 post_id が有効の場合、投稿情報を取得するために preg_replace_callback から呼び出される。
 	 * @param	Array	$matches
 	 * @return	String
 	 */
-	public function get_post_property( $matches ) {
+	public function get_post_property_from_querystring( $matches ) {
 		if ( isset( $this->options_by_formkey['querystring'] ) )
 			$querystring = $this->options_by_formkey['querystring'];
 		if ( !empty( $querystring ) && isset( $_GET['post_id'] ) && MWF_Functions::is_numeric( $_GET['post_id'] ) ) {
 			$_post = get_post( $_GET['post_id'] );
 			if ( empty( $_post->ID ) )
-				return $matches[0];
+				return;
 			if ( isset( $_post->$matches[1] ) ) {
 				return $_post->$matches[1];
 			} else {
 				// post_meta の処理
 				$pm = get_post_meta( $_post->ID, $matches[1], true );
+				if ( !empty( $pm ) )
+					return $pm;
+			}
+		}
+		return;
+	}
+
+	/**
+	 * get_post_property_from_this
+	 * 引数 post_id が無効の場合、投稿情報を取得するために preg_replace_callback から呼び出される。
+	 * @param	Array	$matches
+	 * @return	String
+	 */
+	public function get_post_property_from_this( $matches ) {
+		global $post;
+		if ( !is_singular() )
+			return;
+		$post_id = get_the_ID();
+		if ( isset( $post->ID ) && MWF_Functions::is_numeric( $post->ID ) ) {
+			if ( isset( $post->$matches[1] ) ) {
+				return $post->$matches[1];
+			} else {
+				// post_meta の処理
+				$pm = get_post_meta( $post->ID, $matches[1], true );
 				if ( !empty( $pm ) )
 					return $pm;
 			}

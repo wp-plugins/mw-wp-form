@@ -3,8 +3,8 @@ Contributors: inc2734
 Donate link: http://www.amazon.co.jp/registry/wishlist/39ANKRNSTNW40
 Tags: plugin, form, confirm, preview, shortcode, mail
 Requires at least: 3.4
-Tested up to: 3.8.1
-Stable tag: 1.5.1
+Tested up to: 3.9.0
+Stable tag: 1.6.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -54,19 +54,46 @@ Do you have questions or issues with MW WP Form? Use these support channels appr
 
 == Changelog ==
 
+= 1.6.0 =
+* Changed : Changed Redirection flow.
+* Changed : If querystring setting is set and doesn't get post from querystring, return empty.
+* Changed : When a URL doesn't begin http or https in URL settings, home_url() is complemented.
+* Added   : {xxx} ( e.g. {post_title} ) get post property from the now post if querystring setting does't set.
+* Added   : Repeat submitting came to be blocked.
+* Bug fix : Fixed translation mistake in admin page.
+* Bug fix : Fixed selected file reset button bug on file field.
+* Bug fix : Fixed bug that not to work rightly when setting noempty validation in image or file field.
+
+= 1.5.6 =
+* Bug fix : Fix selected file reset button bug in Firefox.
+* Changed : Change file field's default size attribute.
+
+= 1.5.5 =
+* Added   : Selected file reset button has been added.
+
+= 1.5.4 =
+* Bug fix : Fix spelling mistake in admin page.
+* Added   : Convert full-pitch character to half character in text shortcode.
+
+= 1.5.3 =
+* Bug fix : Fixed a bug where <br> is added in textarea.
+
+= 1.5.2 =
+* Bug fix : Datapicker starting a new line.
+
 = 1.5.1 =
 * Bug fix : Fix wpautop bug.
 
 = 1.5.0 =
 * Deleted   : Delete qtags.
 * Bug fix   : Fix inquiery data are not saved when admin mail content is empty.
-* Bug fix   : Fix bug that don't start a new line.
+* Bug fix   : Fix bug that doesn't start a new line.
 * Added     : Add filter_hook mwform_admin_mail_raw_mw-wp-form-xxx.
 * Added     : Add filter_hook mwform_auto_mail_raw_mw-wp-form-xxx.
 * Deprecated: Deprecated mw_form_field::set_qtags()
 
 = 1.4.1 =
-* Changed : Changed flow to read saving inquiry data.
+* Changed : Change flow to read saving inquiry data.
 * Bug fix : Fix tel validation.
 
 = 1.4.0 =
