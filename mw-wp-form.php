@@ -262,8 +262,12 @@ class mw_wp_form {
 		// $_FILESがあるときは$this->dataに統合
 		$files = array();
 		foreach ( $_FILES as $key => $file ) {
-			if ( $file['error'] == UPLOAD_ERR_OK && is_uploaded_file( $file['tmp_name'] ) ) {
-				$this->Data->setValue( $key, $file['name'] );
+			if ( !isset( $_POST[$key] ) ) {
+				if ( $file['error'] == UPLOAD_ERR_OK && is_uploaded_file( $file['tmp_name'] ) ) {
+					$this->Data->setValue( $key, $file['name'] );
+				} else {
+					$this->Data->setValue( $key, '' );
+				}
 				$files[$key] = $file;
 			}
 		}
@@ -312,7 +316,7 @@ class mw_wp_form {
 					$this->Data->clearValue( $this->Form->getTokenName() );
 
 					// 手動フォーム対応
-					$REQUEST_URI = $this->parse_url( $_SERVER['REQUEST_URI'] );
+					$REQUEST_URI = $this->parse_url( $this->get_request_uri() );
 					$input = $this->parse_url( $this->input );
 					$complete = $this->parse_url( $this->complete );
 					if ( !$this->options_by_formkey && $REQUEST_URI !== $complete && $input !== $complete ) {
@@ -332,7 +336,7 @@ class mw_wp_form {
 			// 完了 or 確認画面 or エラーURLが設定済みで
 			// 完了 or 確認画面 or エラーに直接アクセスした場合、
 			// 入力画面に戻れれば戻る。戻れない場合はトップに戻す
-			$REQUEST_URI = $this->parse_url( $_SERVER['REQUEST_URI'] );
+			$REQUEST_URI = $this->parse_url( $this->get_request_uri() );
 			$check_urls = array(
 				$this->confirm,
 				$this->complete,
@@ -439,7 +443,7 @@ class mw_wp_form {
 
 		$this->Validation = apply_filters( $filterName, $this->Validation, $this->Data->getValues() );
 		if ( !is_a( $this->Validation, 'MW_Validation' ) ) {
-			exit( __( 'Validation Object is not a MW Validation Class.', MWF_Config::DOMAIN ) );
+			exit( esc_html__( 'Validation Object is not a MW Validation Class.', MWF_Config::DOMAIN ) );
 		}
 	}
 
@@ -746,20 +750,45 @@ class mw_wp_form {
 	 * @param	String	リダイレクトURL
 	 */
 	private function redirect( $url ) {
-		$redirect = ( empty( $url ) ) ? $_SERVER['REQUEST_URI'] : $url;
+		$redirect = ( empty( $url ) ) ? $this->get_request_uri() : $url;
 		$redirect = $this->parse_url( $redirect );
-		$REQUEST_URI = $this->parse_url( $_SERVER['REQUEST_URI'] );
+		$REQUEST_URI = $this->parse_url( $this->get_request_uri() );
 		if ( !empty( $_POST ) || $redirect != $REQUEST_URI ) {
+			$redirect = wp_sanitize_redirect( $redirect );
+			$redirect = wp_validate_redirect( $redirect, home_url() );
 			wp_redirect( $redirect );
 			exit();
 		}
 	}
 
 	/**
+	 * get_request_uri
+	 * $_SERVER['REQUEST_URI'] を http:// からはじまるURLに変換する
+	 * @return string URL
+	 */
+	protected function get_request_uri() {
+		$_REQUEST_URI = $_SERVER['REQUEST_URI'];
+		if ( !preg_match( '/^https?:\/\//', $_REQUEST_URI ) ) {
+			$REQUEST_URI = home_url() . $_REQUEST_URI;
+			$parse_url = parse_url( home_url() );
+			// サブディレクトリ型の場合
+			if ( !empty( $parse_url['path'] ) ) {
+				$pettern = preg_quote( $parse_url['path'], '/' );
+				if ( preg_match( '/^' . $pettern . '/', $_REQUEST_URI ) ) {
+					$REQUEST_URI = preg_replace( '/' . $pettern . '$/', $_REQUEST_URI, home_url() );
+				}
+			}
+		} else {
+			$REQUEST_URI = $_REQUEST_URI;
+		}
+		return $REQUEST_URI;
+	}
+
+	/**
 	 * parse_url
 	 * http:// からはじまるURLに変換する
-	 * @param	String	URL
-	 * @return	String	URL
+	 * @param string URL
+	 * @return string URL
 	 */
 	protected function parse_url( $url ) {
 		if ( empty( $url ) )
@@ -773,8 +802,7 @@ class mw_wp_form {
 			parse_str( $reg[1], $query_string );
 		}
 		if ( !preg_match( '/^https?:\/\//', $url ) ) {
-			$protocol = ( is_ssl() ) ? 'https://' : 'http://';
-			$home_url = untrailingslashit( $protocol . $_SERVER['HTTP_HOST'] );
+			$home_url = home_url();
 			$url = $home_url . $url;
 		}
 		$url = preg_replace( '/([^:])\/+/', '$1/', $url );

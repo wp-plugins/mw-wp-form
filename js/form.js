@@ -21,9 +21,9 @@ jQuery( function( $ ) {
 			$( this ).css( 'visibility', 'hidden' );
 			file_field.replaceWith( new_field );
 
-			var img = $( 'img[src="' + hidden_field.val() + '"]' );
-			hidden_field.remove();
-			img.remove();
+			hidden_field.parent().fadeOut( 100, function() {
+				$( this ).remove();
+			} );
 		} );
 	} );
 	$( document ).on( 'change', '.mw_wp_form input[type="file"]', function() {

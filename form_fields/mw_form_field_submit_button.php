@@ -85,11 +85,11 @@ class mw_form_field_submit_button extends mw_form_field {
 			<input type="text" name="name" />
 		</p>
 		<p>
-			<strong><?php _e( 'String on the confirm button', MWF_Config::DOMAIN ); ?></strong>
+			<strong><?php esc_html_e( 'String on the confirm button', MWF_Config::DOMAIN ); ?></strong>
 			<input type="text" name="confirm_value" />
 		</p>
 		<p>
-			<strong><?php _e( 'String on the submit button', MWF_Config::DOMAIN ); ?></strong>
+			<strong><?php esc_html_e( 'String on the submit button', MWF_Config::DOMAIN ); ?></strong>
 			<input type="text" name="submit_value" />
 		</p>
 		<?php

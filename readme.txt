@@ -4,7 +4,7 @@ Donate link: http://www.amazon.co.jp/registry/wishlist/39ANKRNSTNW40
 Tags: plugin, form, confirm, preview, shortcode, mail
 Requires at least: 3.4
 Tested up to: 3.9.0
-Stable tag: 1.5.6
+Stable tag: 1.6.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -55,14 +55,17 @@ Do you have questions or issues with MW WP Form? Use these support channels appr
 == Changelog ==
 
 = 1.6.0 =
-* Changed : Redirection flow has changed.
-* Changed : If querystring setting is set and don't get post from querystring, return empty.
-* Added   : If querystring setting isn't set, {xxx} ( e.g. {post_title} ) get post property from the now post.
-* Added   : Repeat submitting is blocked.
-* Bug fix : Fix translation mistake in admin page.
+* Changed : Changed Redirection flow.
+* Changed : If querystring setting is set and doesn't get post from querystring, return empty.
+* Changed : When a URL doesn't begin http or https in URL settings, home_url() is complemented.
+* Added   : {xxx} ( e.g. {post_title} ) get post property from the now post if querystring setting does't set.
+* Added   : Repeat submitting came to be blocked.
+* Bug fix : Fixed translation mistake in admin page.
+* Bug fix : Fixed selected file reset button bug on file field.
+* Bug fix : Fixed bug that not to work rightly when setting noempty validation in image or file field.
 
 = 1.5.6 =
-* Bug fix : Fix Selected file reset button bug in Firefox.
+* Bug fix : Fix selected file reset button bug in Firefox.
 * Changed : Change file field's default size attribute.
 
 = 1.5.5 =
@@ -84,7 +87,7 @@ Do you have questions or issues with MW WP Form? Use these support channels appr
 = 1.5.0 =
 * Deleted   : Delete qtags.
 * Bug fix   : Fix inquiery data are not saved when admin mail content is empty.
-* Bug fix   : Fix bug that don't start a new line.
+* Bug fix   : Fix bug that doesn't start a new line.
 * Added     : Add filter_hook mwform_admin_mail_raw_mw-wp-form-xxx.
 * Added     : Add filter_hook mwform_auto_mail_raw_mw-wp-form-xxx.
 * Deprecated: Deprecated mw_form_field::set_qtags()

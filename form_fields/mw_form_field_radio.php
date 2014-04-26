@@ -94,23 +94,23 @@ class mw_form_field_radio extends mw_form_field {
 			<input type="text" name="name" />
 		</p>
 		<p>
-			<strong>id(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<strong>id(<?php esc_html_e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
 			<input type="text" name="id" />
 		</p>
 		<p>
-			<strong><?php _e( 'Choices', MWF_Config::DOMAIN ); ?>(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<strong><?php esc_html_e( 'Choices', MWF_Config::DOMAIN ); ?>(<?php esc_html_e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
 			<textarea name="children"></textarea>
 			<span class="mwf_note">
-				<?php _e( 'Input one line about one item.', MWF_Config::DOMAIN ); ?>
+				<?php esc_html_e( 'Input one line about one item.', MWF_Config::DOMAIN ); ?>
 			</span>
 		</p>
 		<p>
-			<strong><?php _e( 'Default value', MWF_Config::DOMAIN ); ?>(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<strong><?php esc_html_e( 'Default value', MWF_Config::DOMAIN ); ?>(<?php esc_html_e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
 			<input type="text" name="value" />
 		</p>
 		<p>
-			<strong><?php _e( 'Dsiplay error', MWF_Config::DOMAIN ); ?></strong>
-			<input type="checkbox" name="show_error" value="false" /> <?php _e( 'Don\'t display error.', MWF_Config::DOMAIN ); ?>
+			<strong><?php esc_html_e( 'Dsiplay error', MWF_Config::DOMAIN ); ?></strong>
+			<input type="checkbox" name="show_error" value="false" /> <?php esc_html_e( 'Don\'t display error.', MWF_Config::DOMAIN ); ?>
 		</p>
 		<?php
 	}

@@ -264,7 +264,7 @@ abstract class mw_form_field {
 		if ( $this->display_name )
 			$display_name = $this->display_name;
 		?>
-		<option value="<?php echo esc_attr( $this->shortcode_name ); ?>"><?php echo esc_attr( $display_name ); ?></option>
+		<option value="<?php echo esc_attr( $this->shortcode_name ); ?>"><?php echo esc_html( $display_name ); ?></option>
 		<?php
 	}
 }
