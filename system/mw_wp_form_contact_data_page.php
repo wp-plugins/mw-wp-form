@@ -135,7 +135,7 @@ class MW_WP_Form_Contact_Data_Page {
 			?>
 			<form id="mw-wp-form_csv" method="post" action="<?php echo esc_url( $action ); ?>">
 				<input type="hidden" name="test" value="hoge" />
-				<input type="submit" value="<?php _e( 'CSV Download', MWF_Config::DOMAIN ); ?>" class="button-primary" />
+				<input type="submit" value="<?php esc_attr_e( 'CSV Download', MWF_Config::DOMAIN ); ?>" class="button-primary" />
 				<?php wp_nonce_field( MWF_Config::NAME ); ?>
 			</form>
 			<?php
@@ -338,7 +338,7 @@ class MW_WP_Form_Contact_Data_Page {
 				</tr>
 				<?php endforeach; ?>
 				<tr>
-					<th><?php _e( 'Memo', MWF_Config::DOMAIN ); ?></th>
+					<th><?php esc_html_e( 'Memo', MWF_Config::DOMAIN ); ?></th>
 					<td><textarea name="<?php echo $this->POST_DATA_NAME; ?>[memo]" cols="50" rows="5"><?php echo $this->get_post_data( 'memo' ); ?></textarea></td>
 				</tr>
 			</table>
@@ -393,23 +393,23 @@ class MW_WP_Form_Contact_Data_Page {
 	public function inquiry_data_page() {
 		?>
 		<div class="wrap">
-			<h2><?php _e( 'Inquiry data', MWF_Config::DOMAIN ); ?></h2>
+			<h2><?php esc_html_e( 'Inquiry data', MWF_Config::DOMAIN ); ?></h2>
 			<p>
-				<?php _e( 'You can see the inquiry data that are saved in the database by clicking on the link below.', MWF_Config::DOMAIN ); ?>
+				<?php esc_html_e( 'You can see the inquiry data that are saved in the database by clicking on the link below.', MWF_Config::DOMAIN ); ?>
 			</p>
 			<table class="wp-list-table widefat fixed" cellspacing="0">
 				<thead>
-					<th class="<?php echo MWF_Config::NAME; ?>-table-title"><?php _e( 'Form title', MWF_Config::DOMAIN ); ?></th>
-					<th class="<?php echo MWF_Config::NAME; ?>-table-count"><?php _e( 'The number of inquiries', MWF_Config::DOMAIN ); ?></th>
-					<th class="<?php echo MWF_Config::NAME; ?>-table-date"><?php _e( 'Updated date', MWF_Config::DOMAIN ); ?></th>
-					<th class="<?php echo MWF_Config::NAME; ?>-table-date"><?php _e( 'Created date', MWF_Config::DOMAIN ); ?></th>
+					<th class="<?php echo MWF_Config::NAME; ?>-table-title"><?php esc_html_e( 'Form title', MWF_Config::DOMAIN ); ?></th>
+					<th class="<?php echo MWF_Config::NAME; ?>-table-count"><?php esc_html_e( 'The number of inquiries', MWF_Config::DOMAIN ); ?></th>
+					<th class="<?php echo MWF_Config::NAME; ?>-table-date"><?php esc_html_e( 'Updated date', MWF_Config::DOMAIN ); ?></th>
+					<th class="<?php echo MWF_Config::NAME; ?>-table-date"><?php esc_html_e( 'Created date', MWF_Config::DOMAIN ); ?></th>
 				</thead>
 				<tbody>
 					<?php $i = 0; foreach ( $this->form_post_type as $post_type ) : $i ++; ?>
 					<?php $post_type_object = get_post_type_object( $post_type ); ?>
 					<tr <?php if ( $i % 2 == 1 ) echo 'class="alternate"'; ?>>
 						<td class="<?php echo MWF_Config::NAME; ?>-table-title"><?php echo esc_html( $post_type_object->labels->singular_name ) ; ?></td>
-						<td class="<?php echo MWF_Config::NAME; ?>-table-count"><a href="edit.php?post_type=<?php echo esc_attr( $post_type ); ?>"><?php echo esc_html( $this->get_count( $post_type ) ) ?> <?php _e( 'cases', MWF_Config::DOMAIN ); ?></a></td>
+						<td class="<?php echo MWF_Config::NAME; ?>-table-count"><a href="edit.php?post_type=<?php echo esc_attr( $post_type ); ?>"><?php echo esc_html( $this->get_count( $post_type ) ) ?> <?php esc_html_e( 'cases', MWF_Config::DOMAIN ); ?></a></td>
 						<td class="<?php echo MWF_Config::NAME; ?>-table-date"><?php echo esc_html( $this->get_modified_datetime( $post_type ) ); ?></td>
 						<td class="<?php echo MWF_Config::NAME; ?>-table-date"><?php echo esc_html( $this->get_created_datetime( $post_type ) ); ?></td>
 					</tr>

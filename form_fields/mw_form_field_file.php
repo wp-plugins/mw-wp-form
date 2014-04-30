@@ -3,11 +3,11 @@
  * Name: MW Form Field File
  * URI: http://2inc.org
  * Description: 画像アップロードフィールドを出力。
- * Version: 1.4.0
+ * Version: 1.4.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : May 17, 2013
- * Modified: April 5, 2014
+ * Modified: April 19, 2014
  * License: GPL2
  *
  * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
@@ -48,7 +48,7 @@ class mw_form_field_file extends mw_form_field {
 		return array(
 			'name' => '',
 			'id'   => '',
-			'size' => 60,
+			'size' => 20,
 			'show_error' => 'true',
 		);
 	}
@@ -109,16 +109,16 @@ class mw_form_field_file extends mw_form_field {
 			<input type="text" name="name" />
 		</p>
 		<p>
-			<strong>id(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<strong>id(<?php esc_html_e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
 			<input type="text" name="id" />
 		</p>
 		<p>
-			<strong>size(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<strong>size(<?php esc_html_e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
 			<input type="text" name="size" />
 		</p>
 		<p>
-			<strong><?php _e( 'Dsiplay error', MWF_Config::DOMAIN ); ?></strong>
-			<input type="checkbox" name="show_error" value="false" /> <?php _e( 'Don\'t display error.', MWF_Config::DOMAIN ); ?>
+			<strong><?php esc_html_e( 'Dsiplay error', MWF_Config::DOMAIN ); ?></strong>
+			<input type="checkbox" name="show_error" value="false" /> <?php esc_html_e( 'Don\'t display error.', MWF_Config::DOMAIN ); ?>
 		</p>
 		<?php
 	}

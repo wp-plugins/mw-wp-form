@@ -95,28 +95,28 @@ class mw_form_field_password extends mw_form_field {
 			<input type="text" name="name" />
 		</p>
 		<p>
-			<strong>id(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<strong>id(<?php esc_html_e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
 			<input type="text" name="id" />
 		</p>
 		<p>
-			<strong>size(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<strong>size(<?php esc_html_e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
 			<input type="text" name="size" />
 		</p>
 		<p>
-			<strong>maxlength(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<strong>maxlength(<?php esc_html_e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
 			<input type="text" name="maxlength" />
 		</p>
 		<p>
-			<strong><?php _e( 'Default value', MWF_Config::DOMAIN ); ?>(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<strong><?php esc_html_e( 'Default value', MWF_Config::DOMAIN ); ?>(<?php esc_html_e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
 			<input type="text" name="value" />
 		</p>
 		<p>
-			<strong>placeholder(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<strong>placeholder(<?php esc_html_e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
 			<input type="text" name="placeholder" />
 		</p>
 		<p>
-			<strong><?php _e( 'Dsiplay error', MWF_Config::DOMAIN ); ?></strong>
-			<input type="checkbox" name="show_error" value="false" /> <?php _e( 'Don\'t display error.', MWF_Config::DOMAIN ); ?>
+			<strong><?php esc_html_e( 'Dsiplay error', MWF_Config::DOMAIN ); ?></strong>
+			<input type="checkbox" name="show_error" value="false" /> <?php esc_html_e( 'Don\'t display error.', MWF_Config::DOMAIN ); ?>
 		</p>
 		<?php
 	}
