@@ -3,11 +3,11 @@
  * Name: MW Form Field TextArea
  * URI: http://2inc.org
  * Description: テキストエリアを出力。
- * Version: 1.4.0
+ * Version: 1.4.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: April 5, 2014
+ * Modified: April 8, 2014
  * License: GPL2
  *
  * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
@@ -81,7 +81,7 @@ class mw_form_field_textarea extends mw_form_field {
 	 */
 	protected function confirmPage() {
 		$value = $this->Form->getValue( $this->atts['name'] );
-		$_ret  = nl2br( $value );
+		$_ret  = nl2br( esc_html( $value ) );
 		$_ret .= $this->Form->hidden( $this->atts['name'], $value );
 		return $_ret;
 	}
@@ -97,28 +97,28 @@ class mw_form_field_textarea extends mw_form_field {
 			<input type="text" name="name" />
 		</p>
 		<p>
-			<strong>id(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<strong>id(<?php esc_html_e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
 			<input type="text" name="id" />
 		</p>
 		<p>
-			<strong>cols(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<strong>cols(<?php esc_html_e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
 			<input type="text" name="cols" />
 		</p>
 		<p>
-			<strong>rows(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<strong>rows(<?php esc_html_e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
 			<input type="text" name="rows" />
 		</p>
 		<p>
-			<strong><?php _e( 'Default value', MWF_Config::DOMAIN ); ?>(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<strong><?php esc_html_e( 'Default value', MWF_Config::DOMAIN ); ?>(<?php esc_html_e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
 			<input type="text" name="value" />
 		</p>
 		<p>
-			<strong>placeholder(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<strong>placeholder(<?php esc_html_e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
 			<input type="text" name="placeholder" />
 		</p>
 		<p>
-			<strong><?php _e( 'Dsiplay error', MWF_Config::DOMAIN ); ?></strong>
-			<input type="checkbox" name="show_error" value="false" /> <?php _e( 'Don\'t display error.', MWF_Config::DOMAIN ); ?>
+			<strong><?php esc_html_e( 'Dsiplay error', MWF_Config::DOMAIN ); ?></strong>
+			<input type="checkbox" name="show_error" value="false" /> <?php esc_html_e( 'Don\'t display error.', MWF_Config::DOMAIN ); ?>
 		</p>
 		<?php
 	}

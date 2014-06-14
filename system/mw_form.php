@@ -3,11 +3,11 @@
  * Name: MW Form
  * URI: http://2inc.org
  * Description: フォームクラス
- * Version: 1.3.10
+ * Version: 1.4.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : September 25, 2012
- * Modified: January 16, 2013
+ * Modified: June 13, 2014
  * License: GPL2
  *
  * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
@@ -66,32 +66,27 @@ class MW_Form {
 	protected $method = 'post';
 	private $ENCODE = 'utf-8';
 
+	const COMPLETE_TWICE = '__complete_twice_flg';
+
 	/**
 	 * __construct
-	 * 取得データを保存、識別子とセッションIDののhash値をトークンとして利用
+	 * 取得データを保存
 	 * @param string $key 識別子
 	 */
 	public function __construct( $key = '' ) {
 		$this->Data = MW_WP_Form_Data::getInstance( $key );
 		if ( $key ) {
-			$this->key = $key . '_token';
+			$this->key = $key . '_key';
 		}
 		$this->Session = MW_Session::start( $this->key );
 		$this->modeCheck = $this->modeCheck();
-		$this->token = sha1( $this->key . session_id() );
-		if ( $this->isInput() && empty( $_POST ) && !$this->Session->getValue( $this->tokenName ) ) {
-			$this->Session->save( array( $this->tokenName => $this->token ) );
-		}
 	}
 
 	/**
-	 * clearToken
-	 * トークン用のセッションを破棄
+	 * getTokenName
+	 * nonce用のキーを返す
+	 * @return string
 	 */
-	private function clearToken() {
-		$this->Session->clearValue( $this->tokenName );
-	}
-
 	public function getTokenName() {
 		return $this->tokenName;
 	}
@@ -133,6 +128,17 @@ class MW_Form {
 	}
 
 	/**
+	 * isBack
+	 * 入力画面（戻る）かどうか
+	 * @return bool
+	 */
+	public function isBack() {
+		if ( $this->modeCheck === 'back' )
+			return true;
+		return false;
+	}
+
+	/**
 	 * modeCheck
 	 * 表示画面判定
 	 * @return string input || confirm || complete
@@ -141,7 +147,7 @@ class MW_Form {
 		$backButton = $this->getValue( $this->backButton );
 		$confirmButton = $this->getValue( $this->confirmButton );
 		if ( isset( $backButton ) ) {
-			return 'input';
+			return 'back';
 		} elseif ( isset( $confirmButton ) ) {
 			return 'confirm';
 		} elseif ( !isset( $confirmButton ) && !isset( $backButton ) && $this->check() ) {
@@ -158,14 +164,12 @@ class MW_Form {
 	protected function check() {
 		if ( isset( $_POST[$this->tokenName] ) )
 			$requestToken = $_POST[$this->tokenName];
-		$s_token = $this->Session->getValue( $this->tokenName );
 
 		$data = $this->Data->getValues();
-		if ( isset( $requestToken ) && !empty( $s_token ) && $requestToken === $s_token ) {
-			$this->clearToken();
+		if ( isset( $requestToken ) && wp_verify_nonce( $requestToken, $this->key ) ) {
+			$this->Data->setValue( self::COMPLETE_TWICE, true );
 			return true;
-		} elseif ( empty( $_POST ) && $data ) {
-			$this->clearToken();
+		} elseif ( empty( $_POST ) && !empty( $data ) && $this->Data->getValue( self::COMPLETE_TWICE ) ) {
 			return true;
 		}
 		return false;
@@ -331,7 +335,7 @@ class MW_Form {
 	public function end() {
 		$html = '';
 		if ( $this->method === 'post' ) {
-			$html .= $this->hidden( $this->tokenName, $this->token );
+			$html .= wp_nonce_field( $this->key, $this->tokenName, true, false );
 		}
 		$html .= '</form>';
 		return $html;
@@ -721,13 +725,13 @@ class MW_Form {
 		$_ret = sprintf( '<input type="text" name="%s" value="%s" size="%d" %s />',
 			esc_attr( $name ), esc_attr( $value ), esc_attr( $options['size'] ), $id
 		);
-		$_ret .= sprintf( '
-			<script type="text/javascript">
+		$_ret .= sprintf(
+			'<script type="text/javascript">
 			jQuery( function( $ ) {
 				$("input[name=\'%s\']").datepicker({%s});
 			} );
-			</script>
-		', esc_html( $name ), $options['js'] );
+			</script>'
+		, esc_html( $name ), $options['js'] );
 		return $_ret;
 	}
 
@@ -741,11 +745,11 @@ class MW_Form {
 	public function file( $name, $options = array() ) {
 		$defaults = array(
 			'id' => '',
-			'size' => 60,
+			'size' => 20,
 		);
 		$id = $this->get_attr_id( $options['id'] );
 		$options = array_merge( $defaults, $options );
-		return sprintf( '<input type="file" name="%s" size="%d" %s />',
+		return sprintf( '<input type="file" name="%s" size="%d" %s /><span data-mwform-file-delete="%1$s" class="mwform-file-delete">&times;</span>',
 			esc_attr( $name ), esc_attr( $options['size'] ), $id
 		);
 	}
