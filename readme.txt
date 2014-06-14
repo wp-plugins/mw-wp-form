@@ -1,10 +1,10 @@
 === MW WP Form ===
-Contributors: inc2734
+Contributors: inc2734, ryu263
 Donate link: http://www.amazon.co.jp/registry/wishlist/39ANKRNSTNW40
 Tags: plugin, form, confirm, preview, shortcode, mail
-Requires at least: 3.4
+Requires at least: 3.5
 Tested up to: 3.9.0
-Stable tag: 1.6.1
+Stable tag: 1.7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -53,6 +53,19 @@ Do you have questions or issues with MW WP Form? Use these support channels appr
 1. screenshot-1.png
 
 == Changelog ==
+
+= 1.7.0 =
+* Added   : X-Accel-Expires param in header.
+* Added   : Add CC setting in admin mail setting.
+* Added   : Add BCC setting in admin mail setting.
+* Added   : X-Accel-Expires param in header.
+* Changed : Data store has been changed to Transient API from PHP SESSION.
+* Changed : Nonce check system has been changed to WordPress nonce check system from original.
+* Changed : Accept space in katakana validation.
+* Changed : Accept space in hiragana validation.
+* Changed : The way of isplaying attached files has been changed to URL from ID in csv file.
+* Changed : Require WordPress Version 3.5
+* Bug fix : Fixed a bug that sender not set at email when {sender} and {e-mail} in mail settings were conversion blank.
 
 = 1.6.1 =
 * Bug fix : Support Akismet 3.0.0

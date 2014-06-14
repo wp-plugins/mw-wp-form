@@ -3,14 +3,14 @@
  * Name: MW Mail
  * URI: http://2inc.org
  * Description: メールクラス
- * Version: 1.3.4
+ * Version: 1.4.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: July 20, 2012
- * Modified: December 24, 2013
+ * Modified: June 13, 2014
  * License: GPL2
  *
- * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
+ * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -28,6 +28,8 @@
 class MW_Mail {
 
 	public $to;				// 宛先
+	public $cc;				// CC
+	public $bcc;			// BCC
 	public $from;			// 送信元
 	public $sender;			// 送信者
 	public $subject;		// 題名
@@ -47,13 +49,17 @@ class MW_Mail {
 		add_action( 'phpmailer_init', array( $this, 'set_return_path' ) );
 		add_filter( 'wp_mail_from', array( $this, 'set_mail_from' ) );
 		add_filter( 'wp_mail_from_name', array( $this, 'set_mail_from_name' ) );
-		$to = explode( ',', $this->to );
-		if ( isset( $to[0] ) ) {
-			foreach ( $to as $value ) {
-				$value = trim( $value );
-				$header = '';
-				wp_mail( $value, $subject, $body, $header, $this->attachments );
+		$tos = explode( ',', $this->to );
+		foreach ( $tos as $to ) {
+			$headers = array();
+			if ( $this->cc ) {
+				$headers[] = 'Cc: ' . $this->cc;
 			}
+			if ( $this->bcc ) {
+				$headers[] = 'Bcc: ' . $this->bcc;
+			}
+			$to = trim( $to );
+			wp_mail( $to, $subject, $body, $headers, $this->attachments );
 		}
 		remove_action( 'phpmailer_init', array( $this, 'set_return_path' ) );
 		remove_filter( 'wp_mail_from', array( $this, 'set_mail_from' ) );

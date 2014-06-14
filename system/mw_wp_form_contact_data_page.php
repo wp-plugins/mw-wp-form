@@ -3,11 +3,11 @@
  * Name: MW WP Form Contact Data Page
  * URI: http://2inc.org
  * Description: DB保存データを扱うクラス
- * Version: 1.0.6
+ * Version: 1.1.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : October 10, 2013
- * Modified: April 2, 2014
+ * Modified: June 13, 2014
  * License: GPL2
  *
  * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
@@ -134,7 +134,6 @@ class MW_WP_Form_Contact_Data_Page {
 			$action = $_SERVER['REQUEST_URI'];
 			?>
 			<form id="mw-wp-form_csv" method="post" action="<?php echo esc_url( $action ); ?>">
-				<input type="hidden" name="test" value="hoge" />
 				<input type="submit" value="<?php esc_attr_e( 'CSV Download', MWF_Config::DOMAIN ); ?>" class="button-primary" />
 				<?php wp_nonce_field( MWF_Config::NAME ); ?>
 			</form>
@@ -183,11 +182,14 @@ class MW_WP_Form_Contact_Data_Page {
 					setup_postdata( $post );
 					$column = array();
 					foreach ( $rows[0] as $key => $value ) {
+						$column[$key] = '';
 						if ( isset( $post->$value ) ) {
-							$column[$key] = $this->escape_double_quote( $post->$value );
-						} else {
-							$post_meta = get_post_meta( $post->ID, $value, true );
-							$column[$key] = ( $post_meta ) ? $this->escape_double_quote( $post_meta ) : '';
+							$post_meta = $post->$value;
+							if ( $this->is_upload_file_key( $post, $value ) ) {
+								$column[$key] = wp_get_attachment_url( $post_meta );
+							} else {
+								$column[$key] = ( $post_meta ) ? $this->escape_double_quote( $post_meta ) : '';
+							}
 						}
 					}
 					$rows[] = $column;
@@ -261,15 +263,8 @@ class MW_WP_Form_Contact_Data_Page {
 		return $columns;
 	}
 	public function add_form_columns( $column, $post_id ) {
+		global $post;
 		$post_custom_keys = get_post_custom_keys( $post_id );
-
-		// 前のバージョンでは MWF_Config::UPLOAD_FILE_KEYS を配列で保持していなかったので分岐させる
-		$_upload_file_keys = get_post_meta( $post_id, '_' . MWF_Config::UPLOAD_FILE_KEYS, true );
-		if ( is_array( $_upload_file_keys ) ) {
-			$upload_file_keys = $_upload_file_keys;
-		} else {
-			$upload_file_keys = get_post_custom_values( '_' . MWF_Config::UPLOAD_FILE_KEYS, $post_id );
-		}
 
 		if ( $column == 'post_date' ) {
 			$post = get_post( $post_id );
@@ -277,8 +272,24 @@ class MW_WP_Form_Contact_Data_Page {
 		}
 		elseif ( !empty( $post_custom_keys ) && is_array( $post_custom_keys ) && in_array( $column, $post_custom_keys ) ) {
 			$post_meta = get_post_meta( $post_id, $column, true );
-			if ( is_array( $upload_file_keys ) && in_array( $column, $upload_file_keys ) ) {
-				echo '<a href="' . admin_url( '/post.php?post=' ) . $post_meta . '&action=edit">' . $post_meta . '</a>';
+			if ( $this->is_upload_file_key( $post, $column ) ) {
+
+				$mimetype = get_post_mime_type( $post_meta );
+				if ( $mimetype ) {
+					// 画像だったら
+					if ( preg_match( '/^image\/.+?$/', $mimetype ) ) {
+						$src = wp_get_attachment_image_src( $post_meta, 'thumbnail' );
+						echo '<img src="' . esc_url( $src[0] ) .'" alt="" style="width:50px;height:50px" />';
+					}
+					// 画像以外
+					else {
+						$src = wp_get_attachment_image_src( $post_meta, 'none', true );
+						echo '<a href="' . esc_url( wp_get_attachment_url( $post_meta ) ) .'" target="_blank">';
+						echo '<img src="' . esc_url( $src[0] ) .'" alt="" style="height:50px" />';
+						echo '</a>';
+					}
+				}
+
 			} elseif ( $post_meta ) {
 				echo esc_html( $post_meta );
 			} else {
@@ -296,13 +307,7 @@ class MW_WP_Form_Contact_Data_Page {
 	public function custom_fields() {
 		global $post;
 		$post_custom = get_post_custom( $post->ID );
-		// 前のバージョンでは MWF_Config::UPLOAD_FILE_KEYS を配列で保持していなかったので分岐させる
-		$_upload_file_keys = get_post_meta( $post->ID, '_' . MWF_Config::UPLOAD_FILE_KEYS, true );
-		if ( is_array( $_upload_file_keys ) ) {
-			$upload_file_keys = $_upload_file_keys;
-		} else {
-			$upload_file_keys = get_post_custom_values( '_' . MWF_Config::UPLOAD_FILE_KEYS, $post->ID );
-		}
+
 		if ( ! empty( $post_custom ) && is_array( $post_custom ) ) {
 			?>
 			<table border="0" cellpadding="0" cellspacing="0">
@@ -314,7 +319,7 @@ class MW_WP_Form_Contact_Data_Page {
 					<th><?php echo esc_html( $key ); ?></th>
 					<td>
 						<?php
-						if ( is_array( $upload_file_keys ) && in_array( $key, $upload_file_keys ) ) {
+						if ( $this->is_upload_file_key( $post, $key ) ) {
 							$mimetype = get_post_mime_type( $value[0] );
 							if ( $mimetype ) {
 								// 画像だったら
@@ -471,5 +476,37 @@ class MW_WP_Form_Contact_Data_Page {
 		}
 		wp_reset_postdata();
 		return $modified_datetime;
+	}
+
+	/**
+	 * get_upload_file_keys
+	 * その投稿がもつ upload_file_key を取得
+	 * @param object $post
+	 * @return array $upload_file_keys
+	 */
+	private function get_upload_file_keys( $_post ) {
+		// 前のバージョンでは MWF_Config::UPLOAD_FILE_KEYS を配列で保持していなかったので分岐させる
+		$_upload_file_keys = get_post_meta( $_post->ID, '_' . MWF_Config::UPLOAD_FILE_KEYS, true );
+		if ( is_array( $_upload_file_keys ) ) {
+			$upload_file_keys = $_upload_file_keys;
+		} else {
+			$upload_file_keys = get_post_custom_values( '_' . MWF_Config::UPLOAD_FILE_KEYS, $_post->ID );
+		}
+		return $upload_file_keys;
+	}
+
+	/**
+	 * is_upload_file_key
+	 * $meta_key が $post の upload_file_key かどうか
+	 * @param object $post
+	 * @param string $meta_key
+	 * @return bool
+	 */
+	private function is_upload_file_key( $_post, $meta_key ) {
+		$upload_file_keys = $this->get_upload_file_keys( $_post );
+		if ( is_array( $upload_file_keys ) && in_array( $meta_key, $upload_file_keys ) ) {
+			return true;
+		}
+		return false;
 	}
 }

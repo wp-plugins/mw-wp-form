@@ -3,7 +3,7 @@
  * Plugin Name: MW WP Form
  * Plugin URI: http://plugins.2inc.org/mw-wp-form/
  * Description: MW WP Form can create mail form with a confirmation screen.
- * Version: 1.6.1
+ * Version: 1.7.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : September 25, 2012
@@ -54,6 +54,8 @@ class mw_wp_form {
 		'mail_content' => '',
 		'automatic_reply_email' => '',
 		'mail_to' => '',
+		'mail_cc' => '',
+		'mail_bcc' => '',
 		'admin_mail_subject' => '',
 		'admin_mail_from' => '',
 		'admin_mail_sender' => '',
@@ -117,8 +119,20 @@ class mw_wp_form {
 		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_validation.php' );
 		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_wp_form_data.php' );
 		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_wp_form_file.php' );
+		add_action( 'nocache_headers' , array( $this, 'nocache_headers' ) , 1 );
 		add_filter( 'template_include', array( $this, 'main' ), 10000 );
 		add_action( 'parse_request', array( $this, 'remove_query_vars_from_post' ) );
+	}
+
+	/**
+	 * nocache_headers
+	 * Nginx Cache Controller用
+	 * @param array $headers
+	 * @return array $headers
+	 */
+	public function nocache_headers( $headers ) {
+		$headers['X-Accel-Expires'] = 0;
+		return $headers;
 	}
 
 	/**
@@ -464,58 +478,27 @@ class mw_wp_form {
 		$Mail_raw = clone $Mail;
 
 		if ( $this->options_by_formkey ) {
-			$admin_mail_subject = $this->options_by_formkey['mail_subject'];
-			if ( !empty( $this->options_by_formkey['admin_mail_subject'] ) )
-				$admin_mail_subject = $this->options_by_formkey['admin_mail_subject'];
-
-			$admin_mail_content = $this->options_by_formkey['mail_content'];
-			if ( !empty( $this->options_by_formkey['admin_mail_content'] ) )
-				$admin_mail_content = $this->options_by_formkey['admin_mail_content'];
-
-			$admin_mail_to = get_bloginfo( 'admin_email' );
-			if ( !empty( $this->options_by_formkey['mail_to'] ) )
-				$admin_mail_to = $this->options_by_formkey['mail_to'];
-
-			$admin_mail_from = get_bloginfo( 'admin_email' );
-			if ( !empty( $this->options_by_formkey['admin_mail_from'] ) )
-				$admin_mail_from = $this->options_by_formkey['admin_mail_from'];
-
-			$admin_mail_sender = get_bloginfo( 'name' );
-			if ( !empty( $this->options_by_formkey['admin_mail_sender'] ) )
-				$admin_mail_sender = $this->options_by_formkey['admin_mail_sender'];
-
-			// 送信先を指定
-			$Mail_raw->to = $admin_mail_to;
-			// 送信元を指定
-			$Mail_raw->from = $admin_mail_from;
-			// 送信者を指定
-			$Mail_raw->sender = $admin_mail_sender;
-			// タイトルを指定
-			$Mail_raw->subject = $admin_mail_subject;
-			// 本文を指定
-			$Mail_raw->body = $admin_mail_content;
+			$Mail_raw = $this->set_admin_mail_raw_params( $Mail_raw );
 
 			// 添付ファイルのデータをためた配列を作成
 			$attachments = array();
 			// $Mail->attachments を設定（メールにファイルを添付）
 			$upload_file_keys = $this->Data->getValue( MWF_Config::UPLOAD_FILE_KEYS );
-			if ( $upload_file_keys !== null ) {
-				if ( is_array( $upload_file_keys ) ) {
-					$wp_upload_dir = wp_upload_dir();
-					foreach ( $upload_file_keys as $key ) {
-						$upload_file_url = $this->Data->getValue( $key );
-						if ( !$upload_file_url )
-							continue;
-						$filepath = MWF_Functions::fileurl_to_path( $upload_file_url );
-						if ( file_exists( $filepath ) ) {
-							$filepath = $this->File->moveTempFileToUploadDir( $filepath );
-							$new_upload_file_url = MWF_Functions::filepath_to_url( $filepath );
-							$attachments[$key] = $filepath;
-							$this->Data->setValue( $key, $new_upload_file_url );
-						}
+			if ( $upload_file_keys !== null && is_array( $upload_file_keys ) ) {
+				$wp_upload_dir = wp_upload_dir();
+				foreach ( $upload_file_keys as $key ) {
+					$upload_file_url = $this->Data->getValue( $key );
+					if ( !$upload_file_url )
+						continue;
+					$filepath = MWF_Functions::fileurl_to_path( $upload_file_url );
+					if ( file_exists( $filepath ) ) {
+						$filepath = $this->File->moveTempFileToUploadDir( $filepath );
+						$new_upload_file_url = MWF_Functions::filepath_to_url( $filepath );
+						$attachments[$key] = $filepath;
+						$this->Data->setValue( $key, $new_upload_file_url );
 					}
-					$Mail_raw->attachments = $attachments;
 				}
+				$Mail_raw->attachments = $attachments;
 			}
 
 			$filter_name = 'mwform_admin_mail_raw_' . $this->key;
@@ -524,6 +507,7 @@ class mw_wp_form {
 				return;
 
 			$Mail = $this->parse_mail_object( $Mail_raw );
+			$Mail = $this->set_admin_mail_reaquire_params( $Mail );
 		}
 
 		$filter_name = 'mwform_mail_' . $this->key;
@@ -574,29 +558,8 @@ class mw_wp_form {
 			if ( isset( $this->options_by_formkey['automatic_reply_email'] ) ) {
 				$automatic_reply_email = $this->Data->getValue( $this->options_by_formkey['automatic_reply_email'] );
 				if ( $automatic_reply_email && !$this->Validation->mail( $automatic_reply_email ) ) {
+					$Mail_raw = $this->set_reply_mail_raw_params( $Mail_raw );
 
-					$reply_mail_from = get_bloginfo( 'admin_email' );
-					if ( !empty( $this->options_by_formkey['mail_from'] ) )
-						$reply_mail_from = $this->options_by_formkey['mail_from'];
-
-					$reply_mail_sender = get_bloginfo( 'name' );
-					if ( !empty( $this->options_by_formkey['mail_sender'] ) )
-						$reply_mail_sender = $this->options_by_formkey['mail_sender'];
-
-					$reply_mail_subject = $this->options_by_formkey['mail_subject'];
-
-					$reply_mail_content = $this->options_by_formkey['mail_content'];
-
-					// 送信先を指定
-					$Mail_raw->to = $automatic_reply_email;
-					// 送信元を指定
-					$Mail_raw->from = $reply_mail_from;
-					// 送信者を指定
-					$Mail_raw->sender = $reply_mail_sender;
-					// タイトルを指定
-					$Mail_raw->subject = $reply_mail_subject;
-					// 本文を指定
-					$Mail_raw->body = $reply_mail_content;
 					// 自動返信メールからは添付ファイルを削除
 					$Mail_raw->attachments = array();
 
@@ -606,6 +569,7 @@ class mw_wp_form {
 						return;
 
 					$Mail = $this->parse_mail_object( $Mail_raw );
+					$Mail = $this->set_reply_mail_reaquire_params( $Mail );
 
 					$filter_name = 'mwform_auto_mail_' . $this->key;
 					$Mail = apply_filters( $filter_name, $Mail, $this->Data->getValues() );
@@ -626,7 +590,7 @@ class mw_wp_form {
 		$parsed_obj = clone $obj;
 		$parsed_obj_vars = get_object_vars( $parsed_obj );
 		foreach ( $parsed_obj_vars as $key => $value ) {
-			if ( is_array( $value ) || $key == 'to' )
+			if ( is_array( $value ) || $key == 'to' || $key == 'cc' || $key == 'bcc' )
 				continue;
 			$value = $this->parse_mail_content( $value );
 			$parsed_obj->$key = $value;
@@ -978,5 +942,140 @@ class mw_wp_form {
 				$this->Data->pushValue( MWF_Config::UPLOAD_FILE_KEYS, $key );
 			}
 		}
+	}
+
+	/**
+	 * set_admin_mail_reaquire_params
+	 * 管理者メールに必須の項目を設定
+	 * @param MW_Mail $Mail
+	 * @return  MW_Mail $Mail
+	 */
+	private function set_admin_mail_reaquire_params( MW_Mail $Mail ) {
+		$admin_mail_to = get_bloginfo( 'admin_email' );
+		$admin_mail_from = get_bloginfo( 'admin_email' );
+		$admin_mail_sender = get_bloginfo( 'name' );
+
+		if ( !$Mail->to ) {
+			$Mail->to = $admin_mail_to;;
+		}
+		if ( !$Mail->from ) {
+			$Mail->from = $admin_mail_from;;
+		}
+		if ( !$Mail->sender ) {
+			$Mail->sender = $admin_mail_sender;;
+		}
+		return $Mail;
+	}
+
+	/**
+	 * set_reply_mail_reaquire_params
+	 * 自動返信メールに必須の項目を設定
+	 * @param MW_Mail $Mail
+	 * @return  MW_Mail $Mail
+	 */
+	private function set_reply_mail_reaquire_params( MW_Mail $Mail ) {
+		$reply_mail_from = get_bloginfo( 'admin_email' );
+		$reply_mail_sender = get_bloginfo( 'name' );
+
+		if ( !$Mail->from ) {
+			$Mail->from = $reply_mail_from;;
+		}
+		if ( !$Mail->sender ) {
+			$Mail->sender = $reply_mail_sender;;
+		}
+		return $Mail;
+	}
+
+	/**
+	 * set_admin_mail_raw_params
+	 * 管理者メールに項目を設定
+	 * @param MW_Mail $Mail
+	 * @return  MW_Mail $Mail
+	 */
+	private function set_admin_mail_raw_params( MW_Mail $Mail ) {
+		if ( $this->options_by_formkey ) {
+			// タイトルを指定
+			$admin_mail_subject = $this->options_by_formkey['mail_subject'];
+			if ( !empty( $this->options_by_formkey['admin_mail_subject'] ) )
+				$admin_mail_subject = $this->options_by_formkey['admin_mail_subject'];
+			$Mail->subject = $admin_mail_subject;
+
+			// 本文を指定
+			$admin_mail_content = $this->options_by_formkey['mail_content'];
+			if ( !empty( $this->options_by_formkey['admin_mail_content'] ) )
+				$admin_mail_content = $this->options_by_formkey['admin_mail_content'];
+			$Mail->body = $admin_mail_content;
+
+			// 送信先を指定
+			$admin_mail_to = get_bloginfo( 'admin_email' );
+			if ( !empty( $this->options_by_formkey['mail_to'] ) )
+				$admin_mail_to = $this->options_by_formkey['mail_to'];
+			$Mail->to = $admin_mail_to;
+
+			// CCを指定
+			$admin_mail_cc = $this->defaults['mail_cc'];
+			if ( !empty( $this->options_by_formkey['mail_cc'] ) )
+				$admin_mail_cc = $this->options_by_formkey['mail_cc'];
+			$Mail->cc = $admin_mail_cc;
+
+			// BCCを指定
+			$admin_mail_bcc = $this->defaults['mail_bcc'];
+			if ( !empty( $this->options_by_formkey['mail_bcc'] ) )
+				$admin_mail_bcc = $this->options_by_formkey['mail_bcc'];
+			$Mail->bcc = $admin_mail_bcc;
+
+			// 送信元を指定
+			$admin_mail_from = get_bloginfo( 'admin_email' );
+			if ( !empty( $this->options_by_formkey['admin_mail_from'] ) )
+				$admin_mail_from = $this->options_by_formkey['admin_mail_from'];
+			$Mail->from = $admin_mail_from;
+
+			// 送信者を指定
+			$admin_mail_sender = get_bloginfo( 'name' );
+			if ( !empty( $this->options_by_formkey['admin_mail_sender'] ) )
+				$admin_mail_sender = $this->options_by_formkey['admin_mail_sender'];
+			$Mail->sender = $admin_mail_sender;
+		}
+		return $Mail;
+	}
+
+	/**
+	 * set_reply_mail_raw_params
+	 * 自動返信メールに項目を設定
+	 * @param MW_Mail $Mail
+	 * @return  MW_Mail $Mail
+	 */
+	private function set_reply_mail_raw_params( MW_Mail $Mail ) {
+		$Mail->to = '';
+		$Mail->cc = '';
+		$Mail->bcc = '';
+		if ( $this->options_by_formkey ) {
+			$automatic_reply_email = $this->Data->getValue( $this->options_by_formkey['automatic_reply_email'] );
+			if ( $automatic_reply_email && !$this->Validation->mail( $automatic_reply_email ) ) {
+				// 送信先を指定
+				$Mail->to = $automatic_reply_email;
+
+				// 送信元を指定
+				$reply_mail_from = get_bloginfo( 'admin_email' );
+				if ( !empty( $this->options_by_formkey['mail_from'] ) )
+					$reply_mail_from = $this->options_by_formkey['mail_from'];
+				$Mail->from = $reply_mail_from;
+
+				// 送信者を指定
+				$reply_mail_sender = get_bloginfo( 'name' );
+				if ( !empty( $this->options_by_formkey['mail_sender'] ) )
+					$reply_mail_sender = $this->options_by_formkey['mail_sender'];
+				$Mail->sender = $reply_mail_sender;
+
+				// タイトルを指定
+				$reply_mail_subject = $this->options_by_formkey['mail_subject'];
+				$Mail->subject = $reply_mail_subject;
+
+				// 本文を指定
+				$reply_mail_content = $this->options_by_formkey['mail_content'];
+				$Mail->body = $reply_mail_content;
+			}
+		}
+		return $Mail;
 	}
 }

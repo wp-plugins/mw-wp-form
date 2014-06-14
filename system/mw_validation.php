@@ -3,11 +3,11 @@
  * Name: MW Validation
  * URI: http://2inc.org
  * Description: バリデーションクラス
- * Version: 1.6.4
+ * Version: 1.6.5
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : July 20, 2012
- * Modified: April 23, 2014
+ * Modified: June 13, 2014
  * License: GPL2
  *
  * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
@@ -202,7 +202,7 @@ class MW_Validation {
 			if ( is_array( $value ) ) {
 				$value = implode( $this->getSeparatorValue( $key ), $value );
 			}
-			if ( !preg_match( '/^[ァ-ヾ]+$/u', $value ) ) {
+			if ( !preg_match( '/^[ァ-ヾ 　]*?[ァ-ヾ]+?[ァ-ヾ 　]*?$/u', $value ) ) {
 				$defaults = array(
 					'message' => __( 'Please enter with a Japanese Katakana.', MWF_Config::DOMAIN )
 				);
@@ -225,7 +225,7 @@ class MW_Validation {
 			if ( is_array( $value ) ) {
 				$value = implode( $this->getSeparatorValue( $key ), $value );
 			}
-			if ( !preg_match( '/^[ぁ-ゞ]+$/u', $value ) ) {
+			if ( !preg_match( '/^[ぁ-ゞ 　]*?[ぁ-ゞ]+?[ぁ-ゞ 　]*?$/u', $value ) ) {
 				$defaults = array(
 					'message' => __( 'Please enter with a Japanese Hiragana.', MWF_Config::DOMAIN )
 				);
