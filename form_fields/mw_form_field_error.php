@@ -79,10 +79,10 @@ class mw_form_field_error extends mw_form_field {
 	public function mwform_tag_generator_dialog() {
 		?>
 		<p>
-			<strong><?php _e( 'name of the element which wants to display error', MWF_Config::DOMAIN ); ?></strong>
+			<strong><?php esc_html_e( 'name of the element which wants to display error', MWF_Config::DOMAIN ); ?></strong>
 			<textarea name="keys"></textarea>
 			<span class="mwf_note">
-				<?php _e( 'Input one line about one item.', MWF_Config::DOMAIN ); ?>
+				<?php esc_html_e( 'Input one line about one item.', MWF_Config::DOMAIN ); ?>
 			</span>
 		</p>
 		<?php

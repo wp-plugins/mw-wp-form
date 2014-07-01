@@ -3,14 +3,14 @@
  * Name: MW WP Form Data
  * URI: http://2inc.org
  * Description: mw_wp_form のデータ操作用
- * Version: 1.0.2
+ * Version: 1.0.3
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : October 10, 2013
- * Modified: December 19, 2013
+ * Modified: June 13, 2014
  * License: GPL2
  *
- * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
+ * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as
@@ -27,7 +27,7 @@
  */
 class mw_wp_form_data {
 	private static $Instance;
-	private $data;
+	private $data = array();
 	private $Session;
 
 	/**
@@ -48,8 +48,8 @@ class mw_wp_form_data {
 	/**
 	 * getValue
 	 * データを取得
-	 * @param    String    $key    データのキー
-	 * @return   String    データ
+	 * @param string $key データのキー
+	 * @return string データ
 	 */
 	public function getValue( $key ) {
 		if ( isset( $this->data[$key] ) )
@@ -59,10 +59,10 @@ class mw_wp_form_data {
 	/**
 	 * getValues
 	 * 全てのデータを取得
-	 * @return   Array   データ
+	 * @return array データ
 	 */
 	public function getValues() {
-		if ( $this->data === null)
+		if ( $this->data === null )
 			return array();
 		return $this->data;
 	}
@@ -70,8 +70,8 @@ class mw_wp_form_data {
 	/**
 	 * setValue
 	 * データを追加
-	 * @param    String    $key    データのキー
-	 * @param    String    $value  値
+	 * @param string $key データのキー
+	 * @param string $value 値
 	 */
 	public function setValue( $key, $value ){
 		$this->data[$key] = $value;
@@ -81,7 +81,7 @@ class mw_wp_form_data {
 	/**
 	 * setValue
 	 * 複数のデータを一括で追加
-	 * @param    Array    値
+	 * @param array 値
 	 */
 	public function setValues( Array $array ) {
 		foreach ( $array as $key => $value ) {
@@ -93,7 +93,7 @@ class mw_wp_form_data {
 	/**
 	 * clearValue
 	 * データを消す
-	 * @param    String    $key    データのキー
+	 * @param string $key データのキー
 	 */
 	public function clearValue( $key ) {
 		unset( $this->data[$key] );
@@ -103,18 +103,18 @@ class mw_wp_form_data {
 	/**
 	 * clearValues
 	 * データを消す
-	 * @param    String    $key    データのキー
+	 * @param string $key データのキー
 	 */
 	public function clearValues() {
-		unset( $this->data );
+		$this->data = array();
 		$this->Session->clearValues();
 	}
 
 	/**
 	 * pushValue
 	 * 指定した $key をキーと配列にデータを追加
-	 * @param    String    $key    データのキー
-	 * @param    String    $value  値
+	 * @param string $key データのキー
+	 * @param string $value 値
 	 */
 	public function pushValue( $key, $value ) {
 		$this->data[$key][] = $value;
