@@ -75,7 +75,7 @@ class mw_form_field_zip extends mw_form_field {
 	 */
 	protected function confirmPage() {
 		$value = $this->Form->getZipValue( $this->atts['name'] );
-		$_ret  = $value;
+		$_ret  = esc_html( $value );
 		$_ret .= $this->Form->hidden( $this->atts['name'].'[data]', $value );
 		$_ret .= $this->Form->separator( $this->atts['name'] );
 		return $_ret;
@@ -92,12 +92,12 @@ class mw_form_field_zip extends mw_form_field {
 			<input type="text" name="name" /></td>
 		</p>
 		<p>
-			<strong><?php _e( 'Dsiplay error', MWF_Config::DOMAIN ); ?></strong>
-			<input type="checkbox" name="show_error" value="false" /> <?php _e( 'Don\'t display error.', MWF_Config::DOMAIN ); ?>
+			<strong><?php esc_html_e( 'Dsiplay error', MWF_Config::DOMAIN ); ?></strong>
+			<input type="checkbox" name="show_error" value="false" /> <?php esc_html_e( 'Don\'t display error.', MWF_Config::DOMAIN ); ?>
 		</p>
 		<p>
-			<strong><?php _e( 'Convert half alphanumeric', MWF_Config::DOMAIN ); ?></strong>
-			<input type="checkbox" name="conv_half_alphanumeric" value="false" /> <?php _e( 'Don\'t Convert.', MWF_Config::DOMAIN ); ?>
+			<strong><?php esc_html_e( 'Convert half alphanumeric', MWF_Config::DOMAIN ); ?></strong>
+			<input type="checkbox" name="conv_half_alphanumeric" value="false" /> <?php esc_html_e( 'Don\'t Convert.', MWF_Config::DOMAIN ); ?>
 		</p>
 		<?php
 	}

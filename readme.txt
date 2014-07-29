@@ -1,10 +1,10 @@
 === MW WP Form ===
-Contributors: inc2734
+Contributors: inc2734, ryu263
 Donate link: http://www.amazon.co.jp/registry/wishlist/39ANKRNSTNW40
 Tags: plugin, form, confirm, preview, shortcode, mail
-Requires at least: 3.4
-Tested up to: 3.8.1
-Stable tag: 1.5.1
+Requires at least: 3.5
+Tested up to: 3.9.1
+Stable tag: 1.7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -54,19 +54,69 @@ Do you have questions or issues with MW WP Form? Use these support channels appr
 
 == Changelog ==
 
+= 1.7.2 =
+* Bug fix : XSS vulnerability fix.
+
+= 1.7.1 =
+* Bug fix : Fixed a bug that MW WP Form's shortcodes doesn't parse in the nested shortcode.
+
+= 1.7.0 =
+* Added   : X-Accel-Expires param in header.
+* Added   : Add CC setting in admin mail setting.
+* Added   : Add BCC setting in admin mail setting.
+* Added   : X-Accel-Expires param in header.
+* Changed : Data store has been changed to Transient API from PHP SESSION.
+* Changed : Nonce check system has been changed to WordPress nonce check system from original.
+* Changed : Accept space in katakana validation.
+* Changed : Accept space in hiragana validation.
+* Changed : The way of isplaying attached files has been changed to URL from ID in csv file.
+* Changed : Require WordPress Version 3.5
+* Bug fix : Fixed a bug that sender not set at email when {sender} and {e-mail} in mail settings were conversion blank.
+
+= 1.6.1 =
+* Bug fix : Support Akismet 3.0.0
+* Changed : Support psd, ai, eps file upload.
+
+= 1.6.0 =
+* Changed : Changed Redirection flow.
+* Changed : If querystring setting is set and doesn't get post from querystring, return empty.
+* Changed : When a URL doesn't begin http or https in URL settings, home_url() is complemented.
+* Added   : {xxx} ( e.g. {post_title} ) get post property from the now post if querystring setting does't set.
+* Added   : Repeat submitting came to be blocked.
+* Bug fix : Fixed translation mistake in admin page.
+* Bug fix : Fixed selected file reset button bug on file field.
+* Bug fix : Fixed bug that not to work rightly when setting noempty validation in image or file field.
+
+= 1.5.6 =
+* Bug fix : Fix selected file reset button bug in Firefox.
+* Changed : Change file field's default size attribute.
+
+= 1.5.5 =
+* Added   : Selected file reset button has been added.
+
+= 1.5.4 =
+* Bug fix : Fix spelling mistake in admin page.
+* Added   : Convert full-pitch character to half character in text shortcode.
+
+= 1.5.3 =
+* Bug fix : Fixed a bug where <br> is added in textarea.
+
+= 1.5.2 =
+* Bug fix : Datapicker starting a new line.
+
 = 1.5.1 =
 * Bug fix : Fix wpautop bug.
 
 = 1.5.0 =
 * Deleted   : Delete qtags.
 * Bug fix   : Fix inquiery data are not saved when admin mail content is empty.
-* Bug fix   : Fix bug that don't start a new line.
+* Bug fix   : Fix bug that doesn't start a new line.
 * Added     : Add filter_hook mwform_admin_mail_raw_mw-wp-form-xxx.
 * Added     : Add filter_hook mwform_auto_mail_raw_mw-wp-form-xxx.
 * Deprecated: Deprecated mw_form_field::set_qtags()
 
 = 1.4.1 =
-* Changed : Changed flow to read saving inquiry data.
+* Changed : Change flow to read saving inquiry data.
 * Bug fix : Fix tel validation.
 
 = 1.4.0 =

@@ -62,7 +62,7 @@ class mw_form_field_hidden extends mw_form_field {
 		if ( $this->atts['echo'] === 'true' ) {
 			$echo_value = $this->atts['value'];
 		}
-		return $echo_value . $this->Form->hidden( $this->atts['name'], $this->atts['value'] );
+		return esc_html( $echo_value ) . $this->Form->hidden( $this->atts['name'], $this->atts['value'] );
 	}
 
 	/**
@@ -90,12 +90,12 @@ class mw_form_field_hidden extends mw_form_field {
 			<input type="text" name="name" />
 		</p>
 		<p>
-			<strong><?php _e( 'Default value', MWF_Config::DOMAIN ); ?>(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<strong><?php esc_html_e( 'Default value', MWF_Config::DOMAIN ); ?>(<?php esc_html_e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
 			<input type="text" name="value" />
 		</p>
 		<p>
-			<strong><?php _e( 'Display', MWF_Config::DOMAIN ); ?></strong>
-			<input type="checkbox" name="echo" value="true" /> <?php _e( 'Display hidden value.', MWF_Config::DOMAIN ); ?>
+			<strong><?php esc_html_e( 'Display', MWF_Config::DOMAIN ); ?></strong>
+			<input type="checkbox" name="echo" value="true" /> <?php esc_html_e( 'Display hidden value.', MWF_Config::DOMAIN ); ?>
 		</p>
 		<?php
 	}
