@@ -1,31 +1,16 @@
 <?php
 /**
  * Name: MW Form Field Text
- * URI: http://2inc.org
  * Description: テキストフィールドを出力。
- * Version: 1.4.1
+ * Version: 1.4.2
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: April 5, 2014
- * License: GPL2
- *
- * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License, version 2, as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * Modified: July 24, 2014
+ * License: GPLv2
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
-class mw_form_field_text extends mw_form_field {
+class MW_Form_Field_Text extends MW_Form_Field {
 
 	/**
 	 * set_names
@@ -68,11 +53,11 @@ class mw_form_field_text extends mw_form_field {
 			$conv_half_alphanumeric = true;
 		}
 		$_ret = $this->Form->text( $this->atts['name'], array(
-			'id'        => $this->atts['id'],
-			'size'      => $this->atts['size'],
-			'maxlength' => $this->atts['maxlength'],
-			'value'     => $this->atts['value'],
-			'placeholder'     => $this->atts['placeholder'],
+			'id'          => $this->atts['id'],
+			'size'        => $this->atts['size'],
+			'maxlength  ' => $this->atts['maxlength'],
+			'value'       => $this->atts['value'],
+			'placeholder' => $this->atts['placeholder'],
 			'conv-half-alphanumeric' => $conv_half_alphanumeric,
 		) );
 		if ( $this->atts['show_error'] !== 'false' )
@@ -83,7 +68,7 @@ class mw_form_field_text extends mw_form_field {
 	/**
 	 * confirmPage
 	 * 確認ページでのフォーム項目を返す
-	 * @return	String	HTML
+	 * @return string HTML
 	 */
 	protected function confirmPage() {
 		$value = $this->Form->getValue( $this->atts['name'] );

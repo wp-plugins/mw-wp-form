@@ -1,34 +1,21 @@
 <?php
 /**
  * Name: MW Akismet
- * URI: http://2inc.org
  * Description: Akismetクラス
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : April 30, 2014
- * Modified:
- * License: GPL2
- *
- * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License, version 2, as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * Modified: July 24, 2014
+ * License: GPLv2
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
 class MW_Akismet {
-	public function __construct() {
-	}
 
+	/**
+	 * is_enable
+	 * @return string APIキー
+	 */
 	private function is_enable() {
 		if ( is_callable( array( 'Akismet', 'get_api_key' ) ) ) {
 			return Akismet::get_api_key();
@@ -39,7 +26,15 @@ class MW_Akismet {
 		return false;
 	}
 
-	public function check( $akismet_author, $akismet_author_email, $akismet_author_url, $data ) {
+	/**
+	 * check
+	 * @param string $akismet_author
+	 * @param string $akismet_author_email
+	 * @param string $akismet_author_url
+	 * @param MW_WP_Form_Data $Data
+	 * @return bool
+	 */
+	public function check( $akismet_author, $akismet_author_email, $akismet_author_url, $Data ) {
 		global $akismet_api_host, $akismet_api_port;
 
 		if ( !$this->is_enable() )
@@ -48,32 +43,28 @@ class MW_Akismet {
 		$doAkismet = false;
 
 		$author = '';
-		if ( !empty( $data[ $akismet_author ] ) ) {
-			$author = $data[ $akismet_author ];
+		if ( $Data->getValue( $akismet_author ) ) {
+			$author = $Data->getValue( $akismet_author );
 			$doAkismet = true;
 		}
 
 		$author_email = '';
-		if ( !empty( $data[ $akismet_author_email ] ) ) {
-			$author_email = $data[ $akismet_author_email ];
+		if ( $Data->getValue( $akismet_author_email ) ) {
+			$author_email = $Data->getValue( $akismet_author_email );
 			$doAkismet = true;
 		}
 
 		$author_url = '';
-		if ( !empty( $data[ $akismet_author_url ] ) ) {
-			$author_url = $data[ $akismet_author_url ];
+		if ( $Data->getValue( $akismet_author_url ) ) {
+			$author_url = $Data->getValue( $akismet_author_url );
 			$doAkismet = true;
 		}
 
 		if ( $doAkismet ) {
 			$content = '';
-			foreach ( $data as $value ) {
-				if ( is_array( $value ) && isset( $value['data'] ) && is_array( $value['data'] ) ) {
-					$value = implode( $value['separator'], $value['data'] );
-				}
-				if ( !is_array( $value ) ) {
-					$content .= $value . "\n\n";
-				}
+			foreach ( $Data->getValues() as $key => $value ) {
+				$value = $Data->get( $key );
+				$content .= $value . "\n\n";
 			}
 			$permalink = get_permalink();
 			$akismet = array();
@@ -110,4 +101,3 @@ class MW_Akismet {
 		}
 	}
 }
-?>

@@ -1,29 +1,14 @@
 <?php
 /**
  * Name: MW Form
- * URI: http://2inc.org
  * Description: フォームクラス
- * Version: 1.4.0
+ * Version: 1.4.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : September 25, 2012
- * Modified: June 13, 2014
- * License: GPL2
- *
- * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License, version 2, as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * Modified: July 23, 2014
+ * License: GPLv2
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
 class MW_Form {
 
@@ -48,11 +33,6 @@ class MW_Form {
 	protected $Data;
 
 	/**
-	 * sessionオブジェクト
-	 */
-	protected $Session;
-
-	/**
 	 * 確認ボタンの名前
 	 */
 	protected $confirmButton = 'submitConfirm';
@@ -62,10 +42,19 @@ class MW_Form {
 	 */
 	protected $backButton = 'submitBack';
 
+	/**
+	 * 現在のモード
+	 */
 	protected $modeCheck = 'input';
-	protected $method = 'post';
-	private $ENCODE = 'utf-8';
 
+	/**
+	 * フォームの method
+	 */
+	protected $method = 'post';
+
+	/**
+	 * 完了画面の判定用
+	 */
 	const COMPLETE_TWICE = '__complete_twice_flg';
 
 	/**
@@ -78,7 +67,6 @@ class MW_Form {
 		if ( $key ) {
 			$this->key = $key . '_key';
 		}
-		$this->Session = MW_Session::start( $this->key );
 		$this->modeCheck = $this->modeCheck();
 	}
 
@@ -210,16 +198,7 @@ class MW_Form {
 	 * @return string データ
 	 */
 	public function getZipValue( $key ) {
-		$separator = $this->getSeparatorValue( $key );
-		// すべて空のからのときはimplodeしないように（---がいってしまうため）
-		$value = $this->getValue( $key );
-		if ( is_array( $value ) && isset( $value['data'] ) && is_array( $value['data'] ) && !empty( $separator ) ) {
-			foreach ( $value['data'] as $child ) {
-				if ( $child !== '' && $child !== null ) {
-					return implode( $separator, $value['data'] );
-				}
-			}
-		}
+		return $this->Data->getSeparatedValue( $key );
 	}
 
 	/**
@@ -240,17 +219,7 @@ class MW_Form {
 	 * @return string データ
 	 */
 	public function getCheckedValue( $key, Array $data ) {
-		$separator = $this->getSeparatorValue( $key );
-		$value = $this->getValue( $key );
-		if ( is_array( $value ) && isset( $value['data'] ) && is_array( $value['data'] ) && !empty( $separator ) ) {
-			$rightData = array();
-			foreach ( $value['data'] as $child ) {
-				if ( isset( $data[$child] ) && !in_array( $data[$child], $rightData ) ) {
-					$rightData[] = $data[$child];
-				}
-			}
-			return implode( $separator, $rightData );
-		}
+		return $this->Data->getSeparatedValue( $key, $data );
 	}
 
 	/**
@@ -304,10 +273,7 @@ class MW_Form {
 	 * @return string
 	 */
 	public function getSeparatorValue( $key ) {
-		$value = $this->getValue( $key );
-		if ( is_array( $value ) && isset( $value['separator'] ) ) {
-			return $value['separator'];
-		}
+		return $this->Data->getSeparatorValue( $key );
 	}
 
 	/**
@@ -358,9 +324,12 @@ class MW_Form {
 			'placeholder' => '',
 		);
 		$options = array_merge( $defaults, $options );
-		$value = $this->getValue( $name );
-		if ( is_null( $value ) ) {
-			$value = $options['value'];
+		$value = $options['value'];
+		if ( !is_null( $value ) ) {
+			$value = $this->getValue( $name );
+			if ( is_null( $value ) ) {
+				$value = $options['value'];
+			}
 		}
 		$placeholder = $this->get_attr_placeholder( $options['placeholder'] );
 		$dataConvHalfAlphanumeric = null;
@@ -387,10 +356,6 @@ class MW_Form {
 	 * @return string HTML
 	 */
 	public function hidden( $name, $value ) {
-		$_value = $this->getValue( $name );
-		if ( !is_null( $_value ) ) {
-			$value = $_value;
-		}
 		if ( is_array( $value ) ) {
 			$value = $this->getZipValue( $name );
 		}
@@ -413,9 +378,12 @@ class MW_Form {
 			'placeholder' => '',
 		);
 		$options = array_merge( $defaults, $options );
-		$value = $this->getValue( $name );
-		if ( is_null( $value ) ) {
-			$value = $options['value'];
+		$value = $options['value'];
+		if ( !is_null( $value ) ) {
+			$value = $this->getValue( $name );
+			if ( is_null( $value ) ) {
+				$value = $options['value'];
+			}
 		}
 		$placeholder = $this->get_attr_placeholder( $options['placeholder'] );
 		$id = $this->get_attr_id( $options['id'] );
@@ -550,9 +518,12 @@ class MW_Form {
 			'placeholder' => '',
 		);
 		$options = array_merge( $defaults, $options );
-		$value = $this->getValue( $name );
-		if ( is_null( $value ) ) {
-			$value = $options['value'];
+		$value = $options['value'];
+		if ( !is_null( $value ) ) {
+			$value = $this->getValue( $name );
+			if ( is_null( $value ) ) {
+				$value = $options['value'];
+			}
 		}
 		$placeholder = $this->get_attr_placeholder( $options['placeholder'] );
 		$id = $this->get_attr_id( $options['id'] );
@@ -580,9 +551,12 @@ class MW_Form {
 			'value' => ''
 		);
 		$options = array_merge( $defaults, $options );
-		$value = $this->getValue( $name );
-		if ( is_null( $value ) ) {
-			$value = $options['value'];
+		$value = $options['value'];
+		if ( !is_null( $value ) ) {
+			$value = $this->getValue( $name );
+			if ( is_null( $value ) ) {
+				$value = $options['value'];
+			}
 		}
 		$id = $this->get_attr_id( $options['id'] );
 		$_ret = sprintf( '<select name="%s" %s>', esc_attr( $name ), $id );
@@ -610,9 +584,12 @@ class MW_Form {
 			'value' => ''
 		);
 		$options = array_merge( $defaults, $options );
-		$value = $this->getValue( $name );
-		if ( is_null( $value ) ) {
-			$value = $options['value'];
+		$value = $options['value'];
+		if ( !is_null( $value ) ) {
+			$value = $this->getValue( $name );
+			if ( is_null( $value ) ) {
+				$value = $options['value'];
+			}
 		}
 
 		$i = 0;
@@ -649,15 +626,17 @@ class MW_Form {
 			'value' => array()
 		);
 		$options = array_merge( $defaults, $options );
-
-		$value = $this->getValue( $name );
-		if ( is_array( $value ) && isset( $value['data'] ) ) {
-			$value = $value['data'];
-		} else {
-			$value = $options['value'];
-		}
-		if ( !is_array( $value ) ) {
-			$value = explode( $separator, $value );
+		$value = $options['value'];
+		if ( !is_null( $value ) ) {
+			$value = $this->getValue( $name );
+			if ( is_array( $value ) && isset( $value['data'] ) ) {
+				$value = $value['data'];
+			} else {
+				$value = $options['value'];
+			}
+			if ( !is_array( $value ) ) {
+				$value = explode( $separator, $value );
+			}
 		}
 
 		$i = 0;
@@ -717,9 +696,12 @@ class MW_Form {
 			'value' => '',
 		);
 		$options = array_merge( $defaults, $options );
-		$value = $this->getValue( $name );
-		if ( is_null( $value ) ) {
-			$value = $options['value'];
+		$value = $options['value'];
+		if ( !is_null( $value ) ) {
+			$value = $this->getValue( $name );
+			if ( is_null( $value ) ) {
+				$value = $options['value'];
+			}
 		}
 		$id = $this->get_attr_id( $options['id'] );
 		$_ret = sprintf( '<input type="text" name="%s" value="%s" size="%d" %s />',
