@@ -4,7 +4,7 @@ Donate link: http://www.amazon.co.jp/registry/wishlist/39ANKRNSTNW40
 Tags: plugin, form, confirm, preview, shortcode, mail
 Requires at least: 3.7
 Tested up to: 3.9.1
-Stable tag: 1.8.0
+Stable tag: 1.8.1
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -53,6 +53,11 @@ Do you have questions or issues with MW WP Form? Use these support channels appr
 1. screenshot-1.png
 
 == Changelog ==
+
+= 1.8.1 =
+* Bug fix : Fix PHP error under PHP 5.3.0
+* Bug fix : Fix bug that are not validated of noEmpty in zip and tel field.
+* Bug fix : Fix bug that error is displayed if the validation that was registered is disabled.
 
 = 1.8.0 =
 * Added   : Add mwform_validation_rules filter hook.
