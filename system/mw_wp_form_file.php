@@ -1,29 +1,14 @@
 <?php
 /**
  * Name: MW WP Form File
- * URI: http://2inc.org
  * Description: Tempディレクトリ、ファイルアップロードの処理を行うクラス
- * Version: 1.0.4
+ * Version: 1.0.6
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : October 10, 2013
- * Modified: January 7, 2014
- * License: GPL2
- *
- * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License, version 2, as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * Modified: July 24, 2014
+ * License: GPLv2
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
 class MW_WP_Form_File {
 
@@ -31,6 +16,18 @@ class MW_WP_Form_File {
 	 * __construct
 	 */
 	public function __construct() {
+		add_filter( 'upload_mimes', array( $this, 'upload_mimes' ) );
+	}
+
+	/**
+	 * upload_mimes
+	 * @param array $t MIMEタイプの配列
+	 */
+	public function upload_mimes( $t ) {
+		$t['psd'] = 'image/vnd.adobe.photoshop';
+		$t['eps'] = 'application/octet-stream';
+		$t['ai'] = 'application/pdf';
+		return $t;
 	}
 
 	/**
@@ -100,8 +97,8 @@ class MW_WP_Form_File {
 
 	/**
 	 * fileUpload
-	 * ファイルアップロード処理。$this->data[$key] にファイルの URL を入れる
-	 * @return  Array  ( name属性値 => アップロードできたファイルのURL, … )
+	 * ファイルアップロード処理。
+	 * @return array ( name属性値 => アップロードできたファイルのURL, … )
 	 */
 	public function fileUpload() {
 		$this->createTempDir();
@@ -109,31 +106,62 @@ class MW_WP_Form_File {
 
 		$uploadedFiles = array();
 		foreach ( $_FILES as $key => $file ) {
-			if ( empty( $file['tmp_name'] ) )
-				continue;
-
-			if ( $this->checkFileType( $file['tmp_name'], $file['name'] )
-				 && $file['error'] == UPLOAD_ERR_OK
-				 && is_uploaded_file( $file['tmp_name'] ) ) {
-
-				$extension = pathinfo( $file['name'], PATHINFO_EXTENSION );
-				$uploadfile = $this->setUploadFileName( $extension );
-
-				$is_uploaded = move_uploaded_file( $file['tmp_name'], $uploadfile['file'] );
-				if ( $is_uploaded )
-					$uploadedFiles[$key] = $uploadfile['url'];
-			}
+			$upload_file_url = $this->_fileUpload( $file );
+			if ( $upload_file_url )
+				$uploadedFiles[$key] = $upload_file_url;
 		}
 		return $uploadedFiles;
+	}
+
+	/**
+	 * singleFileUpload
+	 * ファイルアップロード処理。
+	 * @param string $key アップロードしたいファイルの name 属性
+	 * @return string アップロードできたファイルのURL
+	 */
+	public function singleFileUpload( $key ) {
+		$this->createTempDir();
+		$this->cleanTempDir();
+
+		$file = '';
+		if ( is_array( $_FILES ) && isset( $_FILES[$key] ) ) {
+			$file = $_FILES[$key];
+			return $this->_fileUpload( $file );
+		}
+	}
+
+	/**
+	 * _fileUpload
+	 * ファイルアップロードの実処理。
+	 * @param arary $file $_FILES['hoge'] の配列
+	 * @return アップロードしたファイルの URL
+	 */
+	protected function _fileUpload( $file ) {
+		if ( empty( $file['tmp_name'] ) )
+			return;
+
+		$is_uploaded = false;
+		if ( $this->checkFileType( $file['tmp_name'], $file['name'] )
+			 && $file['error'] == UPLOAD_ERR_OK
+			 && is_uploaded_file( $file['tmp_name'] ) ) {
+
+			$extension = pathinfo( $file['name'], PATHINFO_EXTENSION );
+			$uploadfile = $this->setUploadFileName( $extension );
+
+			$is_uploaded = move_uploaded_file( $file['tmp_name'], $uploadfile['file'] );
+			if ( $is_uploaded ) {
+				return $uploadfile['url'];
+			}
+		}
 	}
 
 	/**
 	 * saveAttachmentsInMedia
 	 * 添付ファイルをメディアに保存、投稿データに添付ファイルのキー（配列）を保存
 	 * $this->options_by_formkey が確定した後でのみ利用可能
-	 * @param  Int    post_id
-	 * @param  Array  ( ファイルのname属性値 => ファイルパス, … )
-	 * @param  Int    生成フォーム（usedb）の post_id
+	 * @param int post_id
+	 * @param array ( ファイルのname属性値 => ファイルパス, … )
+	 * @param int 生成フォーム（usedb）の post_id
 	 */
 	public function saveAttachmentsInMedia( $post_id, $attachments, $form_key_post_id ) {
 		require_once( ABSPATH . 'wp-admin' . '/includes/media.php' );
@@ -183,13 +211,13 @@ class MW_WP_Form_File {
 			$upload_dir = realpath( $wp_upload_dir['path'] );
 			$upload_url = $wp_upload_dir['url'];
 		}
-		$uploadfile['file'] = $upload_dir . '/' . $filename;
-		$uploadfile['url']  = $upload_url . '/' . $filename;
+		$uploadfile['file'] = trailingslashit( $upload_dir ) . $filename;
+		$uploadfile['url']  = trailingslashit( $upload_url ) . $filename;
 		while ( file_exists( $uploadfile['file'] ) ) {
 			$count ++;
 			$filename = $basename . '-' . $count . '.' . $extension;
-			$uploadfile['file'] = $upload_dir . '/' . $filename;
-			$uploadfile['url']  = $upload_url . '/' . $filename;
+			$uploadfile['file'] = trailingslashit( $upload_dir ) . $filename;
+			$uploadfile['url']  = trailingslashit( $upload_url ) . $filename;
 		}
 		return $uploadfile;
 	}
@@ -232,7 +260,7 @@ class MW_WP_Form_File {
 		$temp_dir = $this->getTempDir();
 		$temp_dir = $temp_dir['dir'];
 		if ( $sub_dir )
-			$temp_dir = $temp_dir . '/' . $sub_dir;
+			$temp_dir = trailingslashit( $temp_dir ) . $sub_dir;
 
 		if ( !file_exists( $temp_dir ) )
 			return;
@@ -242,10 +270,10 @@ class MW_WP_Form_File {
 
 		while ( false !== ( $file = readdir( $handle ) ) ) {
 			if ( $file !== '.' && $file !== '..' ) {
-				if ( is_dir( $temp_dir . '/' . $file ) ) {
+				if ( is_dir( trailingslashit( $temp_dir ) . $file ) ) {
 					$this->removeTempDir( $file );
 				} else {
-					unlink( $temp_dir . '/' . $file );
+					unlink( trailingslashit( $temp_dir ) . $file );
 				}
 			}
 		}
@@ -266,10 +294,10 @@ class MW_WP_Form_File {
 		if ( $handle === false )
 			return;
 		while ( false !== ( $filename = readdir( $handle ) ) ) {
-			if ( $filename !== '.' && $filename !== '..' && !is_dir( $temp_dir . '/' . $filename ) ) {
-				$stat = stat( $temp_dir . '/' . $filename );
+			if ( $filename !== '.' && $filename !== '..' && !is_dir( trailingslashit( $temp_dir ) . $filename ) ) {
+				$stat = stat( trailingslashit( $temp_dir ) . $filename );
 				if ( $stat['mtime'] + 3600 < time() )
-					unlink( $temp_dir . '/' . $filename );
+					unlink( trailingslashit( $temp_dir ) . $filename );
 			}
 		}
 		closedir( $handle );
@@ -278,8 +306,8 @@ class MW_WP_Form_File {
 	/**
 	 * moveTempFileToUploadDir
 	 * Tempディレクトリからuploadディレクトリにファイルを移動。
-	 * @param   String  ファイルパス
-	 * @return  Boolean
+	 * @param string ファイルパス
+	 * @return bool
 	 */
 	public function moveTempFileToUploadDir( $filepath ) {
 		$tempdir = dirname( $filepath );
@@ -291,8 +319,8 @@ class MW_WP_Form_File {
 		if ( $tempdir == $uploaddir ) {
 			return $filepath;
 		}
-		if ( rename( $filepath, $uploaddir . '/' . $new_filename ) ) {
-			return $uploaddir . '/' . $new_filename;
+		if ( rename( $filepath, trailingslashit( $uploaddir ) . $new_filename ) ) {
+			return trailingslashit( $uploaddir ) . $new_filename;
 		}
 		return $filepath;
 	}
