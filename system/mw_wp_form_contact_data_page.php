@@ -2,11 +2,11 @@
 /**
  * Name: MW WP Form Contact Data Page
  * Description: DB保存データを扱うクラス
- * Version: 1.2.0
+ * Version: 1.2.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : October 10, 2013
- * Modified: July 24, 2014
+ * Modified: September 1, 2014
  * License: GPLv2
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -163,6 +163,7 @@ class MW_WP_Form_Contact_Data_Page {
 			?>
 			<form id="mw-wp-form_csv" method="post" action="<?php echo esc_url( $action ); ?>">
 				<input type="submit" value="<?php esc_attr_e( 'CSV Download', MWF_Config::DOMAIN ); ?>" class="button-primary" />
+				<input type="hidden" name="<?php echo esc_attr( MWF_Config::NAME . '-csv-download' ); ?>" value="1" />
 				<?php wp_nonce_field( MWF_Config::NAME ); ?>
 			</form>
 			<?php
@@ -179,8 +180,10 @@ class MW_WP_Form_Contact_Data_Page {
 
 		$post_type = $_GET['post_type'];
 
-		if ( in_array( $post_type, $this->form_post_type ) && !empty( $_POST ) ) {
-			check_admin_referer( MWF_Config::NAME );
+		if ( in_array( $post_type, $this->form_post_type ) &&
+			!empty( $_POST ) &&
+			isset( $_POST[MWF_Config::NAME . '-csv-download'] ) &&
+			check_admin_referer( MWF_Config::NAME ) ) {
 
 			$posts_mwf = get_posts( array(
 				'post_type' => $post_type,
@@ -484,6 +487,7 @@ class MW_WP_Form_Contact_Data_Page {
 			<table class="wp-list-table widefat fixed" cellspacing="0">
 				<thead>
 					<th class="<?php echo MWF_Config::NAME; ?>-table-title"><?php esc_html_e( 'Form title', MWF_Config::DOMAIN ); ?></th>
+					<th class="<?php echo MWF_Config::NAME; ?>-table-chart"><?php esc_html_e( 'Display Chart', MWF_Config::DOMAIN ); ?></th>
 					<th class="<?php echo MWF_Config::NAME; ?>-table-count"><?php esc_html_e( 'The number of inquiries', MWF_Config::DOMAIN ); ?></th>
 					<th class="<?php echo MWF_Config::NAME; ?>-table-date"><?php esc_html_e( 'Updated date', MWF_Config::DOMAIN ); ?></th>
 					<th class="<?php echo MWF_Config::NAME; ?>-table-date"><?php esc_html_e( 'Created date', MWF_Config::DOMAIN ); ?></th>
@@ -493,7 +497,8 @@ class MW_WP_Form_Contact_Data_Page {
 					<?php $post_type_object = get_post_type_object( $post_type ); ?>
 					<tr <?php if ( $i % 2 == 1 ) echo 'class="alternate"'; ?>>
 						<td class="<?php echo MWF_Config::NAME; ?>-table-title"><?php echo esc_html( $post_type_object->labels->singular_name ) ; ?></td>
-						<td class="<?php echo MWF_Config::NAME; ?>-table-count"><a href="edit.php?post_type=<?php echo esc_attr( $post_type ); ?>"><?php echo esc_html( $this->get_count( $post_type ) ) ?> <?php esc_html_e( 'cases', MWF_Config::DOMAIN ); ?></a></td>
+						<td class="<?php echo MWF_Config::NAME; ?>-table-chart"><a href="<?php echo admin_url( 'edit.php?post_type=' . MWF_Config::NAME . '&page=' . MWF_Config::NAME . '-chart&formkey=' . $post_type ); ?>"><?php esc_html_e( 'Display Chart', MWF_Config::DOMAIN ); ?></td>
+						<td class="<?php echo MWF_Config::NAME; ?>-table-count"><a href="<?php echo admin_url( 'edit.php?post_type=' . $post_type ); ?>"><?php echo esc_html( $this->get_count( $post_type ) ) ?> <?php esc_html_e( 'cases', MWF_Config::DOMAIN ); ?></a></td>
 						<td class="<?php echo MWF_Config::NAME; ?>-table-date"><?php echo esc_html( $this->get_modified_datetime( $post_type ) ); ?></td>
 						<td class="<?php echo MWF_Config::NAME; ?>-table-date"><?php echo esc_html( $this->get_created_datetime( $post_type ) ); ?></td>
 					</tr>
@@ -528,11 +533,11 @@ class MW_WP_Form_Contact_Data_Page {
 	 */
 	private function get_count( $post_type ) {
 		global $wpdb;
-		$count = $wpdb->prepare(
-			"SELECT count(*) FROM $wpdb->posts WHERE post_type = '%s'",
-			$post_type
-		);
-		return number_format( $wpdb->get_var( $count ) );
+		$posts_contact = get_posts( array(
+			'post_type' => $post_type,
+			'posts_per_page' => -1,
+		) );
+		return count( $posts_contact );
 	}
 
 	/**

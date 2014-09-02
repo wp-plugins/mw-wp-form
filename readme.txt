@@ -1,10 +1,10 @@
 === MW WP Form ===
 Contributors: inc2734, ryu263
 Donate link: http://www.amazon.co.jp/registry/wishlist/39ANKRNSTNW40
-Tags: plugin, form, confirm, preview, shortcode, mail
+Tags: plugin, form, confirm, preview, shortcode, mail, chart, graph
 Requires at least: 3.7
 Tested up to: 3.9.1
-Stable tag: 1.8.3
+Stable tag: 1.9.0
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,9 +15,11 @@ MW WP Form can create mail form with a confirmation screen using shortcode.
 MW WP Form can create mail form with a confirmation screen using shortcode.
 
 * Form created using shortcodes
-* Using confirmation page
+* Using confirmation page is possible.
 * The page changes by the same URL or individual URL are possible.
 * Many validation rules
+* Saving contact data is possible.
+* Displaying Chart using saved contact data is possible.
 
 MW WP Form はショートコードを使って確認画面付きのメールフォームを作成することができるプラグインです。
 
@@ -25,10 +27,17 @@ MW WP Form はショートコードを使って確認画面付きのメールフ
 * 確認画面が表示可能
 * 同一URL・個別URLでの画面変遷が可能
 * 豊富なバリデーションルール
+* 問い合わせデータを保存可能
+* 保存した問い合わせデータをグラフ可能
 
 = Official =
 
 http://plugins.2inc.org/mw-wp-form/
+
+== The following third-party resources ==
+
+Google Charts
+Source: https://developers.google.com/chart/
 
 = Contributors =
 
@@ -50,9 +59,22 @@ Do you have questions or issues with MW WP Form? Use these support channels appr
 
 == Screenshots ==
 
-1. screenshot-1.png
+1. Form creation page.
+2. Form item create box. You can easily insert the form.
+3. Supports saving inquiry data to database.
+4. List page of inquiry data that has been saved.
+5. Supports chart display of saved inquiry data.
 
 == Changelog ==
+
+= 1.9.0 =
+* Added   : Add chart function.
+* Added   : Add separator attribute in checkbox tag generator.
+* Bug fix : Fix bug that can not change display option in saving contact data list page.
+* Bug fix : Fix bug that display wrong number of inquiries.
+
+= 1.8.4 =
+* Bug fix : Fix bug that can not be set maxlength in mwform_text shortcode.
 
 = 1.8.3 =
 * Bug fix : Fix bug that file is not uploaded when validation is not set in the file field.
