@@ -1,39 +1,56 @@
 <?php
 /**
  * Name: MW Mail
- * URI: http://2inc.org
  * Description: メールクラス
- * Version: 1.3.4
+ * Version: 1.4.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created: July 20, 2012
- * Modified: December 24, 2013
- * License: GPL2
- *
- * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License, version 2, as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * Modified: July 24, 2014
+ * License: GPLv2
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
 class MW_Mail {
 
-	public $to;				// 宛先
-	public $from;			// 送信元
-	public $sender;			// 送信者
-	public $subject;		// 題名
-	public $body;			// 本文
-	public $attachments;	// 添付
-	private $ENCODE = 'utf-8';
+	/**
+	 * 宛先
+	 */
+	public $to;
+
+	/**
+	 * CC
+	 */
+	public $cc;
+
+	/**
+	 * BCC
+	 */
+	public $bcc;
+
+	/**
+	 * 送信元
+	 */
+	public $from;
+
+	/**
+	 * 送信者
+	 */
+	public $sender;
+
+	/**
+	 * 件名
+	 */
+	public $subject;
+
+	/**
+	 * 本文
+	 */
+	public $body;
+
+	/**
+	 * 添付
+	 */
+	public $attachments;
 
 	/**
 	 * send
@@ -47,13 +64,17 @@ class MW_Mail {
 		add_action( 'phpmailer_init', array( $this, 'set_return_path' ) );
 		add_filter( 'wp_mail_from', array( $this, 'set_mail_from' ) );
 		add_filter( 'wp_mail_from_name', array( $this, 'set_mail_from_name' ) );
-		$to = explode( ',', $this->to );
-		if ( isset( $to[0] ) ) {
-			foreach ( $to as $value ) {
-				$value = trim( $value );
-				$header = '';
-				wp_mail( $value, $subject, $body, $header, $this->attachments );
+		$tos = explode( ',', $this->to );
+		foreach ( $tos as $to ) {
+			$headers = array();
+			if ( $this->cc ) {
+				$headers[] = 'Cc: ' . $this->cc;
 			}
+			if ( $this->bcc ) {
+				$headers[] = 'Bcc: ' . $this->bcc;
+			}
+			$to = trim( $to );
+			wp_mail( $to, $subject, $body, $headers, $this->attachments );
 		}
 		remove_action( 'phpmailer_init', array( $this, 'set_return_path' ) );
 		remove_filter( 'wp_mail_from', array( $this, 'set_mail_from' ) );
@@ -72,10 +93,11 @@ class MW_Mail {
 	/**
 	 * createBody
 	 * 配列からbodyを生成
-	 * @param	Array ( 見出し => 内容, … )
-	 * 			Array ( 'exclude' => array( 除外したいキー1, … ) )
+	 * @param array ( 見出し => 内容, … )
+	 * @param array ( 'exclude' => array( 除外したいキー1, … ) )
+	 * @return string メール本文
 	 */
-	public function createBody( Array $array, Array $options = array() ) {
+	public function createBody( array $array, array $options = array() ) {
 		$_ret = '';
 		$defaults = array(
 			'exclude' => array()
@@ -104,4 +126,3 @@ class MW_Mail {
 		return $_ret;
 	}
 }
-?>
