@@ -2,15 +2,21 @@
 /**
  * Name: MW Form Field File
  * Description: 画像アップロードフィールドを出力。
- * Version: 1.4.2
+ * Version: 1.4.3
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : May 17, 2013
- * Modified: July 24, 2014
+ * Modified: September 3, 2014
  * License: GPLv2
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
 class MW_Form_Field_File extends MW_Form_Field {
+
+	/**
+	 * string $type フォームタグの種類
+	 * input, select, button, other
+	 */
+	public $type = 'input';
 
 	/**
 	 * set_names
@@ -33,7 +39,6 @@ class MW_Form_Field_File extends MW_Form_Field {
 		return array(
 			'name' => '',
 			'id'   => '',
-			'size' => 20,
 			'show_error' => 'true',
 		);
 	}
@@ -45,8 +50,7 @@ class MW_Form_Field_File extends MW_Form_Field {
 	 */
 	protected function inputPage() {
 		$_ret = $this->Form->file( $this->atts['name'], array(
-			'id'   => $this->atts['id'],
-			'size' => $this->atts['size'],
+			'id' => $this->atts['id'],
 		) );
 		$value = $this->Form->getValue( $this->atts['name'] );
 		$upload_file_keys = $this->Form->getValue( MWF_Config::UPLOAD_FILE_KEYS );
@@ -96,10 +100,6 @@ class MW_Form_Field_File extends MW_Form_Field {
 		<p>
 			<strong>id(<?php esc_html_e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
 			<input type="text" name="id" />
-		</p>
-		<p>
-			<strong>size(<?php esc_html_e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
-			<input type="text" name="size" />
 		</p>
 		<p>
 			<strong><?php esc_html_e( 'Dsiplay error', MWF_Config::DOMAIN ); ?></strong>

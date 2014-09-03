@@ -3,11 +3,11 @@
  * Plugin Name: MW WP Form
  * Plugin URI: http://plugins.2inc.org/mw-wp-form/
  * Description: MW WP Form can create mail form with a confirmation screen.
- * Version: 1.9.0
+ * Version: 1.9.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : September 25, 2012
- * Modified: August 8, 2014
+ * Modified: September 3, 2014
  * Text Domain: mw-wp-form
  * Domain Path: /languages/
  * License: GPLv2
@@ -153,7 +153,7 @@ class mw_wp_form {
 		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_mail.php' );
 		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_validation.php' );
 		include_once( plugin_dir_path( __FILE__ ) . 'system/mw_wp_form_file.php' );
-		add_action( 'nocache_headers' , array( $this, 'nocache_headers' ) , 1 );
+		add_filter( 'nocache_headers' , array( $this, 'nocache_headers' ) , 1 );
 		add_filter( 'template_include', array( $this, 'main' ), 10000 );
 		add_action( 'parse_request', array( $this, 'remove_query_vars_from_post' ) );
 	}
@@ -242,15 +242,15 @@ class mw_wp_form {
 	 */
 	public function original_style() {
 		$url = plugin_dir_url( __FILE__ );
-		wp_register_style( MWF_Config::DOMAIN, $url . 'css/style.css' );
-		wp_enqueue_style( MWF_Config::DOMAIN );
+		wp_register_style( MWF_Config::NAME, $url . 'css/style.css' );
+		wp_enqueue_style( MWF_Config::NAME );
 
 		$style = $this->options_by_formkey['style'];
 		$styles = apply_filters( 'mwform_styles', array() );
 		if ( is_array( $styles ) && isset( $styles[$style] ) ) {
 			$css = $styles[$style];
-			wp_register_style( MWF_Config::DOMAIN . '_style', $css );
-			wp_enqueue_style( MWF_Config::DOMAIN . '_style' );
+			wp_register_style( MWF_Config::NAME . '_style', $css );
+			wp_enqueue_style( MWF_Config::NAME . '_style' );
 		}
 	}
 
@@ -260,8 +260,8 @@ class mw_wp_form {
 	 */
 	public function original_script() {
 		$url = plugin_dir_url( __FILE__ );
-		wp_register_script( MWF_Config::DOMAIN, $url . 'js/form.js', array( 'jquery' ), false, true );
-		wp_enqueue_script( MWF_Config::DOMAIN );
+		wp_register_script( MWF_Config::NAME, $url . 'js/form.js', array( 'jquery' ), false, true );
+		wp_enqueue_script( MWF_Config::NAME );
 	}
 
 	/**
@@ -320,6 +320,8 @@ class mw_wp_form {
 			 is_null( $this->complete ) ||
 			 is_null( $this->validation_error ) )
 			return $template;
+
+		nocache_headers();
 
 		// セッション初期化
 		$this->Data = MW_WP_Form_Data::getInstance( $this->key );
