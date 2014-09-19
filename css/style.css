@@ -5,6 +5,11 @@
 	color : #B70000;
 	display : block;
 }
+
+.mw_wp_form .akismet_error {
+	display: block;
+}
+
 .ui-datepicker .ui-datepicker-title select.ui-datepicker-month,
 .ui-datepicker .ui-datepicker-title select.ui-datepicker-year {
 	width: 40%;
@@ -19,4 +24,9 @@
 	line-height: 1.6;
 	margin: 0 0 5px;
 	padding: 5px;
+}
+
+.mwform-file-delete {
+	cursor: pointer;
+	visibility: hidden;
 }
