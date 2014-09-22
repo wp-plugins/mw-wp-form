@@ -1,31 +1,22 @@
 <?php
 /**
  * Name: MW Form Field Confirm Button
- * URI: http://2inc.org
  * Description: 確認ボタンを出力。
- * Version: 1.4.0
+ * Version: 1.4.3
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: April 5, 2014
- * License: GPL2
- *
- * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License, version 2, as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * Modified: September 5, 2014
+ * License: GPLv2
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
-class mw_form_field_confirm_button extends mw_form_field {
+class MW_Form_Field_Confirm_Button extends MW_Form_Field {
+
+	/**
+	 * string $type フォームタグの種類
+	 * input, select, button, other
+	 */
+	public $type = 'button';
 
 	/**
 	 * set_names
@@ -42,7 +33,7 @@ class mw_form_field_confirm_button extends mw_form_field {
 	/**
 	 * setDefaults
 	 * $this->defaultsを設定し返す
-	 * @return	Array	defaults
+	 * @return array defaults
 	 */
 	protected function setDefaults() {
 		return array(
@@ -53,7 +44,7 @@ class mw_form_field_confirm_button extends mw_form_field {
 	/**
 	 * inputPage
 	 * 入力ページでのフォーム項目を返す
-	 * @return	String	HTML
+	 * @return string HTML
 	 */
 	protected function inputPage() {
 		return $this->Form->submit( $this->Form->getConfirmButtonName(), $this->atts['value'] );
@@ -62,7 +53,7 @@ class mw_form_field_confirm_button extends mw_form_field {
 	/**
 	 * confirmPage
 	 * 確認ページでのフォーム項目を返す
-	 * @return	String	HTML
+	 * @return string HTML
 	 */
 	protected function confirmPage() {
 	}
@@ -74,7 +65,7 @@ class mw_form_field_confirm_button extends mw_form_field {
 	public function mwform_tag_generator_dialog() {
 		?>
 		<p>
-			<strong><?php _e( 'Default value', MWF_Config::DOMAIN ); ?>(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
+			<strong><?php esc_html_e( 'String on the button', MWF_Config::DOMAIN ); ?>(<?php esc_html_e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
 			<input type="text" name="value" />
 		</p>
 		<?php
