@@ -4,7 +4,7 @@ Donate link: http://www.amazon.co.jp/registry/wishlist/39ANKRNSTNW40
 Tags: plugin, form, confirm, preview, shortcode, mail, chart, graph
 Requires at least: 3.7
 Tested up to: 4.0
-Stable tag: 1.9.4
+Stable tag: 2.0.0
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -33,6 +33,10 @@ MW WP Form はショートコードを使って確認画面付きのメールフ
 = Official =
 
 http://plugins.2inc.org/mw-wp-form/
+
+= GitHub =
+
+https://github.com/inc2734/mw-wp-form
 
 = The following third-party resources =
 
@@ -66,6 +70,12 @@ Do you have questions or issues with MW WP Form? Use these support channels appr
 5. Supports chart display of saved inquiry data.
 
 == Changelog ==
+
+= 2.0.0 =
+* Added   : Add scrolling of screen transition setting.
+* Added   : Add filter_hook mwform_scroll_offset_mw-wp-form-xxx.
+* Added   : Support auto tracking number.
+* Added   : Add filter_hook mwform_tracking_number_title_mw-wp-form-xxx.
 
 = 1.9.4 =
 * Bug fix : Fix HTML structures.

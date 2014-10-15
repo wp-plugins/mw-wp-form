@@ -3,11 +3,11 @@
  * Plugin Name: MW WP Form
  * Plugin URI: http://plugins.2inc.org/mw-wp-form/
  * Description: MW WP Form can create mail form with a confirmation screen.
- * Version: 1.9.4
+ * Version: 2.0.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : September 25, 2012
- * Modified: September 22, 2014
+ * Modified: October 14, 2014
  * Text Domain: mw-wp-form
  * Domain Path: /languages/
  * License: GPLv2
@@ -77,6 +77,7 @@ class mw_wp_form {
 		'validation_error_url' => '',
 		'validation' => array(),
 		'style' => '',
+		'scroll' => null,
 	);
 
 	/**
@@ -264,6 +265,18 @@ class mw_wp_form {
 	}
 
 	/**
+	 * scroll_script
+	 */
+	public function scroll_script() {
+		$url = plugin_dir_url( __FILE__ );
+		wp_register_script( MWF_Config::NAME . '-scroll', $url . 'js/scroll.js', array( 'jquery' ), false, true );
+		wp_localize_script( MWF_Config::NAME . '-scroll', 'mwform_scroll', array(
+			'offset' => apply_filters( 'mwform_scroll_offset_' . $this->key, 0 ),
+		) );
+		wp_enqueue_script( MWF_Config::NAME . '-scroll' );
+	}
+
+	/**
 	 * get_shortcode
 	 * MW WP Form のショートコードが含まれていればそのショートコードを返す
 	 * @param string $content
@@ -432,6 +445,14 @@ class mw_wp_form {
 				$this->redirect( $back_url );
 			}
 		}
+
+		// スクロール用スクリプトのロード
+		if ( !empty( $this->options_by_formkey['scroll'] ) ) {
+			if ( $this->Form->isConfirm() || $this->Form->isComplete() || !$this->Validation->check() ) {
+				add_action( 'wp_enqueue_scripts', array( $this, 'scroll_script' ) );
+			}
+		}
+
 		add_shortcode( 'mwform_formkey', array( $this, '_mwform_formkey' ) );
 		add_shortcode( 'mwform', array( $this, '_mwform' ) );
 		add_shortcode( 'mwform_complete_message', array( $this, '_mwform_complete_message' ) );
@@ -620,25 +641,33 @@ class mw_wp_form {
 			if ( isset( $this->options_by_formkey['automatic_reply_email'] ) ) {
 				$automatic_reply_email = $this->Data->getValue( $this->options_by_formkey['automatic_reply_email'] );
 				if ( $automatic_reply_email && !$this->validation_rules['mail']->rule( $automatic_reply_email ) ) {
-					$Mail_raw = $this->set_reply_mail_raw_params( $Mail_raw );
+					$Mail_auto_raw = $this->set_reply_mail_raw_params( clone $Mail_raw );
 
 					// 自動返信メールからは添付ファイルを削除
-					$Mail_raw->attachments = array();
+					$Mail_auto_raw->attachments = array();
 
 					$filter_name = 'mwform_auto_mail_raw_' . $this->key;
-					$Mail_raw = apply_filters( $filter_name, $Mail_raw, $this->Data->getValues() );
-					if ( !is_a( $Mail_raw, 'MW_Mail' ) )
+					$Mail_auto_raw = apply_filters( $filter_name, $Mail_auto_raw, $this->Data->getValues() );
+					if ( !is_a( $Mail_auto_raw, 'MW_Mail' ) )
 						return;
 
-					$Mail = $this->parse_mail_object( $Mail_raw );
-					$Mail = $this->set_reply_mail_reaquire_params( $Mail );
+					$Mail_auto = $this->parse_mail_object( $Mail_auto_raw );
+					$Mail_auto = $this->set_reply_mail_reaquire_params( $Mail_auto );
 
 					$filter_name = 'mwform_auto_mail_' . $this->key;
-					$Mail = apply_filters( $filter_name, $Mail, $this->Data->getValues() );
-					if ( !is_a( $Mail, 'MW_Mail' ) )
+					$Mail_auto = apply_filters( $filter_name, $Mail_auto, $this->Data->getValues() );
+					if ( !is_a( $Mail_auto, 'MW_Mail' ) )
 						return;
-					$Mail->send();
+					$Mail_auto->send();
 				}
+			}
+
+			// 問い合わせ番号を加算
+			if ( preg_match( '{' . MWF_Config::TRACKINGNUMBER . '}', $Mail_raw->body, $reg ) ) {
+				$form_id = $this->options_by_formkey['post_id'];
+				$tracking_number = $this->get_tracking_number( $form_id );
+				$new_tracking_number = $tracking_number + 1;
+				update_post_meta( $form_id, MWF_Config::TRACKINGNUMBER, $new_tracking_number );
 			}
 		}
 	}
@@ -696,11 +725,25 @@ class mw_wp_form {
 	 * parse_mail_body
 	 * $this->create_mail_body(), $this->save_mail_body の本体
 	 * 第2引数でDB保存するか判定
+	 * @param array $matches
+	 * @param bool $doUpdate
+	 * @return string $value
 	 */
 	protected function parse_mail_body( $matches, $doUpdate = false ) {
-		$value = $this->Data->get( $matches[1] );
+		$match = $matches[1];
+		// MWF_Config::TRACKINGNUMBER のときはお問い合せ番号を参照する
+		if ( $match === MWF_Config::TRACKINGNUMBER ) {
+			if ( !empty( $this->options_by_formkey['post_id'] ) ) {
+				$form_id = $this->options_by_formkey['post_id'];
+				$tracking_number_title = esc_html__( 'Tracking Number', MWF_Config::DOMAIN );
+				$match = apply_filters( 'mwform_tracking_number_title_' . $this->key, $tracking_number_title );
+				$value = $this->get_tracking_number( $form_id );
+			}
+		} else {
+			$value = $this->Data->get( $match );
+		}
 		if ( $value !== null && $doUpdate ) {
-			update_post_meta( $this->insert_id, $matches[1], $value );
+			update_post_meta( $this->insert_id, $match, $value );
 		}
 		return $value;
 	}
@@ -846,13 +889,12 @@ class mw_wp_form {
 				}
 			}
 			$_preview_class = ( $this->viewFlg === 'confirm' ) ? ' mw_wp_form_preview' : '';
-			return
-				'<div id="mw_wp_form_' . $this->key . '" class="mw_wp_form mw_wp_form_' . $this->viewFlg . $_preview_class . '">' .
-				$this->Form->start() .
-				do_shortcode( $content ) .
-				$upload_file_hidden .
-				$this->Form->end() .
-				'<!-- end .mw_wp_form --></div>';
+			return sprintf(
+				'<div id="mw_wp_form_%s" class="mw_wp_form mw_wp_form_%s">%s<!-- end .mw_wp_form --></div>',
+				esc_attr( $this->key ),
+				esc_attr( $this->viewFlg . $_preview_class ),
+				$this->Form->start() . do_shortcode( $content ) . $upload_file_hidden . $this->Form->end()
+			);
 		}
 	}
 
@@ -942,7 +984,12 @@ class mw_wp_form {
 	 */
 	public function _mwform_complete_message( $atts, $content = '' ) {
 		if ( $this->viewFlg == 'complete' ) {
-			return $content;
+			return sprintf(
+				'<div id="mw_wp_form_%s" class="mw_wp_form mw_wp_form_%s">%s<!-- end .mw_wp_form --></div>',
+				esc_attr( $this->key ),
+				esc_attr( $this->viewFlg ),
+				$content
+			);
 		}
 	}
 
@@ -1124,5 +1171,18 @@ class mw_wp_form {
 			}
 		}
 		return $Mail;
+	}
+
+	/**
+	 * get_tracking_number
+	 * @param int $post_id フォームの Post ID
+	 * @return int $tracking_number
+	 */
+	protected function get_tracking_number( $post_id ) {
+		$tracking_number = get_post_meta( $post_id, MWF_Config::TRACKINGNUMBER, true );
+		if ( empty( $tracking_number ) ) {
+			$tracking_number = 1;
+		}
+		return intval( $tracking_number );
 	}
 }

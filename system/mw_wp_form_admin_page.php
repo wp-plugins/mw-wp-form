@@ -2,11 +2,11 @@
 /**
  * Name: MW WP Form Admin Page
  * Description: 管理画面クラス
- * Version: 1.11.1
+ * Version: 1.12.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : February 21, 2013
- * Modified: September 3, 2014
+ * Modified: October 14, 2014
  * License: GPLv2
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -323,6 +323,9 @@ class MW_WP_Form_Admin_Page {
 		<p>
 			<label><input type="checkbox" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[usedb]" value="1" <?php checked( $this->get_post_data( 'usedb' ), 1 ); ?> /> <?php esc_html_e( 'Saving inquiry data in database', MWF_Config::DOMAIN ); ?></label>
 		</p>
+		<p>
+			<label><input type="checkbox" name="<?php echo esc_attr( MWF_Config::NAME ); ?>[scroll]" value="1" <?php checked( $this->get_post_data( 'scroll' ), 1 ); ?> /> <?php esc_html_e( 'Enable scrolling of screen transition.', MWF_Config::DOMAIN ); ?></label>
+		</p>
 		<table border="0" cellpadding="0" cellspacing="0" class="akismet">
 			<tr>
 				<th colspan="2"><?php esc_html_e( 'Akismet Setting', MWF_Config::DOMAIN ); ?></th>
@@ -366,6 +369,10 @@ class MW_WP_Form_Admin_Page {
 		?>
 		<p>
 			<?php esc_html_e( '{key} is converted form data.', MWF_Config::DOMAIN ); ?>
+			<?php echo sprintf(
+				esc_html__( 'It is automatically converted to Tracking number when you input {%s}.', MWF_Config::DOMAIN ),
+				MWF_Config::TRACKINGNUMBER
+			); ?>
 		</p>
 		<p>
 			<b><?php esc_html_e( 'Subject', MWF_Config::DOMAIN ); ?></b><br />
@@ -402,6 +409,10 @@ class MW_WP_Form_Admin_Page {
 		?>
 		<p>
 			<?php esc_html_e( '{key} is converted form data.', MWF_Config::DOMAIN ); ?>
+			<?php echo sprintf(
+				esc_html__( 'It is automatically converted to Tracking number when you input {%s}.', MWF_Config::DOMAIN ),
+				MWF_Config::TRACKINGNUMBER
+			); ?>
 		</p>
 		<p>
 			<?php esc_html_e( 'If Admin Email Options is a blank, Automatic Replay Email Options is used as Admin Email Options.', MWF_Config::DOMAIN ); ?>
