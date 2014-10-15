@@ -1,33 +1,30 @@
 <?php
 /**
  * Name: MW WP Form Data
- * URI: http://2inc.org
  * Description: mw_wp_form のデータ操作用
- * Version: 1.0.2
+ * Version: 1.2.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : October 10, 2013
- * Modified: December 19, 2013
- * License: GPL2
- *
- * Copyright 2013 Takashi Kitajima (email : inc@2inc.org)
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License, version 2, as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * Modified: August 8, 2014
+ * License: GPLv2
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
-class mw_wp_form_data {
+class MW_WP_Form_Data {
+
+	/**
+	 * MW_WP_Form_Data オブジェクト
+	 */
 	private static $Instance;
-	private $data;
+
+	/**
+	 * フォームから送信された内容を保存した配列
+	 */
+	private $data = array();
+
+	/**
+	 * MW_Sesion オブジェクト
+	 */
 	private $Session;
 
 	/**
@@ -35,7 +32,8 @@ class mw_wp_form_data {
 	 * @param string $key データのキー
 	 */
 	private function __construct( $key ) {
-		$this->Session = MW_Session::start( $key );
+		$this->Session = new MW_Session( $key );
+		$this->data = $this->Session->getValues();
 	}
 
 	public static function getInstance( $key ) {
@@ -48,8 +46,8 @@ class mw_wp_form_data {
 	/**
 	 * getValue
 	 * データを取得
-	 * @param    String    $key    データのキー
-	 * @return   String    データ
+	 * @param string $key データのキー
+	 * @return string データ
 	 */
 	public function getValue( $key ) {
 		if ( isset( $this->data[$key] ) )
@@ -59,10 +57,10 @@ class mw_wp_form_data {
 	/**
 	 * getValues
 	 * 全てのデータを取得
-	 * @return   Array   データ
+	 * @return array データ
 	 */
 	public function getValues() {
-		if ( $this->data === null)
+		if ( $this->data === null )
 			return array();
 		return $this->data;
 	}
@@ -70,8 +68,8 @@ class mw_wp_form_data {
 	/**
 	 * setValue
 	 * データを追加
-	 * @param    String    $key    データのキー
-	 * @param    String    $value  値
+	 * @param string $key データのキー
+	 * @param string $value 値
 	 */
 	public function setValue( $key, $value ){
 		$this->data[$key] = $value;
@@ -81,7 +79,7 @@ class mw_wp_form_data {
 	/**
 	 * setValue
 	 * 複数のデータを一括で追加
-	 * @param    Array    値
+	 * @param array 値
 	 */
 	public function setValues( Array $array ) {
 		foreach ( $array as $key => $value ) {
@@ -93,7 +91,7 @@ class mw_wp_form_data {
 	/**
 	 * clearValue
 	 * データを消す
-	 * @param    String    $key    データのキー
+	 * @param string $key データのキー
 	 */
 	public function clearValue( $key ) {
 		unset( $this->data[$key] );
@@ -103,21 +101,87 @@ class mw_wp_form_data {
 	/**
 	 * clearValues
 	 * データを消す
-	 * @param    String    $key    データのキー
+	 * @param string $key データのキー
 	 */
 	public function clearValues() {
-		unset( $this->data );
+		$this->data = array();
 		$this->Session->clearValues();
 	}
 
 	/**
 	 * pushValue
 	 * 指定した $key をキーと配列にデータを追加
-	 * @param    String    $key    データのキー
-	 * @param    String    $value  値
+	 * @param string $key データのキー
+	 * @param string $value 値
 	 */
 	public function pushValue( $key, $value ) {
 		$this->data[$key][] = $value;
 		$this->Session->pushValue( $key, $value );
+	}
+
+	/**
+	 * get
+	 * 整形済み（メール送信可能な）データを取得
+	 * @param string $key データのキー
+	 * @return string データ
+	 */
+	public function get( $key ) {
+		if ( isset( $this->data[$key] ) ) {
+			if ( is_array( $this->data[$key] ) ) {
+				if ( !array_key_exists( 'data', $this->data[$key] ) )
+					return;
+				if ( is_array( $this->data[$key]['data'] ) ) {
+					return $this->getSeparatedValue( $key );
+				} else {
+					return $this->data[$key]['data'];
+				}
+			} else {
+				return $this->data[$key];
+			}
+		}
+	}
+
+	/**
+	 * getSeparatorValue
+	 * 送られてきたseparatorを返す
+	 * @param string $key name属性
+	 * @return string
+	 */
+	public function getSeparatorValue( $key ) {
+		$value = $this->getValue( $key );
+		if ( is_array( $value ) && isset( $value['separator'] ) ) {
+			return $value['separator'];
+		}
+	}
+
+	/**
+	 * getSeparatedValue
+	 * 配列データを整形して返す ( 郵便番号等用 )
+	 * @param string $key name属性
+	 * @param array $children 選択肢
+	 * @return string データ
+	 */
+	public function getSeparatedValue( $key, array $children = array() ) {
+		$separator = $this->getSeparatorValue( $key );
+		$value = $this->getValue( $key );
+		if ( is_array( $value ) && isset( $value['data'] ) && is_array( $value['data'] ) && !empty( $separator ) ) {
+			if ( $children ) {
+				$rightData = array();
+				foreach ( $value['data'] as $child ) {
+					if ( isset( $children[$child] ) && !in_array( $children[$child], $rightData ) ) {
+						$rightData[] = $children[$child];
+					}
+				}
+				return implode( $separator, $rightData );
+			} else {
+				// すべて空のからのときはimplodeしないように（---がいってしまうため）
+				foreach ( $value['data'] as $child ) {
+					if ( $child !== '' && $child !== null ) {
+						return implode( $separator, $value['data'] );
+					}
+				}
+				return '';
+			}
+		}
 	}
 }
