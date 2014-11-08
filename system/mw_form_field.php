@@ -1,31 +1,16 @@
 <?php
 /**
  * Name: MW Form Field
- * URI: http://2inc.org
  * Description: フォームフィールドの抽象クラス
- * Version: 1.6.0
+ * Version: 1.6.4
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: April 4, 2014
- * License: GPL2
- *
- * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License, version 2, as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * Modified: November 2, 2014
+ * License: GPLv2
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
-abstract class mw_form_field {
+abstract class MW_Form_Field {
 
 	/**
 	 * string $shortcode_name
@@ -63,6 +48,12 @@ abstract class mw_form_field {
 	protected $key;
 
 	/**
+	 * string $type フォームタグの種類
+	 * input, select, button, error, other
+	 */
+	protected $type = 'other';
+
+	/**
 	 * array $qtags qtagsの引数
 	 */
 	protected $qtags = array(
@@ -80,6 +71,7 @@ abstract class mw_form_field {
 		$this->defaults = $this->setDefaults();
 		add_action( 'mwform_add_shortcode', array( $this, 'add_shortcode' ), 10, 4 );
 		$this->_add_mwform_tag_generator();
+		add_filter( 'mwform_form_fields', array( $this, 'mwform_form_fields' ) );
 	}
 
 	/**
@@ -107,7 +99,7 @@ abstract class mw_form_field {
 	 * @param string $arg2 終了タグ（ショートコード）
 	 */
 	protected function set_qtags( $id, $display, $arg1, $arg2 = '' ) {
-		MWF_Functions::deprecated_message( 'mw_form_field::set_qtags', 'mw_form_field::set_names' );
+		MWF_Functions::deprecated_message( 'MW_Form_Field::set_qtags', 'MW_Form_Field::set_names' );
 		$this->qtags = array(
 			'id' => $id,
 			'display' => $display,
@@ -141,21 +133,22 @@ abstract class mw_form_field {
 				$_ret .= $error_html;
 			}
 		}
-		return apply_filters( 'mwform_error_message_wrapper', $_ret, $this->key );
+		if ( $_ret )
+			return apply_filters( 'mwform_error_message_wrapper', $_ret, $this->key );
 	}
 
 	/**
 	 * setDefaults
 	 * $this->defaultsを設定し返す
-	 * @return	Array	defaults
+	 * @return array defaults
 	 */
 	abstract protected function setDefaults();
 
 	/**
 	 * inputPage
 	 * 入力ページでのフォーム項目を返す
-	 * @param	Array	$atts
-	 * @return	String	HTML
+	 * @param array $atts
+	 * @return string HTML
 	 */
 	abstract protected function inputPage();
 	public function _inputPage( $atts ) {
@@ -169,8 +162,8 @@ abstract class mw_form_field {
 	/**
 	 * confirmPage
 	 * 確認ページでのフォーム項目を返す
-	 * @param	Array	$atts
-	 * @return	String	HTML
+	 * @param array $atts
+	 * @return string HTML
 	 */
 	abstract protected function confirmPage();
 	public function _confirmPage( $atts ) {
@@ -181,12 +174,12 @@ abstract class mw_form_field {
 	/**
 	 * add_short_code
 	 * フォーム項目を返す
-	 * @param	MW_Form		$Form
-	 * 			String		$viewFlg
-	 * 			MW_Error	$Error
-	 * 			String		$key
+	 * @param MW_Form $Form
+	 * @param string $viewFlg
+	 * @param MW_Error $Error
+	 * @param string $key
 	 */
-	public function add_shortcode( mw_form $Form, $viewFlg, mw_error $Error, $key ) {
+	public function add_shortcode( MW_Form $Form, $viewFlg, MW_Error $Error, $key ) {
 		if ( !empty( $this->shortcode_name ) ) {
 			$this->Form = $Form;
 			$this->Error = $Error;
@@ -212,7 +205,7 @@ abstract class mw_form_field {
 	 */
 	protected function getChildren( $_children ) {
 		$children = array();
-		if ( !empty( $_children) && !is_array( $_children ) ) {
+		if ( !empty( $_children ) && !is_array( $_children ) ) {
 			$_children = explode( ',', $_children );
 		}
 		if ( is_array( $_children ) ) {
@@ -232,7 +225,12 @@ abstract class mw_form_field {
 	 */
 	protected function _add_mwform_tag_generator() {
 		add_action( 'mwform_tag_generator_dialog', array( $this, 'add_mwform_tag_generator' ) );
-		add_action( 'mwform_tag_generator_option', array( $this, 'mwform_tag_generator_option' ) );
+		if ( $this->type !== 'other' ) {
+			$tag = 'mwform_tag_generator_' . $this->type . '_option';
+		} else {
+			$tag = 'mwform_tag_generator_option';
+		}
+		add_action( $tag, array( $this, 'mwform_tag_generator_option' ) );
 	}
 
 	/**
@@ -242,9 +240,9 @@ abstract class mw_form_field {
 	public function add_mwform_tag_generator() {
 		?>
 		<div id="dialog-<?php echo esc_attr( $this->shortcode_name ); ?>" class="mwform-dialog" title="<?php echo esc_attr( $this->shortcode_name ); ?>">
-			<form>
+			<div class="form">
 				<?php $this->mwform_tag_generator_dialog(); ?>
-			</form>
+			</div>
 		</div>
 		<?php
 	}
@@ -253,7 +251,7 @@ abstract class mw_form_field {
 	 * add_mwform_tag_generator
 	 * タグジェネレータのダイアログを出力。各フォーム項目クラスでオーバーライド
 	 */
-	protected function mwform_tag_generator_dialog() {}
+	public function mwform_tag_generator_dialog( array $options = array() ) {}
 
 	/**
 	 * mwform_tag_generator_option
@@ -264,10 +262,46 @@ abstract class mw_form_field {
 		if ( $this->display_name )
 			$display_name = $this->display_name;
 		?>
-		<option value="<?php echo esc_attr( $this->shortcode_name ); ?>"><?php echo esc_attr( $display_name ); ?></option>
+		<option value="<?php echo esc_attr( $this->shortcode_name ); ?>"><?php echo esc_html( $display_name ); ?></option>
 		<?php
 	}
+
+	/**
+	 * mwform_form_fields
+	 * @param array $form_fields MW_Form_Field を継承したオブジェクトの一覧
+	 * @return array $form_fields
+	 */
+	public function mwform_form_fields( array $form_fields ) {
+		$form_fields = array_merge( $form_fields, array( $this->shortcode_name => $this ) );
+		return $form_fields;
+	}
+
+	/**
+	 * get_display_name
+	 * @return string 表示名
+	 */
+	public function get_display_name() {
+		return $this->display_name;
+	}
+
+	/**
+	 * get_value_for_generator
+	 * MW WP Fomr Generator 用
+	 */
+	public function get_value_for_generator( $key, $options ) {
+		$attributes = array_keys( $this->defaults );
+		$add_allow_attributes = array(
+			'mw-wp-form-generator-notes',
+			'mw-wp-form-generator-display-name'
+		);
+		$attributes = array_merge( $attributes, $add_allow_attributes );
+		$attributes = array_flip( $attributes );
+		if ( isset( $attributes[$key] ) ) {
+			if ( isset( $options[$key] ) ) {
+				return $options[$key];
+			} else {
+				return '';
+			}
+		}
+	}
 }
-
-
-

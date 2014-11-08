@@ -1,31 +1,22 @@
 <?php
 /**
  * Name: MW Form Field Password
- * URI: http://2inc.org
  * Description: パスワードフィールドを出力。
- * Version: 1.4.0
+ * Version: 1.4.3
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: April 5, 2014
- * License: GPL2
- *
- * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License, version 2, as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * Modified: November 2, 2014
+ * License: GPLv2
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
-class mw_form_field_password extends mw_form_field {
+class MW_Form_Field_Password extends MW_Form_Field {
+
+	/**
+	 * string $type フォームタグの種類
+	 * input, select, button, error, other
+	 */
+	public $type = 'input';
 
 	/**
 	 * set_names
@@ -42,32 +33,32 @@ class mw_form_field_password extends mw_form_field {
 	/**
 	 * setDefaults
 	 * $this->defaultsを設定し返す
-	 * @return	Array	defaults
+	 * @return array defaults
 	 */
 	protected function setDefaults() {
 		return array(
-			'name'       => '',
-			'id'         => '',
-			'size'       => 60,
-			'maxlength'  => 255,
-			'value'      => '',
+			'name'        => '',
+			'id'          => '',
+			'size'        => 60,
+			'maxlength'   => 255,
+			'value'       => '',
 			'placeholder' => '',
-			'show_error' => 'true',
+			'show_error'  => 'true',
 		);
 	}
 
 	/**
 	 * inputPage
 	 * 入力ページでのフォーム項目を返す
-	 * @return	String	HTML
+	 * @return string HTML
 	 */
 	protected function inputPage() {
 		$_ret = $this->Form->password( $this->atts['name'], array(
-			'id'        => $this->atts['id'],
-			'size'      => $this->atts['size'],
-			'maxlength' => $this->atts['maxlength'],
-			'value'     => $this->atts['value'],
-			'placeholder'     => $this->atts['placeholder'],
+			'id'          => $this->atts['id'],
+			'size'        => $this->atts['size'],
+			'maxlength'   => $this->atts['maxlength'],
+			'value'       => $this->atts['value'],
+			'placeholder' => $this->atts['placeholder'],
 		) );
 		if ( $this->atts['show_error'] !== 'false' )
 			$_ret .= $this->getError( $this->atts['name'] );
@@ -77,7 +68,7 @@ class mw_form_field_password extends mw_form_field {
 	/**
 	 * confirmPage
 	 * 確認ページでのフォーム項目を返す
-	 * @return	String	HTML
+	 * @return string HTML
 	 */
 	protected function confirmPage() {
 		$value = $this->Form->getValue( $this->atts['name'] );
@@ -88,35 +79,42 @@ class mw_form_field_password extends mw_form_field {
 	 * add_mwform_tag_generator
 	 * フォームタグジェネレーター
 	 */
-	public function mwform_tag_generator_dialog() {
+	public function mwform_tag_generator_dialog( array $options = array() ) {
 		?>
 		<p>
-			<strong>name</strong>
-			<input type="text" name="name" />
+			<strong>name<span class="mwf_require">*</span></strong>
+			<?php $name = $this->get_value_for_generator( 'name', $options ); ?>
+			<input type="text" name="name" value="<?php echo esc_attr( $name ); ?>" />
 		</p>
 		<p>
-			<strong>id(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
-			<input type="text" name="id" />
+			<strong>id</strong>
+			<?php $id = $this->get_value_for_generator( 'id', $options ); ?>
+			<input type="text" name="id" value="<?php echo esc_attr( $id ); ?>" />
 		</p>
 		<p>
-			<strong>size(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
-			<input type="text" name="size" />
+			<strong>size</strong>
+			<?php $size = $this->get_value_for_generator( 'size', $options ); ?>
+			<input type="text" name="size" value="<?php echo esc_attr( $size ); ?>" />
 		</p>
 		<p>
-			<strong>maxlength(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
-			<input type="text" name="maxlength" />
+			<strong>maxlength</strong>
+			<?php $maxlength = $this->get_value_for_generator( 'maxlength', $options ); ?>
+			<input type="text" name="maxlength" value="<?php echo esc_attr( $maxlength ); ?>" />
 		</p>
 		<p>
-			<strong><?php _e( 'Default value', MWF_Config::DOMAIN ); ?>(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
-			<input type="text" name="value" />
+			<strong><?php esc_html_e( 'Default value', MWF_Config::DOMAIN ); ?></strong>
+			<?php $value = $this->get_value_for_generator( 'value', $options ); ?>
+			<input type="text" name="value" value="<?php echo esc_attr( $value ); ?>" />
 		</p>
 		<p>
-			<strong>placeholder(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
-			<input type="text" name="placeholder" />
+			<strong>placeholder</strong>
+			<?php $placeholder = $this->get_value_for_generator( 'placeholder', $options ); ?>
+			<input type="text" name="placeholder" value="<?php echo esc_attr( $placeholder ); ?>" />
 		</p>
 		<p>
-			<strong><?php _e( 'Dsiplay error', MWF_Config::DOMAIN ); ?></strong>
-			<input type="checkbox" name="show_error" value="false" /> <?php _e( 'Don\'t display error.', MWF_Config::DOMAIN ); ?>
+			<strong><?php esc_html_e( 'Dsiplay error', MWF_Config::DOMAIN ); ?></strong>
+			<?php $show_error = $this->get_value_for_generator( 'show_error', $options ); ?>
+			<input type="checkbox" name="show_error" value="false" <?php checked( 'false', $show_error ); ?> /> <?php esc_html_e( 'Don\'t display error.', MWF_Config::DOMAIN ); ?>
 		</p>
 		<?php
 	}

@@ -1,31 +1,22 @@
 <?php
 /**
  * Name: MW Form Field Submit Button
- * URI: http://2inc.org
  * Description: 送信ボタンを出力。
- * Version: 1.4.0
+ * Version: 1.4.3
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: April 5, 2014
- * License: GPL2
- *
- * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License, version 2, as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * Modified: November 2, 2014
+ * License: GPLv2
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
-class mw_form_field_submit extends mw_form_field {
+class MW_Form_Field_Submit extends MW_Form_Field {
+
+	/**
+	 * string $type フォームタグの種類
+	 * input, select, button, error, other
+	 */
+	public $type = 'button';
 
 	/**
 	 * set_names
@@ -42,11 +33,11 @@ class mw_form_field_submit extends mw_form_field {
 	/**
 	 * setDefaults
 	 * $this->defaultsを設定し返す
-	 * @return	Array	defaults
+	 * @return array defaults
 	 */
 	protected function setDefaults() {
 		return array(
-			'name' => '',
+			'name'  => '',
 			'value' => __( 'Send', MWF_Config::DOMAIN ),
 		);
 	}
@@ -54,7 +45,7 @@ class mw_form_field_submit extends mw_form_field {
 	/**
 	 * inputPage
 	 * 入力ページでのフォーム項目を返す
-	 * @return	String	HTML
+	 * @return string HTML
 	 */
 	protected function inputPage() {
 		return $this->Form->submit( $this->atts['name'], $this->atts['value'] );
@@ -63,7 +54,7 @@ class mw_form_field_submit extends mw_form_field {
 	/**
 	 * confirmPage
 	 * 確認ページでのフォーム項目を返す
-	 * @return	String	HTML
+	 * @return string HTML
 	 */
 	protected function confirmPage() {
 		return $this->inputPage( $this->atts );
@@ -73,15 +64,17 @@ class mw_form_field_submit extends mw_form_field {
 	 * add_mwform_tag_generator
 	 * フォームタグジェネレーター
 	 */
-	public function mwform_tag_generator_dialog() {
+	public function mwform_tag_generator_dialog( array $options = array() ) {
 		?>
 		<p>
-			<strong>name</strong>
-			<input type="text" name="name" />
+			<strong>name<span class="mwf_require">*</span></strong>
+			<?php $name = $this->get_value_for_generator( 'name', $options ); ?>
+			<input type="text" name="name" value="<?php echo esc_attr( $name ); ?>" />
 		</p>
 		<p>
-			<strong><?php _e( 'String on the button', MWF_Config::DOMAIN ); ?>(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
-			<input type="text" name="value" />
+			<strong><?php esc_html_e( 'String on the button', MWF_Config::DOMAIN ); ?></strong>
+			<?php $value = $this->get_value_for_generator( 'value', $options ); ?>
+			<input type="text" name="value" value="<?php echo esc_attr( $value ); ?>" />
 		</p>
 		<?php
 	}

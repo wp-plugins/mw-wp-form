@@ -1,31 +1,22 @@
 <?php
 /**
  * Name: MW Form Field Checkbox
- * URI: http://2inc.org
  * Description: チェックボックスを出力。
- * Version: 1.4.0
+ * Version: 1.4.4
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: April 5, 2014
- * License: GPL2
- *
- * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License, version 2, as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * Modified: November 2, 2014
+ * License: GPLv2
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
-class mw_form_field_checkbox extends mw_form_field {
+class MW_Form_Field_Checkbox extends MW_Form_Field {
+
+	/**
+	 * string $type フォームタグの種類
+	 * input, select, button, error, other
+	 */
+	public $type = 'select';
 
 	/**
 	 * set_names
@@ -42,7 +33,7 @@ class mw_form_field_checkbox extends mw_form_field {
 	/**
 	 * setDefaults
 	 * $this->defaultsを設定し返す
-	 * @return	Array	defaults
+	 * @return array defaults
 	 */
 	protected function setDefaults() {
 		return array(
@@ -62,10 +53,11 @@ class mw_form_field_checkbox extends mw_form_field {
 	 */
 	protected function inputPage() {
 		$children = $this->getChildren( $this->atts['children'] );
+		$separator = ( $this->atts['separator'] ) ? $this->atts['separator'] : $this->defaults['separator'];
 		$_ret = $this->Form->checkbox( $this->atts['name'], $children, array(
 			'id'    => $this->atts['id'],
 			'value' => $this->atts['value'],
-		), $this->atts['separator'] );
+		), $separator );
 		if ( $this->atts['show_error'] !== 'false' )
 			$_ret .= $this->getError( $this->atts['name'] );
 		return $_ret;
@@ -74,12 +66,12 @@ class mw_form_field_checkbox extends mw_form_field {
 	/**
 	 * confirmPage
 	 * 確認ページでのフォーム項目を返す
-	 * @return	String	HTML
+	 * @return string HTML
 	 */
 	protected function confirmPage() {
 		$children = $this->getChildren( $this->atts['children'] );
 		$value = $this->Form->getCheckedValue( $this->atts['name'], $children );
-		$_ret  = $value;
+		$_ret  = esc_html( $value );
 		$_ret .= $this->Form->hidden( $this->atts['name'] . '[data]', $value );
 		$_ret .= $this->Form->separator( $this->atts['name'] );
 		return $_ret;
@@ -89,30 +81,40 @@ class mw_form_field_checkbox extends mw_form_field {
 	 * add_mwform_tag_generator
 	 * フォームタグジェネレーター
 	 */
-	public function mwform_tag_generator_dialog() {
+	public function mwform_tag_generator_dialog( array $options = array() ) {
 		?>
 		<p>
-			<strong>name</strong>
-			<input type="text" name="name" />
+			<strong>name<span class="mwf_require">*</span></strong>
+			<?php $name = $this->get_value_for_generator( 'name', $options ); ?>
+			<input type="text" name="name" value="<?php echo esc_attr( $name ); ?>" />
 		</p>
 		<p>
-			<strong>id(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
-			<input type="text" name="id" />
+			<strong>id</strong>
+			<?php $id = $this->get_value_for_generator( 'id', $options ); ?>
+			<input type="text" name="id" value="<?php echo esc_attr( $id ); ?>" />
 		</p>
 		<p>
-			<strong><?php _e( 'Choices', MWF_Config::DOMAIN ); ?>(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
-			<textarea name="children"></textarea>
+			<strong><?php esc_html_e( 'Choices', MWF_Config::DOMAIN ); ?><span class="mwf_require">*</span></strong>
+			<?php $children = "\n" . $this->get_value_for_generator( 'children', $options ); ?>
+			<textarea name="children"><?php echo esc_attr( $children ); ?></textarea>
 			<span class="mwf_note">
-				<?php _e( 'Input one line about one item.', MWF_Config::DOMAIN ); ?>
+				<?php esc_html_e( 'Input one line about one item.', MWF_Config::DOMAIN ); ?>
 			</span>
 		</p>
 		<p>
-			<strong><?php _e( 'Default value', MWF_Config::DOMAIN ); ?>(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
-			<input type="text" name="value" />
+			<strong><?php esc_html_e( 'Default value', MWF_Config::DOMAIN ); ?></strong>
+			<?php $value = $this->get_value_for_generator( 'value', $options ); ?>
+			<input type="text" name="value" value="<?php echo esc_attr( $value ); ?>" />
 		</p>
 		<p>
-			<strong><?php _e( 'Dsiplay error', MWF_Config::DOMAIN ); ?></strong>
-			<input type="checkbox" name="show_error" value="false" /> <?php _e( 'Don\'t display error.', MWF_Config::DOMAIN ); ?>
+			<strong><?php esc_html_e( 'Separator string', MWF_Config::DOMAIN ); ?></strong>
+			<?php $separator = $this->get_value_for_generator( 'separator', $options ); ?>
+			<input type="text" name="separator" size="10" value="<?php echo esc_attr( $separator ); ?>" />
+		</p>
+		<p>
+			<strong><?php esc_html_e( 'Dsiplay error', MWF_Config::DOMAIN ); ?></strong>
+			<?php $show_error = $this->get_value_for_generator( 'show_error', $options ); ?>
+			<input type="checkbox" name="show_error" value="false" <?php checked( 'false', $show_error ); ?> /> <?php esc_html_e( 'Don\'t display error.', MWF_Config::DOMAIN ); ?>
 		</p>
 		<?php
 	}
