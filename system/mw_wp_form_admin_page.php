@@ -2,11 +2,11 @@
 /**
  * Name: MW WP Form Admin Page
  * Description: 管理画面クラス
- * Version: 1.12.0
+ * Version: 1.12.1
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : February 21, 2013
- * Modified: October 14, 2014
+ * Modified: November 2, 2014
  * License: GPLv2
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -38,7 +38,7 @@ class MW_WP_Form_Admin_Page {
 		add_action( 'admin_print_footer_scripts', array( $this, 'add_quicktag' ) );
 		add_action( 'current_screen', array( $this, 'current_screen' ) );
 		add_filter( 'default_content', array( $this, 'default_content' ) );
-		add_action( 'edit_form_after_title', array( $this, 'add_tag_generator' ) );
+		add_action( 'media_buttons', array( $this, 'add_tag_generator' ) );
 	}
 
 	/**
@@ -595,6 +595,9 @@ class MW_WP_Form_Admin_Page {
 				</optgroup>
 				<optgroup label="<?php echo esc_attr_e( 'Button fields', MWF_Config::DOMAIN ); ?>">
 					<?php do_action( 'mwform_tag_generator_button_option' ); ?>
+				</optgroup>
+				<optgroup label="<?php echo esc_attr_e( 'Error fields', MWF_Config::DOMAIN ); ?>">
+					<?php do_action( 'mwform_tag_generator_error_option' ); ?>
 				</optgroup>
 				<optgroup label="<?php echo esc_attr_e( 'Other fields', MWF_Config::DOMAIN ); ?>">
 					<?php do_action( 'mwform_tag_generator_option' ); ?>

@@ -2,11 +2,11 @@
 /**
  * Name: MW Form Field Submit
  * Description: 確認ボタンと送信ボタンを自動出力。
- * Version: 1.4.2
+ * Version: 1.4.3
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: September 3, 2014
+ * Modified: November 2, 2014
  * License: GPLv2
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -14,7 +14,7 @@ class MW_Form_Field_Submit_Button extends MW_Form_Field {
 
 	/**
 	 * string $type フォームタグの種類
-	 * input, select, button, other
+	 * input, select, button, error, other
 	 */
 	public $type = 'button';
 
@@ -68,19 +68,22 @@ class MW_Form_Field_Submit_Button extends MW_Form_Field {
 	 * add_mwform_tag_generator
 	 * フォームタグジェネレーター
 	 */
-	public function mwform_tag_generator_dialog() {
+	public function mwform_tag_generator_dialog( array $options = array() ) {
 		?>
 		<p>
 			<strong>name</strong>
-			<input type="text" name="name" />
+			<?php $name = $this->get_value_for_generator( 'name', $options ); ?>
+			<input type="text" name="name" value="<?php echo esc_attr( $name ); ?>" />
 		</p>
 		<p>
 			<strong><?php esc_html_e( 'String on the confirm button', MWF_Config::DOMAIN ); ?></strong>
-			<input type="text" name="confirm_value" />
+			<?php $confirm_value = $this->get_value_for_generator( 'confirm_value', $options ); ?>
+			<input type="text" name="confirm_value" value="<?php echo esc_attr( $confirm_value ); ?>" />
 		</p>
 		<p>
 			<strong><?php esc_html_e( 'String on the submit button', MWF_Config::DOMAIN ); ?></strong>
-			<input type="text" name="submit_value" />
+			<?php $submit_value = $this->get_value_for_generator( 'submit_value', $options ); ?>
+			<input type="text" name="submit_value" value="<?php echo esc_attr( $submit_value ); ?>" />
 		</p>
 		<?php
 	}

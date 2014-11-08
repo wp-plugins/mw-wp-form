@@ -2,15 +2,21 @@
 /**
  * Name: MW Form Field Error
  * Description: エラーを出力。
- * Version: 1.4.1
+ * Version: 1.4.2
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: July 24, 2014
+ * Modified: November 2, 2014
  * License: GPLv2
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
 class MW_Form_Field_Error extends MW_Form_Field {
+
+	/**
+	 * string $type フォームタグの種類
+	 * input, select, button, error, other
+	 */
+	public $type = 'error';
 
 	/**
 	 * set_names
@@ -61,11 +67,12 @@ class MW_Form_Field_Error extends MW_Form_Field {
 	 * add_mwform_tag_generator
 	 * フォームタグジェネレーター
 	 */
-	public function mwform_tag_generator_dialog() {
+	public function mwform_tag_generator_dialog( array $options = array() ) {
 		?>
 		<p>
 			<strong><?php esc_html_e( 'name of the element which wants to display error', MWF_Config::DOMAIN ); ?></strong>
-			<textarea name="keys"></textarea>
+			<?php $keys = "\n" . $this->get_value_for_generator( 'keys', $options ); ?>
+			<textarea name="keys"><?php echo esc_attr( $keys ); ?></textarea>
 			<span class="mwf_note">
 				<?php esc_html_e( 'Input one line about one item.', MWF_Config::DOMAIN ); ?>
 			</span>

@@ -2,11 +2,11 @@
 /**
  * Name: MW Form Field Confirm Button
  * Description: 確認ボタンを出力。
- * Version: 1.4.3
+ * Version: 1.4.4
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : December 14, 2012
- * Modified: September 5, 2014
+ * Modified: November 2, 2014
  * License: GPLv2
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -14,7 +14,7 @@ class MW_Form_Field_Confirm_Button extends MW_Form_Field {
 
 	/**
 	 * string $type フォームタグの種類
-	 * input, select, button, other
+	 * input, select, button, error, other
 	 */
 	public $type = 'button';
 
@@ -62,11 +62,12 @@ class MW_Form_Field_Confirm_Button extends MW_Form_Field {
 	 * add_mwform_tag_generator
 	 * フォームタグジェネレーター
 	 */
-	public function mwform_tag_generator_dialog() {
+	public function mwform_tag_generator_dialog( array $options = array() ) {
 		?>
 		<p>
-			<strong><?php esc_html_e( 'String on the button', MWF_Config::DOMAIN ); ?>(<?php esc_html_e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
-			<input type="text" name="value" />
+			<strong><?php esc_html_e( 'String on the button', MWF_Config::DOMAIN ); ?></strong>
+			<?php $name = $this->get_value_for_generator( 'name', $options ); ?>
+			<input type="text" name="value" value="<?php echo esc_attr( $name ); ?>" />
 		</p>
 		<?php
 	}

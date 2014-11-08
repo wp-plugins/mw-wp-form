@@ -3,11 +3,11 @@
  * Plugin Name: MW WP Form
  * Plugin URI: http://plugins.2inc.org/mw-wp-form/
  * Description: MW WP Form can create mail form with a confirmation screen.
- * Version: 2.0.0
+ * Version: 2.1.0
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : September 25, 2012
- * Modified: October 14, 2014
+ * Modified: November 2, 2014
  * Text Domain: mw-wp-form
  * Domain Path: /languages/
  * License: GPLv2
@@ -79,6 +79,7 @@ class mw_wp_form {
 		'style' => '',
 		'scroll' => null,
 	);
+	private $form_fields = array();
 
 	/**
 	 * __construct
@@ -127,6 +128,7 @@ class mw_wp_form {
 				new $className();
 			}
 		}
+		$this->form_fields = apply_filters( 'mwform_form_fields', $this->form_fields );
 
 		// バリデーションルールの読み込み、インスタンス化
 		$validation_rules = $this->validation_rules;
@@ -841,11 +843,11 @@ class mw_wp_form {
 
 		// 入力画面・確認画面
 		if ( $this->viewFlg == 'input' || $this->viewFlg == 'confirm' ) {
-			$content = get_the_content();
+			$content = apply_filters( 'mwform_post_content_raw_' . $this->key, get_the_content() );
 			if ( has_filter( 'the_content', 'wpautop' ) ) {
 				$content = wpautop( $content );
 			}
-			$_ret ='[mwform]' . $content . '[/mwform]';
+			$_ret ='[mwform]' . apply_filters( 'mwform_post_content_' . $this->key, $content ) . '[/mwform]';
 		}
 		// 完了画面
 		elseif( $this->viewFlg == 'complete' ) {
@@ -889,10 +891,13 @@ class mw_wp_form {
 				}
 			}
 			$_preview_class = ( $this->viewFlg === 'confirm' ) ? ' mw_wp_form_preview' : '';
+			$style = $this->options_by_formkey['style'];
+			$class_for_style = ( $style ) ? 'mw_wp_form_' . $style : '';
 			return sprintf(
-				'<div id="mw_wp_form_%s" class="mw_wp_form mw_wp_form_%s">%s<!-- end .mw_wp_form --></div>',
+				'<div id="mw_wp_form_%s" class="mw_wp_form mw_wp_form_%s %s">%s<!-- end .mw_wp_form --></div>',
 				esc_attr( $this->key ),
 				esc_attr( $this->viewFlg . $_preview_class ),
+				$class_for_style,
 				$this->Form->start() . do_shortcode( $content ) . $upload_file_hidden . $this->Form->end()
 			);
 		}
