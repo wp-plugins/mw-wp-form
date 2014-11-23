@@ -2,11 +2,11 @@
 /**
  * Name: MW WP Form Contact Data Page
  * Description: DB保存データを扱うクラス
- * Version: 1.2.1
+ * Version: 1.2.2
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : October 10, 2013
- * Modified: September 1, 2014
+ * Modified: November 23, 2014
  * License: GPLv2
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -163,6 +163,9 @@ class MW_WP_Form_Contact_Data_Page {
 			?>
 			<form id="mw-wp-form_csv" method="post" action="<?php echo esc_url( $action ); ?>">
 				<input type="submit" value="<?php esc_attr_e( 'CSV Download', MWF_Config::DOMAIN ); ?>" class="button-primary" />
+				&nbsp;
+				&nbsp;
+				<label><input type="checkbox" name="download-all" value="true" checked="checked" /> Download All</label>
 				<input type="hidden" name="<?php echo esc_attr( MWF_Config::NAME . '-csv-download' ); ?>" value="1" />
 				<?php wp_nonce_field( MWF_Config::NAME ); ?>
 			</form>
@@ -185,10 +188,28 @@ class MW_WP_Form_Contact_Data_Page {
 			isset( $_POST[MWF_Config::NAME . '-csv-download'] ) &&
 			check_admin_referer( MWF_Config::NAME ) ) {
 
+			// posts_per_page
+			$posts_per_page = -1;
+			if ( ( isset( $_POST['download-all'] ) && $_POST['download-all'] === 'true' ) === false ) {
+				$current_user = wp_get_current_user();
+				$_posts_per_page = get_user_meta( $current_user->ID, 'edit_' . $post_type . '_per_page', true );
+				if ( !empty( $_posts_per_page ) ) {
+					$posts_per_page = $_posts_per_page;
+				}
+			}
+
+			// paged
+			$paged = 1;
+			$_paged = $_GET['paged'];
+			if ( !empty( $_paged ) && MWF_Functions::is_numeric( $_paged ) && $posts_per_page > 0 ) {
+				$paged = $_paged;
+			}
+
 			$posts_mwf = get_posts( array(
-				'post_type' => $post_type,
-				'posts_per_page' => -1,
-				'post_status' => 'any',
+				'post_type'      => $post_type,
+				'posts_per_page' => $posts_per_page,
+				'paged'          => $paged,
+				'post_status'    => 'any',
 			) );
 			$csv = '';
 
@@ -532,12 +553,11 @@ class MW_WP_Form_Contact_Data_Page {
 	 * @return numeric 投稿数
 	 */
 	private function get_count( $post_type ) {
-		global $wpdb;
-		$posts_contact = get_posts( array(
+		$query = new WP_Query( array(
 			'post_type' => $post_type,
-			'posts_per_page' => -1,
+			'posts_per_page' => 1,
 		) );
-		return count( $posts_contact );
+		return $query->found_posts;
 	}
 
 	/**
