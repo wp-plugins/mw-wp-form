@@ -2,11 +2,11 @@
 /**
  * Name: MW WP Form Admin Page
  * Description: 管理画面クラス
- * Version: 1.12.1
+ * Version: 1.12.2
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : February 21, 2013
- * Modified: November 2, 2014
+ * Modified: November 26, 2014
  * License: GPLv2
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -39,6 +39,8 @@ class MW_WP_Form_Admin_Page {
 		add_action( 'current_screen', array( $this, 'current_screen' ) );
 		add_filter( 'default_content', array( $this, 'default_content' ) );
 		add_action( 'media_buttons', array( $this, 'add_tag_generator' ) );
+		add_filter( 'manage_posts_columns', array( $this, 'manage_posts_columns' ) );
+		add_action( 'manage_posts_custom_column', array( $this, 'manage_posts_custom_column' ), 10, 2 );
 	}
 
 	/**
@@ -577,10 +579,13 @@ class MW_WP_Form_Admin_Page {
 	/**
 	 * add_tag_generator
 	 * タグジェネレータを出力
+	 * @param string $editor_id
 	 */
-	public function add_tag_generator() {
+	public function add_tag_generator( $editor_id ) {
 		$post_type = get_post_type();
 		if ( $post_type !== MWF_Config::NAME )
+			return;
+		if ( $editor_id !== 'content' )
 			return;
 		do_action( 'mwform_tag_generator_dialog' );
 		?>
@@ -606,5 +611,35 @@ class MW_WP_Form_Admin_Page {
 			<span class="button"><?php esc_html_e( 'Add form tag', MWF_Config::DOMAIN ); ?></span>
 		</div>
 		<?php
+	}
+
+	/**
+	 * manage_posts_columns
+	 * @param array $columns
+	 * @return array $columns
+	 */
+	public function manage_posts_columns( $columns ) {
+		$post_type = get_post_type();
+		if ( $post_type !== MWF_Config::NAME )
+			return $columns;
+		$date = $columns['date'];
+		unset( $columns['date'] );
+		$columns['mwform_form_key'] = __( 'Form Key', MWF_Config::DOMAIN );
+		$columns['date'] = $date;
+		return $columns;
+	}
+
+	/**
+	 * manage_posts_custom_column
+	 * @param string $column_name
+	 * @param int $post_id
+	 */
+	public function manage_posts_custom_column( $column_name, $post_id ) {
+		if ( $column_name === 'mwform_form_key' ) {
+			printf(
+				'<span id="formkey_field">[mwform_formkey key="%d"]</span>',
+				get_the_ID()
+			);
+		}
 	}
 }
