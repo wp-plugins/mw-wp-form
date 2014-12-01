@@ -1,10 +1,10 @@
 === MW WP Form ===
 Contributors: inc2734, ryu263
 Donate link: http://www.amazon.co.jp/registry/wishlist/39ANKRNSTNW40
-Tags: plugin, form, confirm, preview, shortcode, mail, chart, graph
+Tags: plugin, form, confirm, preview, shortcode, mail, chart, graph, html, contact form, form creation, form creator, form manager, form builder, custom form
 Requires at least: 3.7
 Tested up to: 4.0
-Stable tag: 2.1.2
+Stable tag: 2.1.3
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -70,6 +70,10 @@ Do you have questions or issues with MW WP Form? Use these support channels appr
 5. Supports chart display of saved inquiry data.
 
 == Changelog ==
+
+= 2.1.3 =
+* Bug fix : Fixed a bug that number of newline characters are different by the environment.
+* Changed : Modified to ignore uppercase letters of lowercase letters at the file type validation.
 
 = 2.1.2 =
 * Added   : Added form key in list of MW WP Form page.
