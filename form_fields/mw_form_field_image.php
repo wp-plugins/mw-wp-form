@@ -1,31 +1,22 @@
 <?php
 /**
  * Name: MW Form Field Image
- * URI: http://2inc.org
  * Description: 画像アップロードフィールドを出力。
- * Version: 1.4.0
+ * Version: 1.4.4
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : May 17, 2013
- * Modified: April 5, 2014
- * License: GPL2
- *
- * Copyright 2014 Takashi Kitajima (email : inc@2inc.org)
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License, version 2, as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * Modified: November 2, 2014
+ * License: GPLv2
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
-class mw_form_field_image extends mw_form_field {
+class MW_Form_Field_Image extends MW_Form_Field {
+
+	/**
+	 * string $type フォームタグの種類
+	 * input, select, button, error, other
+	 */
+	public $type = 'input';
 
 	/**
 	 * set_names
@@ -42,13 +33,12 @@ class mw_form_field_image extends mw_form_field {
 	/**
 	 * setDefaults
 	 * $this->defaultsを設定し返す
-	 * @return	Array	defaults
+	 * @return array defaults
 	 */
 	protected function setDefaults() {
 		return array(
 			'name' => '',
 			'id'   => '',
-			'size' => 60,
 			'show_error' => 'true',
 		);
 	}
@@ -60,8 +50,7 @@ class mw_form_field_image extends mw_form_field {
 	 */
 	protected function inputPage() {
 		$_ret = $this->Form->file( $this->atts['name'], array(
-			'id'   => $this->atts['id'],
-			'size' => $this->atts['size'],
+			'id' => $this->atts['id'],
 		) );
 		$value = $this->Form->getValue( $this->atts['name'] );
 
@@ -103,23 +92,22 @@ class mw_form_field_image extends mw_form_field {
 	 * add_mwform_tag_generator
 	 * フォームタグジェネレーター
 	 */
-	public function mwform_tag_generator_dialog() {
+	public function mwform_tag_generator_dialog( array $options = array() ) {
 		?>
 		<p>
-			<strong>name</strong>
-			<input type="text" name="name" />
+			<strong>name<span class="mwf_require">*</span></strong>
+			<?php $name = $this->get_value_for_generator( 'name', $options ); ?>
+			<input type="text" name="name" value="<?php echo esc_attr( $name ); ?>" />
 		</p>
 		<p>
-			<strong>id(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
-			<input type="text" name="id" />
+			<strong>id</strong>
+			<?php $id = $this->get_value_for_generator( 'id', $options ); ?>
+			<input type="text" name="id" value="<?php echo esc_attr( $id ); ?>" />
 		</p>
 		<p>
-			<strong>size(<?php _e( 'option', MWF_Config::DOMAIN ); ?>)</strong>
-			<input type="text" name="size" />
-		</p>
-		<p>
-			<strong><?php _e( 'Dsiplay error', MWF_Config::DOMAIN ); ?></strong>
-			<input type="checkbox" name="show_error" value="false" /> <?php _e( 'Don\'t display error.', MWF_Config::DOMAIN ); ?>
+			<strong><?php esc_html_e( 'Dsiplay error', MWF_Config::DOMAIN ); ?></strong>
+			<?php $show_error = $this->get_value_for_generator( 'show_error', $options ); ?>
+			<input type="checkbox" name="show_error" value="false" <?php checked( 'false', $show_error ); ?> /> <?php esc_html_e( 'Don\'t display error.', MWF_Config::DOMAIN ); ?>
 		</p>
 		<?php
 	}

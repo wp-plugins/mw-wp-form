@@ -1,11 +1,11 @@
 === MW WP Form ===
-Contributors: inc2734
+Contributors: inc2734, ryu263
 Donate link: http://www.amazon.co.jp/registry/wishlist/39ANKRNSTNW40
-Tags: plugin, form, confirm, preview, shortcode, mail
-Requires at least: 3.4
-Tested up to: 3.8.1
-Stable tag: 1.5.1
-License: GPLv2 or later
+Tags: plugin, form, confirm, preview, shortcode, mail, chart, graph, html, contact form, form creation, form creator, form manager, form builder, custom form
+Requires at least: 3.7
+Tested up to: 4.0
+Stable tag: 2.1.3
+License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 MW WP Form can create mail form with a confirmation screen using shortcode.
@@ -15,9 +15,11 @@ MW WP Form can create mail form with a confirmation screen using shortcode.
 MW WP Form can create mail form with a confirmation screen using shortcode.
 
 * Form created using shortcodes
-* Using confirmation page
+* Using confirmation page is possible.
 * The page changes by the same URL or individual URL are possible.
 * Many validation rules
+* Saving contact data is possible.
+* Displaying Chart using saved contact data is possible.
 
 MW WP Form はショートコードを使って確認画面付きのメールフォームを作成することができるプラグインです。
 
@@ -25,10 +27,21 @@ MW WP Form はショートコードを使って確認画面付きのメールフ
 * 確認画面が表示可能
 * 同一URL・個別URLでの画面変遷が可能
 * 豊富なバリデーションルール
+* 問い合わせデータを保存可能
+* 保存した問い合わせデータをグラフ可能
 
 = Official =
 
 http://plugins.2inc.org/mw-wp-form/
+
+= GitHub =
+
+https://github.com/inc2734/mw-wp-form
+
+= The following third-party resources =
+
+Google Charts 
+Source: https://developers.google.com/chart/
 
 = Contributors =
 
@@ -50,9 +63,143 @@ Do you have questions or issues with MW WP Form? Use these support channels appr
 
 == Screenshots ==
 
-1. screenshot-1.png
+1. Form creation page.
+2. Form item create box. You can easily insert the form.
+3. Supports saving inquiry data to database.
+4. List page of inquiry data that has been saved.
+5. Supports chart display of saved inquiry data.
 
 == Changelog ==
+
+= 2.1.3 =
+* Bug fix : Fixed a bug that number of newline characters are different by the environment.
+* Changed : Modified to ignore uppercase letters of lowercase letters at the file type validation.
+
+= 2.1.2 =
+* Added   : Added form key in list of MW WP Form page.
+* Bug fix : Fixed a bug that "add form tag button" is displayed in complete message area.
+
+= 2.1.1 =
+* Added   : Added CSV Download option.
+* Added   : Added an option to vertically display in Radio and Checkbox.
+* Changed : Optimization of the number display processing of saving contact data.
+* Changed : Change separator of checkbox in confirm page.
+
+= 2.1.0 =
+* Added   : Add filter_hook mwform_post_content_raw_mw-wp-form-xxx.
+* Added   : Add filter_hook mwform_post_content_mw-wp-form-xxx.
+* Added   : Add filter_hook mwform_form_fields.
+* Added   : Add "Error" form type.
+* Changed : MW_Form_Field::mwform_tag_generator_dialog() method needs $options argument.
+* Changed : Zip code field and Tel field are wrapped by span tag.
+* Bug fix : Empty separator is changed to not allow in checkbox field.
+* Bug fix : Fix add form tag button css bug.
+
+= 2.0.0 =
+* Added   : Add scrolling of screen transition setting.
+* Added   : Add filter_hook mwform_scroll_offset_mw-wp-form-xxx.
+* Added   : Support auto tracking number.
+* Added   : Add filter_hook mwform_tracking_number_title_mw-wp-form-xxx.
+
+= 1.9.4 =
+* Bug fix : Fix HTML structures.
+* Bug fix : Fix bug that does not display image of image field in SSL.
+* Bug fix : Fix bug that does not display link of file field in SSL.
+
+= 1.9.3 =
+* Bug fix : Fix bug that would be escaped in double.
+* Bug fix : Fix uninstall process.
+
+= 1.9.2 =
+* Bug fix : Fix comment in mwform_confirmButton dialogbox.
+* Bug fix : Fix bug in stacking order of the dialog in WordPress 4.0.
+
+= 1.9.1 =
+* Changed : Easy to see change the form tag insertion selectbox.
+* Deleted : Delete size attribute in file or image field.
+* Bug fix : Fix bug that there are cases where the page chache does not disabled on Nginx.
+
+= 1.9.0 =
+* Added   : Add chart function.
+* Added   : Add separator attribute in checkbox tag generator.
+* Bug fix : Fix bug that can not change display option in saving contact data list page.
+* Bug fix : Fix bug that display wrong number of inquiries.
+
+= 1.8.4 =
+* Bug fix : Fix bug that can not be set maxlength in mwform_text shortcode.
+
+= 1.8.3 =
+* Bug fix : Fix bug that file is not uploaded when validation is not set in the file field.
+
+= 1.8.2 =
+* Bug fix : Fix bug that PHP error is displayed in file type validation.
+* Bug fix : Fix bug that PHP error is displayed in admin page.
+* Changed : Change to upload file even if there is a validation error in other fields.
+* Changed : Change to display by scrolling when width of list of stored data is wide.
+
+= 1.8.1 =
+* Bug fix : Fix PHP error under PHP 5.3.0
+* Bug fix : Fix bug that are not validated of noEmpty in zip and tel field.
+* Bug fix : Fix bug that error is displayed if the validation that was registered is disabled.
+
+= 1.8.0 =
+* Added   : Add mwform_validation_rules filter hook.
+* Added   : Add API to get the data for mail.
+* Added   : Add setting of response status in saved contact data.
+* Added   : Add response status and memo in csv.
+* Added   : Add returning link from detail of database saving data to list page.
+* Changed : Form field is empty if seted null in value of shortcode.
+* Changed : WordPress 3.7 higher is required.
+
+= 1.7.2 =
+* Bug fix : XSS vulnerability fix.
+
+= 1.7.1 =
+* Bug fix : Fixed a bug that MW WP Form's shortcodes doesn't parse in the nested shortcode.
+
+= 1.7.0 =
+* Added   : X-Accel-Expires param in header.
+* Added   : Add CC setting in admin mail setting.
+* Added   : Add BCC setting in admin mail setting.
+* Added   : X-Accel-Expires param in header.
+* Changed : Data store has been changed to Transient API from PHP SESSION.
+* Changed : Nonce check system has been changed to WordPress nonce check system from original.
+* Changed : Accept space in katakana validation.
+* Changed : Accept space in hiragana validation.
+* Changed : The way of isplaying attached files has been changed to URL from ID in csv file.
+* Changed : Require WordPress Version 3.5
+* Bug fix : Fixed a bug that sender not set at email when {sender} and {e-mail} in mail settings were conversion blank.
+
+= 1.6.1 =
+* Bug fix : Support Akismet 3.0.0
+* Changed : Support psd, ai, eps file upload.
+
+= 1.6.0 =
+* Changed : Changed Redirection flow.
+* Changed : If querystring setting is set and doesn't get post from querystring, return empty.
+* Changed : When a URL doesn't begin http or https in URL settings, home_url() is complemented.
+* Added   : {xxx} ( e.g. {post_title} ) get post property from the now post if querystring setting does't set.
+* Added   : Repeat submitting came to be blocked.
+* Bug fix : Fixed translation mistake in admin page.
+* Bug fix : Fixed selected file reset button bug on file field.
+* Bug fix : Fixed bug that not to work rightly when setting noempty validation in image or file field.
+
+= 1.5.6 =
+* Bug fix : Fix selected file reset button bug in Firefox.
+* Changed : Change file field's default size attribute.
+
+= 1.5.5 =
+* Added   : Selected file reset button has been added.
+
+= 1.5.4 =
+* Bug fix : Fix spelling mistake in admin page.
+* Added   : Convert full-pitch character to half character in text shortcode.
+
+= 1.5.3 =
+* Bug fix : Fixed a bug where <br> is added in textarea.
+
+= 1.5.2 =
+* Bug fix : Datapicker starting a new line.
 
 = 1.5.1 =
 * Bug fix : Fix wpautop bug.
@@ -60,13 +207,13 @@ Do you have questions or issues with MW WP Form? Use these support channels appr
 = 1.5.0 =
 * Deleted   : Delete qtags.
 * Bug fix   : Fix inquiery data are not saved when admin mail content is empty.
-* Bug fix   : Fix bug that don't start a new line.
+* Bug fix   : Fix bug that doesn't start a new line.
 * Added     : Add filter_hook mwform_admin_mail_raw_mw-wp-form-xxx.
 * Added     : Add filter_hook mwform_auto_mail_raw_mw-wp-form-xxx.
 * Deprecated: Deprecated mw_form_field::set_qtags()
 
 = 1.4.1 =
-* Changed : Changed flow to read saving inquiry data.
+* Changed : Change flow to read saving inquiry data.
 * Bug fix : Fix tel validation.
 
 = 1.4.0 =
