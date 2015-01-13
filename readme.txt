@@ -3,12 +3,12 @@ Contributors: inc2734, ryu263
 Donate link: http://www.amazon.co.jp/registry/wishlist/39ANKRNSTNW40
 Tags: plugin, form, confirm, preview, shortcode, mail, chart, graph, html, contact form, form creation, form creator, form manager, form builder, custom form
 Requires at least: 3.7
-Tested up to: 4.0
-Stable tag: 2.1.3
+Tested up to: 4.1
+Stable tag: 2.2.0
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-MW WP Form can create mail form with a confirmation screen using shortcode.
+MW WP Form is shortcode base contact form plugin. This plugin have many feature. For example you can use many validation rules, contact data saving, and chart aggregation using saved contact data.
 
 == Description ==
 
@@ -70,6 +70,20 @@ Do you have questions or issues with MW WP Form? Use these support channels appr
 5. Supports chart display of saved inquiry data.
 
 == Changelog ==
+
+= 2.2.0 =
+* Refactoring
+* Bug fix : Fixed a mwform_tracking_number_title filter hook bug.
+* Bug fix : Fixed a bug that can not set the more than 2 default values of the checkbox.
+* Bug fix : Fixed a bug that double quotation of shortcodes are escaped in manual form.
+* Changed : Class name changed MW_Form_Field to MW_WP_Form_Abstract_Form_Field.
+* Changed : Class name changed MW_Validation_Rule to MW_WP_Form_Abstract_Validation_Rule.
+* Changed : Zip or Tel validation can use Japanese only.
+* Changed : Zip or Tel field can use Japanese only.
+* Added   : You can set a different value in the key and display value for children of checkbox, select, radio. For xample, [mwform_checkbox name="hoge" children="key1:value1,key2:value2"]
+
+= 2.1.4 =
+* Bug fix : Fixed a bug that data lost when there are multiple same name radio buttons and checkboxes.
 
 = 2.1.3 =
 * Bug fix : Fixed a bug that number of newline characters are different by the environment.
