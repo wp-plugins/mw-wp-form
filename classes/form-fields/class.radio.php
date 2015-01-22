@@ -2,11 +2,11 @@
 /**
  * Name       : MW WP Form Field Radio
  * Description: ラジオボタンを出力
- * Version    : 1.5.0
+ * Version    : 1.5.2
  * Author     : Takashi Kitajima
  * Author URI : http://2inc.org
  * Created    : December 14, 2012
- * Modified   : January 2, 2015
+ * Modified   : January 22, 2015
  * License    : GPLv2
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -59,6 +59,7 @@ class MW_WP_Form_Field_Radio extends MW_WP_Form_Abstract_Form_Field {
 			'value'      => $this->atts['value'],
 			'vertically' => $this->atts['vertically'],
 		) );
+		$_ret .= $this->Form->children( $this->atts['name'], $children );
 		if ( $this->atts['show_error'] !== 'false' ) {
 			$_ret .= $this->get_error( $this->atts['name'] );
 		}
@@ -71,10 +72,12 @@ class MW_WP_Form_Field_Radio extends MW_WP_Form_Abstract_Form_Field {
 	 * @return string HTML
 	 */
 	protected function confirm_page() {
-		$children = $this->get_children( $this->atts['children'] );
-		$value = $this->Form->get_radio_value( $this->atts['name'], $children );
-		$_ret  = esc_html( $value );
-		$_ret .= $this->Form->hidden( $this->atts['name'], $value );
+		$children     = $this->get_children( $this->atts['children'] );
+		$value        = $this->Form->get_radio_value( $this->atts['name'], $children );
+		$posted_value = $this->Form->get_raw( $this->atts['name'] );
+		$_ret         = esc_html( $value );
+		$_ret        .= $this->Form->hidden( $this->atts['name'], $posted_value );
+		$_ret        .= $this->Form->children( $this->atts['name'], $children );
 		return $_ret;
 	}
 
