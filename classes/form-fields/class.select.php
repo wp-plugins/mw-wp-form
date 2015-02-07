@@ -2,11 +2,11 @@
 /**
  * Name       : MW WP Form Field Select
  * Description: セレクトボックスを出力
- * Version    : 1.5.0
+ * Version    : 1.5.3
  * Author     : Takashi Kitajima
  * Author URI : http://2inc.org
  * Created    : December 14, 2012
- * Modified   : January 2, 2015
+ * Modified   : February 6, 2015
  * License    : GPLv2
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -57,6 +57,7 @@ class MW_WP_Form_Field_Select extends MW_WP_Form_Abstract_Form_Field {
 			'id'    => $this->atts['id'],
 			'value' => $this->atts['value'],
 		) );
+		$_ret .= $this->Form->children( $this->atts['name'], $children );
 		if ( $this->atts['show_error'] !== 'false' ) {
 			$_ret .= $this->get_error( $this->atts['name'] );
 		}
@@ -69,10 +70,12 @@ class MW_WP_Form_Field_Select extends MW_WP_Form_Abstract_Form_Field {
 	 * @return string HTML
 	 */
 	protected function confirm_page() {
-		$children = $this->get_children( $this->atts['children'] );
-		$value = $this->Form->get_selected_value( $this->atts['name'], $children );
-		$_ret  = esc_html( $value );
-		$_ret .= $this->Form->hidden( $this->atts['name'], $value );
+		$children     = $this->get_children( $this->atts['children'] );
+		$value        = $this->Form->get_selected_value( $this->atts['name'], $children );
+		$posted_value = $this->Form->get_raw( $this->atts['name'] );
+		$_ret         = esc_html( $value );
+		$_ret        .= $this->Form->hidden( $this->atts['name'], $posted_value );
+		$_ret        .= $this->Form->children( $this->atts['name'], $children );
 		return $_ret;
 	}
 
@@ -98,7 +101,9 @@ class MW_WP_Form_Field_Select extends MW_WP_Form_Abstract_Form_Field {
 			<textarea name="children"><?php echo esc_attr( $children ); ?></textarea>
 			<span class="mwf_note">
 				<?php esc_html_e( 'Input one line about one item.', MWF_Config::DOMAIN ); ?><br />
-				<?php esc_html_e( 'Example: value1&crarr;value2 or key1:value1&crarr;key2:value2', MWF_Config::DOMAIN ); ?>
+				<?php esc_html_e( 'Example: value1&crarr;value2 or key1:value1&crarr;key2:value2', MWF_Config::DOMAIN ); ?><br />
+				<?php esc_html_e( 'You can split the post value and display value by ":". But display value is sent in e-mail.', MWF_Config::DOMAIN ); ?><br />
+				<?php esc_html_e( 'When you want to use ":", please enter "::".', MWF_Config::DOMAIN ); ?>
 			</span>
 		</p>
 		<p>
