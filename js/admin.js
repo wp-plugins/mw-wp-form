@@ -9,12 +9,9 @@ jQuery( function( $ ) {
 		$( '#mw-wp-form_complete_message_metabox input[id^="qt_mw-wp-form_complete_message_mwform_"]' ).remove();
 	} );
 
-} );
-
-/**
- * フォームタグジェネレータ
- */
-jQuery( function( $ ) {
+	/**
+	 * フォームタグジェネレータ
+	 */
 	function mwform_create_shortcode( dialog_id ) {
 		var shortcode = [];
 		var shortcode_name = dialog_id.replace( 'dialog-', '' );
@@ -60,7 +57,7 @@ jQuery( function( $ ) {
 				send_to_editor( mwform_create_shortcode( $( this ).attr( 'id' ) ) );
 				$( this ).dialog( 'close' );
 			},
-			'Cansel': function() {
+			'Cancel': function() {
 				$( this ).dialog( 'close' );
 			}
 		},
@@ -70,5 +67,13 @@ jQuery( function( $ ) {
 	$( '.add-mwform-btn .button' ).click( function() {
 		var select = $( '.add-mwform-btn select' ).val();
 		$( '#dialog-' + select ).dialog( 'open' );
+	} );
+
+	/**
+	 * sortable
+	 */
+	$( '#mw-wp-form_validation .repeatable-boxes' ).sortable( {
+		items : '> .repeatable-box',
+		handle: '.sortable-icon-handle'
 	} );
 } );
