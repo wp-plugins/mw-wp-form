@@ -3,8 +3,8 @@ Contributors: inc2734, ryu263
 Donate link: http://www.amazon.co.jp/registry/wishlist/39ANKRNSTNW40
 Tags: plugin, form, confirm, preview, shortcode, mail, chart, graph, html, contact form, form creation, form creator, form manager, form builder, custom form
 Requires at least: 3.7
-Tested up to: 4.1
-Stable tag: 2.2.7
+Tested up to: 4.1.1
+Stable tag: 2.3.0
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -70,6 +70,19 @@ Do you have questions or issues with MW WP Form? Use these support channels appr
 5. Supports chart display of saved inquiry data.
 
 == Changelog ==
+
+= 2.3.0 =
+* Refactoring mail sending part.
+* Added   : Add "Send value by e-mail" option for checkbox, select, radio.
+* Added   : Add filter hook mwform_custom_mail_tag_mw-wp-form-xxx.
+* Added   : Add filter hook mwform_contact_data_post_type.
+* Added   : Add filter hook mwform_get_inquiry_data_args-mwf_xxx
+* Added   : Add debug mode. no send mail and logging when set "define( 'MWFORM_DEBUG', true );".
+* Added   : Add filter hook mwform_log_directory.
+* Changed : Refactoring admin pages.
+* Changed : Changed generating method of file name that uploaded.
+* Bugfix  : Fixed ai, psd, eps file upload bug.
+* Bugfix  : Fix typo.
 
 = 2.2.7 =
 * Changed : Changed to be able to use ":" as value at checkbox, select, radio.
