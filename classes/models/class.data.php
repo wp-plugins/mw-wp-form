@@ -2,11 +2,11 @@
 /**
  * Name       : MW WP Form Data
  * Description: MW WP Form のデータ操作用
- * Version    : 1.3.1
+ * Version    : 1.3.5
  * Author     : Takashi Kitajima
  * Author URI : http://2inc.org
  * Created    : October 10, 2013
- * Modified   : January 14, 2015
+ * Modified   : January 28, 2015
  * License    : GPLv2
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -292,12 +292,45 @@ class MW_WP_Form_Data {
 					return;
 				}
 				if ( is_array( $this->data[$key]['data'] ) ) {
+					if ( isset( $this->data['__children'][$key] ) ) {
+						$children = json_decode( $this->data['__children'][$key], true );
+						return $this->get_separated_value( $key, $children );
+					}
 					return $this->get_separated_value( $key );
 				} else {
-					return $this->data[$key]['data'];
+					$value = $this->data[$key]['data'];
+					if ( isset( $this->data['__children'][$key] ) ) {
+						$children = json_decode( $this->data['__children'][$key], true );
+						$separator = $this->get_separator_value( $key );
+						$array_value = explode( $separator, $value );
+						$right_value = array();
+						foreach ( $array_value as $v ) {
+							if ( isset( $children[$v] ) ) {
+								$right_value[] = $children[$v];
+							}
+						}
+						return implode( $separator, $right_value );
+					}
+					return $value;
 				}
 			} else {
-				return $this->data[$key];
+				return $this->get_raw( $key );
+			}
+		}
+	}
+
+	/**
+	 * get_in_children
+	 * $children の中に値が含まれているときだけ返す
+	 * @param string $key name属性
+	 * @param array $children
+	 * @return string
+	 */
+	public function get_in_children( $key, array $children ) {
+		$value = $this->get_raw( $key );
+		if ( !is_null( $value ) && !is_array( $value ) ) {
+			if ( isset( $children[$value] ) ) {
+				return $children[$value];
 			}
 		}
 	}
@@ -324,14 +357,14 @@ class MW_WP_Form_Data {
 
 	/**
 	 * get_separated_value
-	 * 配列データを整形して返す ( 郵便番号等用 )
+	 * 配列データを整形して返す ( 郵便番号等用 )。配列の場合は表示値を連結して返す
 	 * @param string $key name属性
 	 * @param array $children 選択肢
 	 * @return string データ
 	 */
 	public function get_separated_value( $key, array $children = array() ) {
 		$separator = $this->get_separator_value( $key );
-		$value = $this->get_raw( $key );
+		$value     = $this->get_raw( $key );
 		if ( is_array( $value ) && isset( $value['data'] ) && is_array( $value['data'] ) && !empty( $separator ) ) {
 			if ( $children ) {
 				$rightData = array();
@@ -342,13 +375,7 @@ class MW_WP_Form_Data {
 				}
 				return implode( $separator, $rightData );
 			} else {
-				// すべて空のからのときはimplodeしないように（---がいってしまうため）
-				foreach ( $value['data'] as $child ) {
-					if ( $child !== '' && $child !== null ) {
-						return implode( $separator, $value['data'] );
-					}
-				}
-				return '';
+				return $this->get_separated_value_not_children_set( $value['data'], $separator );
 			}
 		}
 	}
@@ -358,6 +385,47 @@ class MW_WP_Form_Data {
 			'MW_WP_Form_Data::get_separated_value()'
 		);
 		return $this->get_separated_value( $key );
+	}
+
+	/**
+	 * get_separated_raw_value
+	 * 配列データを整形して返す ( チェックボックス等用 )。配列の場合はpost値を連結して返す
+	 * @param string $key name属性
+	 * @param array $children 選択肢
+	 * @return string データ
+	 */
+	public function get_separated_raw_value( $key, array $children = array() ) {
+		$separator = $this->get_separator_value( $key );
+		$value     = $this->get_raw( $key );
+		if ( is_array( $value ) && isset( $value['data'] ) && is_array( $value['data'] ) && !empty( $separator ) ) {
+			if ( $children ) {
+				$rightData = array();
+				foreach ( $value['data'] as $child ) {
+					if ( isset( $children[$child] ) && !in_array( $child, $rightData ) ) {
+						$rightData[] = $child;
+					}
+				}
+				return implode( $separator, $rightData );
+			} else {
+				return $this->get_separated_value_not_children_set( $value['data'], $separator );
+			}
+		}
+	}
+
+	/**
+	 * get_separated_value_not_children_set
+	 * すべて空のからのときはimplodeしないように（---がいってしまうため）
+	 * @param array $data
+	 * @param string $separator
+	 * @return string
+	 */
+	protected function get_separated_value_not_children_set( array $data, $separator ) {
+		foreach ( $data as $child ) {
+			if ( $child !== '' && $child !== null ) {
+				return implode( $separator, $data );
+			}
+		}
+		return '';
 	}
 
 	/**
