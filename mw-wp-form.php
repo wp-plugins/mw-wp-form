@@ -3,11 +3,11 @@
  * Plugin Name: MW WP Form
  * Plugin URI: http://plugins.2inc.org/mw-wp-form/
  * Description: MW WP Form is shortcode base contact form plugin. This plugin have many feature. For example you can use many validation rules, contact data saving, and chart aggregation using saved contact data.
- * Version: 2.3.4
+ * Version: 2.3.5
  * Author: Takashi Kitajima
  * Author URI: http://2inc.org
  * Created : September 25, 2012
- * Modified: March 18, 2015
+ * Modified: March 26, 2015
  * Text Domain: mw-wp-form
  * Domain Path: /languages/
  * License: GPLv2
@@ -176,6 +176,10 @@ class MW_WP_Form {
 	 * 管理画面（カスタム投稿タイプ）の設定
 	 */
 	public function register_post_type() {
+		if ( !current_user_can( MWF_Config::CAPABILITY ) && is_admin() ) {
+			return;
+		}
+
 		// MW WP Form のフォーム設定を管理する投稿タイプ
 		register_post_type( MWF_Config::NAME, array(
 			'label'    => 'MW WP Form',
