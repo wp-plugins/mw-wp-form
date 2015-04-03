@@ -2,32 +2,32 @@
 /**
  * Name       : MW WP Form Validation Rule Mail
  * Description: 値がメールアドレス
- * Version    : 1.1.0
+ * Version    : 1.1.1
  * Author     : Takashi Kitajima
  * Author URI : http://2inc.org
  * Created    : July 21, 2014
- * Modified   : December 31, 2014
+ * Modified   : April 1, 2015
  * License    : GPLv2
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
 class MW_WP_Form_Validation_Rule_Mail extends MW_WP_Form_Abstract_Validation_Rule {
 
 	/**
-	 * $name
 	 * バリデーションルール名を指定
 	 * @var string
 	 */
 	protected $name = 'mail';
 
 	/**
-	 * rule
+	 * バリデーションチェック
+	 *
 	 * @param string $key name属性
 	 * @param array $option
 	 * @return string エラーメッセージ
 	 */
 	public function rule( $key, array $options = array() ) {
 		$value = $this->Data->get( $key );
-		if ( !is_null( $value ) && !MWF_Functions::is_empty( $value ) ) {
+		if ( !MWF_Functions::is_empty( $value ) ) {
 			if ( !preg_match( '/^[^@]+@([^@^\.]+\.)+[^@^\.]+$/', $value ) ) {
 				$defaults = array(
 					'message' => __( 'This is not the format of a mail address.', MWF_Config::DOMAIN )
@@ -39,7 +39,8 @@ class MW_WP_Form_Validation_Rule_Mail extends MW_WP_Form_Abstract_Validation_Rul
 	}
 
 	/**
-	 * admin
+	 * 設定パネルに追加
+	 *
 	 * @param numeric $key バリデーションルールセットの識別番号
 	 * @param array $value バリデーションルールセットの内容
 	 */

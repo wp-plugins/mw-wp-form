@@ -13,20 +13,20 @@
 class MW_WP_Form_Validation_Rule_FileSize extends MW_WP_Form_Abstract_Validation_Rule {
 
 	/**
-	 * $name
 	 * バリデーションルール名を指定
 	 * @var string
 	 */
 	protected $name = 'filesize';
 
 	/**
-	 * rule
+	 * バリデーションチェック
+	 *
 	 * @param string $key name属性
 	 * @param array $option
 	 * @return string エラーメッセージ
 	 */
 	public function rule( $key, array $options = array() ) {
-		$data = $this->Data->get_raw( MWF_Config::UPLOAD_FILES );
+		$data = $this->Data->get_post_value_by_key( MWF_Config::UPLOAD_FILES );
 		if ( !is_null( $data ) && is_array( $data ) && array_key_exists( $key, $data ) ) {
 			$file = $data[$key];
 			if ( !empty( $file['size'] ) ) {
@@ -43,7 +43,8 @@ class MW_WP_Form_Validation_Rule_FileSize extends MW_WP_Form_Abstract_Validation
 	}
 
 	/**
-	 * admin
+	 * 設定パネルに追加
+	 *
 	 * @param numeric $key バリデーションルールセットの識別番号
 	 * @param array $value バリデーションルールセットの内容
 	 */

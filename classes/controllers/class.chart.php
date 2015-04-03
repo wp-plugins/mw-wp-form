@@ -1,32 +1,29 @@
 <?php
 /**
  * Name       : MW WP Form Chart Controller
- * Version    : 1.0.1
+ * Version    : 1.1.0
  * Author     : Takashi Kitajima
  * Author URI : http://2inc.org
  * Created    : January 1, 2015
- * Modified   : February 7, 2015
+ * Modified   : March 27, 2015
  * License    : GPLv2
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
-class MW_WP_Form_Chart_Controller {
+class MW_WP_Form_Chart_Controller extends MW_WP_Form_Controller {
 
 	/**
-	 * $formkey
 	 * URL引数で渡される、そのグラフに使う投稿タイプ名
 	 * @var string
 	 */
 	protected $formkey;
 
 	/**
-	 * $postdata
 	 * フォームの設定データ
 	 * @var array
 	 */
 	protected $postdata = array();
 
 	/**
-	 * $option_group
 	 * Settings API グループ名
 	 * @var string
 	 */
@@ -46,45 +43,15 @@ class MW_WP_Form_Chart_Controller {
 	 * initialize
 	 */
 	public function initialize() {
-		add_action( 'admin_menu'    , array( $this, 'admin_menu' ) );
-		add_action( 'admin_init'    , array( $this, 'register_setting' ) );
-		add_action( 'current_screen', array( $this, 'current_screen' ) );
-	}
-
-	/**
-	 * current_screen
-	 * @param WP_Screen $screen
-	 */
-	public function current_screen( $screen ) {
-		if ( $screen->id === MWF_Config::NAME . '_page_' . MWF_Config::NAME . '-chart' ) {
-			$contact_data_post_types = MW_WP_Form_Contact_Data_Setting::get_posts();
-			if ( !in_array( $this->formkey, $contact_data_post_types ) ) {
-				exit;
-			}
-		
-			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts') );
+		$contact_data_post_types = MW_WP_Form_Contact_Data_Setting::get_posts();
+		if ( !in_array( $this->formkey, $contact_data_post_types ) ) {
+			exit;
 		}
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts') );
 	}
 
 	/**
-	 * admin_menu
-	 */
-	public function admin_menu() {
-		$View = new MW_WP_Form_Chart_View();
-		$View->set( 'post_type', $this->formkey );
-		$View->set( 'option_group', $this->option_group );
-		add_submenu_page(
-			'edit.php?post_type=' . MWF_Config::NAME,
-			esc_html__( 'Chart', MWF_Config::DOMAIN ),
-			esc_html__( 'Chart', MWF_Config::DOMAIN ),
-			MWF_Config::CAPABILITY,
-			MWF_Config::NAME . '-chart',
-			array( $View, 'index' )
-		);
-	}
-
-	/**
-	 * admin_enqueue_scripts
+	 * CSS、JSの読み込み
 	 */
 	public function admin_enqueue_scripts() {
 		global $wp_scripts;
@@ -124,37 +91,60 @@ class MW_WP_Form_Chart_Controller {
 	}
 
 	/**
-	 * register_setting
+	 * グラフページを表示
 	 */
-	public function register_setting() {
-		if ( !empty( $this->formkey ) ) {
-			$formkey = $this->formkey;
-		} elseif ( !empty( $_POST[MWF_Config::NAME . '-formkey'] ) ) {
-			$formkey = $_POST[MWF_Config::NAME . '-formkey'];
-		}
-		if ( !empty( $formkey ) ) {
-			register_setting(
-				$this->option_group,
-				MWF_Config::NAME . '-chart-' . $formkey,
-				array( $this, 'sanitize' )
-			);
-		}
-	}
+	public function index() {
+		$post_type = $this->formkey;
 
-	/**
-	 * sanitize
-	 * @param array $input フォームから送信されたデータ
-	 * @return array
-	 */
-	public function sanitize( $input ) {
-		$new_input = array();
-		if ( is_array( $input ) && isset( $input['chart'] ) && is_array( $input['chart'] ) ) {
-			foreach ( $input['chart'] as $key => $value ) {
-				if ( !empty( $value['target'] ) ) {
-					$new_input['chart'][$key] = $value;
+		// form_posts
+		$default_args = array(
+			'posts_per_page' => -1,
+		);
+		$_args = apply_filters( 'mwform_get_inquiry_data_args-' . $post_type, $default_args );
+		$args = array(
+			'post_type' => $post_type,
+		);
+		if ( !empty( $_args ) && is_array( $_args ) ) {
+			$args = array_merge( $_args, $args );
+		} else {
+			$args = array_merge( $_args, $default_args );
+		}
+		$form_posts = get_posts( $args );
+
+		// custom_keys
+		$custom_keys = array();
+		foreach ( $form_posts as $post ) {
+			$post_custom_keys = get_post_custom_keys( $post->ID );
+			if ( is_array( $post_custom_keys ) ) {
+				foreach ( $post_custom_keys as $post_custom_key ) {
+					if ( preg_match( '/^_/', $post_custom_key ) ) {
+						continue;
+					}
+					$post_meta = get_post_meta( $post->ID, $post_custom_key, true );
+					$custom_keys[$post_custom_key][$post_meta][] = $post->ID;
 				}
 			}
 		}
-		return $new_input;
+
+		// postdata
+		$postdata = array();
+		$option   = get_option( MWF_Config::NAME . '-chart-' . $post_type );
+		if ( is_array( $option ) && isset( $option['chart'] ) && is_array( $option['chart'] ) ) {
+			$postdata = $option['chart'];
+		}
+		$default_keys = array(
+			'target'    => '',
+			'separator' => '',
+			'chart'     => '',
+		);
+		// 空の隠れフィールド（コピー元）を挿入
+		array_unshift( $postdata, $default_keys );
+
+		$this->assign( 'post_type'   , $post_type );
+		$this->assign( 'option_group', $this->option_group );
+		$this->assign( 'form_posts'  , $form_posts );
+		$this->assign( 'custom_keys' , $custom_keys );
+		$this->assign( 'postdata'    , $postdata );
+		$this->render( 'chart/index' );
 	}
 }

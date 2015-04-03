@@ -2,11 +2,11 @@
 /**
  * Name       : MW WP Form Field Text
  * Description: テキストフィールドを出力
- * Version    : 1.5.0
+ * Version    : 1.5.2
  * Author     : Takashi Kitajima
  * Author URI : http://2inc.org
  * Created    : December 14, 2012
- * Modified   : January 2, 2015
+ * Modified   : April 1, 2015
  * License    : GPLv2
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -39,13 +39,13 @@ class MW_WP_Form_Field_Text extends MW_WP_Form_Abstract_Form_Field {
 	protected function set_defaults() {
 		return array(
 			'name'        => '',
-			'id'          => '',
+			'id'          => null,
 			'size'        => 60,
 			'maxlength'   => 255,
 			'value'       => '',
-			'placeholder' => '',
+			'placeholder' => null,
 			'show_error'  => 'true',
-			'conv_half_alphanumeric' => 'false',
+			'conv_half_alphanumeric' => null,
 		);
 	}
 
@@ -55,15 +55,19 @@ class MW_WP_Form_Field_Text extends MW_WP_Form_Abstract_Form_Field {
 	 * @return string html
 	 */
 	protected function input_page() {
-		$conv_half_alphanumeric = false;
-		if ( $this->atts['conv_half_alphanumeric'] === 'true' ) {
-			$conv_half_alphanumeric = true;
+		if ( $this->atts['conv_half_alphanumeric'] !== 'true' ) {
+			$conv_half_alphanumeric = null;
 		}
+		$value = $this->Data->get_raw( $this->atts['name'] );
+		if ( is_null( $value ) ) {
+			$value = $this->atts['value'];
+		}
+
 		$_ret = $this->Form->text( $this->atts['name'], array(
 			'id'          => $this->atts['id'],
 			'size'        => $this->atts['size'],
 			'maxlength'   => $this->atts['maxlength'],
-			'value'       => $this->atts['value'],
+			'value'       => $value,
 			'placeholder' => $this->atts['placeholder'],
 			'conv-half-alphanumeric' => $conv_half_alphanumeric,
 		) );
@@ -79,7 +83,7 @@ class MW_WP_Form_Field_Text extends MW_WP_Form_Abstract_Form_Field {
 	 * @return string HTML
 	 */
 	protected function confirm_page() {
-		$value = $this->Form->get_raw( $this->atts['name'] );
+		$value = $this->Data->get_raw( $this->atts['name'] );
 		$_ret  = esc_html( $value );
 		$_ret .= $this->Form->hidden( $this->atts['name'], $value );
 		return $_ret;
