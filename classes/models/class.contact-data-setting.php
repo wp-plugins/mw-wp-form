@@ -13,33 +13,36 @@
 class MW_WP_Form_Contact_Data_Setting {
 
 	/**
-	 * $post_id
+	 * 問い合わせデータを保存しているフォームの投稿タイプの一覧
+	 * @var array
+	 */
+	protected static $contact_data_post_types;
+
+	/**
 	 * フォームのPost ID
 	 * @var int
 	 */
 	protected $post_id;
 
 	/**
-	 * $options
 	 * 各フォーム項目から送信された値を格納
 	 * @var array
 	 */
 	protected $options = array();
 
 	/**
-	 * $response_status
+	 * 問い合わせデータのステータス
 	 * @var string not-supported|reservation|supported
 	 */
 	protected $response_status = 'not-supported';
 
 	/**
-	 * $memo
+	 * メモ
 	 * @var string
 	 */
 	protected $memo = '';
 
 	/**
-	 * $response_statuses
 	 * 対応状況種別の一覧
 	 * @var array
 	 */
@@ -47,6 +50,7 @@ class MW_WP_Form_Contact_Data_Setting {
 
 	/**
 	 * __construct
+	 *
 	 * @param int $post_id
 	 */
 	public function __construct( $post_id ) {
@@ -80,7 +84,8 @@ class MW_WP_Form_Contact_Data_Setting {
 	}
 
 	/**
-	 * get_response_statuses
+	 * 問い合わせステータスの種類を取得
+	 *
 	 * @return array
 	 */
 	public function get_response_statuses() {
@@ -88,8 +93,8 @@ class MW_WP_Form_Contact_Data_Setting {
 	}
 
 	/**
-	 * get_permit_keys
 	 * 更新可能なキーを返す
+	 *
 	 * @return array
 	 */
 	public function get_permit_keys() {
@@ -97,7 +102,7 @@ class MW_WP_Form_Contact_Data_Setting {
 	}
 
 	/**
-	 * gets
+	 * 全てのメタデータを取得
 	 */
 	public function gets() {
 		$options = $this->options;
@@ -109,8 +114,8 @@ class MW_WP_Form_Contact_Data_Setting {
 	}
 
 	/**
-	 * get
-	 * 属性の取得
+	 * メタデータの取得
+	 *
 	 * @param string $key
 	 * @return mixed|null
 	 */
@@ -131,8 +136,8 @@ class MW_WP_Form_Contact_Data_Setting {
 	}
 
 	/**
-	 * set
 	 * 属性をセット
+	 *
 	 * @param string $key
 	 * @param mixed $value
 	 */
@@ -146,8 +151,8 @@ class MW_WP_Form_Contact_Data_Setting {
 	}
 
 	/**
-	 * sets
 	 * 属性をセット
+	 *
 	 * @param array $values
 	 */
 	public function sets( array $values ) {
@@ -157,7 +162,8 @@ class MW_WP_Form_Contact_Data_Setting {
 	}
 
 	/**
-	 * save
+	 * 保存
+	 *
 	 * @param bool $non_permit_keys_save_flg permit_keys以外のメタデータも更新する
 	 */
 	public function save( $non_permit_keys_save_flg = false ) {
@@ -178,10 +184,14 @@ class MW_WP_Form_Contact_Data_Setting {
 	}
 	
 	/**
-	 * get_posts
+	 * データベースに保存に設定されているフォーム（投稿）を取得
+	 *
 	 * @return array
 	 */
 	public static function get_posts() {
+		if ( self::$contact_data_post_types !== null ) {
+			return self::$contact_data_post_types;
+		}
 		$contact_data_post_types = array();
 		$Admin = new MW_WP_Form_Admin();
 		$forms = $Admin->get_forms_using_database();
@@ -201,12 +211,13 @@ class MW_WP_Form_Contact_Data_Setting {
 				$new_post_types[] = $post_type;
 			}
 		}
-		return $new_post_types;
+		self::$contact_data_post_types = $new_post_types;
+		return self::$contact_data_post_types;
 	}
 
 	/**
-	 * is_upload_file_key
 	 * $meta_key が $post の upload_file_key かどうか
+	 *
 	 * @param WP_Post $post
 	 * @param string $meta_key
 	 * @return bool
@@ -220,8 +231,8 @@ class MW_WP_Form_Contact_Data_Setting {
 	}
 
 	/**
-	 * get_upload_file_keys
 	 * その投稿がもつ upload_file_key を取得
+	 *
 	 * @param WP_Post $post
 	 * @return array $upload_file_keys
 	 */
