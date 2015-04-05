@@ -2,11 +2,11 @@
 /**
  * Name       : MW WP Form Field Checkbox
  * Description: チェックボックスを出力
- * Version    : 1.5.8
+ * Version    : 1.5.9
  * Author     : Takashi Kitajima
  * Author URI : http://2inc.org
  * Created    : December 14, 2012
- * Modified   : March 25, 2015
+ * Modified   : April 1, 2015
  * License    : GPLv2
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -39,10 +39,10 @@ class MW_WP_Form_Field_Checkbox extends MW_WP_Form_Abstract_Form_Field {
 	protected function set_defaults() {
 		return array(
 			'name'       => '',
-			'id'         => '',
+			'id'         => null,
 			'children'   => '',
 			'value'      => '',
-			'vertically' => '',
+			'vertically' => null,
 			'post_raw'   => 'false',
 			'show_error' => 'true',
 			'separator'  => ', ',
@@ -55,9 +55,13 @@ class MW_WP_Form_Field_Checkbox extends MW_WP_Form_Abstract_Form_Field {
 	 * @return string HTML
 	 */
 	protected function input_page() {
+		$value = $this->Data->get_raw( $this->atts['name'] );
+		if ( is_null( $value ) ) {
+			$value = $this->atts['value'];
+		}
 		$children  = $this->get_children( $this->atts['children'] );
-		$value     = explode( ',', $this->atts['value'] );
 		$separator = ( $this->atts['separator'] ) ? $this->atts['separator'] : $this->defaults['separator'];
+
 		$_ret = $this->Form->checkbox( $this->atts['name'], $children, array(
 			'id'         => $this->atts['id'],
 			'value'      => $value,
@@ -79,11 +83,12 @@ class MW_WP_Form_Field_Checkbox extends MW_WP_Form_Abstract_Form_Field {
 	 */
 	protected function confirm_page() {
 		$children     = $this->get_children( $this->atts['children'] );
-		$value        = $this->Form->get_checked_value( $this->atts['name'], $children );
-		$posted_value = $this->Form->get_separated_raw_value( $this->atts['name'], $children );
+		$value        = $this->Data->get( $this->atts['name'], $children );
+		$posted_value = $this->Data->get_raw( $this->atts['name'] );
+		$separator    = $this->Data->get_separator_value( $this->atts['name'] );
 		$_ret         = esc_html( $value );
 		$_ret        .= $this->Form->hidden( $this->atts['name'] . '[data]', $posted_value );
-		$_ret        .= $this->Form->separator( $this->atts['name'] );
+		$_ret        .= $this->Form->separator( $this->atts['name'], $separator );
 		if ( $this->atts['post_raw'] === 'false' ) {
 			$_ret .= $this->Form->children( $this->atts['name'], $children );
 		}
