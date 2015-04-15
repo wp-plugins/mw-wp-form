@@ -2,11 +2,11 @@
 /**
  * Name       : MW WP Form Abstract Form Field
  * Description: フォームフィールドの抽象クラス
- * Version    : 1.7.2
+ * Version    : 1.7.3
  * Author     : Takashi Kitajima
  * Author URI : http://2inc.org
  * Created    : December 14, 2012
- * Modified   : March 26, 2015
+ * Modified   : April 15, 2015
  * License    : GPLv2
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -190,14 +190,13 @@ abstract class MW_WP_Form_Abstract_Form_Field {
 	 * @param string $view_flg
 	 * @param MW_WP_Form_Error $Error
 	 * @param string $form_key
-	 * @param MW_WP_Form_Data $Data
 	 */
-	public function add_shortcode( MW_WP_Form_Form $Form, $view_flg, MW_WP_Form_Error $Error, $form_key, MW_WP_Form_Data $Data ) {
+	public function add_shortcode( MW_WP_Form_Form $Form, $view_flg, MW_WP_Form_Error $Error, $form_key ) {
 		if ( !empty( $this->shortcode_name ) ) {
 			$this->Form     = $Form;
 			$this->Error    = $Error;
 			$this->form_key = $form_key;
-			$this->Data     = $Data;
+			$this->Data     = MW_WP_Form_Data::getInstance();
 			switch( $view_flg ) {
 				case 'input' :
 					add_shortcode( $this->shortcode_name, array( $this, '_input_page' ) );

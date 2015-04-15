@@ -2,11 +2,11 @@
 /**
  * Name       : MW WP Form Data
  * Description: MW WP Form のデータ操作用
- * Version    : 1.3.7
+ * Version    : 1.3.8
  * Author     : Takashi Kitajima
  * Author URI : http://2inc.org
  * Created    : October 10, 2013
- * Modified   : March 26, 2015
+ * Modified   : April 15, 2015
  * License    : GPLv2
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -64,15 +64,25 @@ class MW_WP_Form_Data {
 	/**
 	 * getInstance
 	 *
-	 * @param string $form_key フォーム識別子
-	 * @param array $POST $_POSTを想定
-	 * @param array $FILES $_FILESを想定
+	 * @param null|string $form_key フォーム識別子
+	 * @param null|array $POST $_POSTを想定
+	 * @param null|array $FILES $_FILESを想定
 	 */
-	public static function getInstance( $form_key, array $POST = array(), array $FILES = array() ) {
-		if ( is_null( self::$Instance ) ) {
-			self::$Instance = new self( $form_key, $POST, $FILES );
+	public static function getInstance( $form_key = null, $POST = null, $FILES = null ) {
+		if ( is_null( $POST ) || !is_array( $POST ) ) {
+			$POST = array();
 		}
-		return self::$Instance;
+		if ( is_null( $FILES ) || !is_array( $FILES ) ) {
+			$FILES = array();
+		}
+		if ( is_null( $form_key ) && !is_null( self::$Instance ) ) {
+			return self::$Instance;
+		}
+		if ( !is_null( $form_key ) ) {
+			self::$Instance = new self( $form_key, $POST, $FILES );
+			return self::$Instance;
+		}
+		exit( 'MW_WP_Form_Data instantiation error.' );
 	}
 
 	/**
@@ -264,7 +274,6 @@ class MW_WP_Form_Data {
 
 	/**
 	 * そのキーに紐づく送信データを取得（通常の value 以外に separator や data などが紐づく）
-	 * todo: post されてないデータを取得するときも使うから名前変更する
 	 */
 	public function get_post_value_by_key( $key ) {
 		if ( isset( $this->data[$key] ) ) {

@@ -1,12 +1,12 @@
 <?php
 /**
  * Name       : MW WP Form Exec Shortcode
- * Version    : 1.1.0
+ * Version    : 1.1.1
  * Description: ExecShortcode（mwform、mwform_formkey）の存在有無のチェックとそれらの抽象化レイヤー
  * Author     : Takashi Kitajima
  * Author URI : http://2inc.org
  * Created    : December 31, 2014
- * Modified   : March 30, 2015
+ * Modified   : April 14, 2015
  * License    : GPLv2
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -192,7 +192,7 @@ class MW_WP_Form_Exec_Shortcode {
 			foreach ( $this->settings as $key => $value ) {
 				$settings[$key] = $Setting->get( $key );
 			}
-			$settings['key'] = MWF_Config::NAME . '-' . $post_id;
+			$settings['key'] = MWF_Functions::get_form_key_from_form_id( $post_id );
 		}
 		$this->set_settings( $settings );
 	}
@@ -267,13 +267,12 @@ class MW_WP_Form_Exec_Shortcode {
 	 * @param string $view_flg
 	 * @param MW_WP_Form_Setting $Setting
 	 * @param MW_WP_Form_Form $Form
-	 * @param MW_WP_Form_Data $Data
 	 */
-	public function add_shortcode( $view_flg, MW_WP_Form_Setting $Setting, MW_WP_Form_Form $Form, MW_WP_Form_Data $Data ) {
+	public function add_shortcode( $view_flg, MW_WP_Form_Setting $Setting, MW_WP_Form_Form $Form ) {
 		$this->view_flg = $view_flg;
 		$this->Setting  = $Setting;
 		$this->Form     = $Form;
-		$this->Data     = $Data;
+		$this->Data     = MW_WP_Form_Data::getInstance();
 		add_shortcode( 'mwform_formkey'         , array( $this, 'mwform_formkey' ) );
 		add_shortcode( 'mwform'                 , array( $this, 'mwform' ) );
 		add_shortcode( 'mwform_complete_message', array( $this, 'mwform_complete_message' ) );

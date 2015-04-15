@@ -2,11 +2,11 @@
 /**
  * Name       : MWF Functions
  * Description: 関数
- * Version    : 1.4.0
+ * Version    : 1.4.2
  * Author     : Takashi Kitajima
  * Author URI : http://2inc.org
  * Created    : May 29, 2013
- * Modified   : March 30, 2015
+ * Modified   : April 14, 2015
  * License    : GPLv2
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -180,7 +180,7 @@ class MWF_Functions {
 	 * @param array ( ファイルのname属性値 => ファイルパス, … )
 	 * @param int 生成フォーム（usedb）の post_id
 	 */
-	public static function save_attachments_in_media( $post_id, $attachments, $form_key_post_id ) {
+	public static function save_attachments_in_media( $post_id, $attachments, $form_id ) {
 		require_once( ABSPATH . 'wp-admin' . '/includes/media.php' );
 		require_once( ABSPATH . 'wp-admin' . '/includes/image.php' );
 		$save_attached_key = array();
@@ -190,7 +190,7 @@ class MWF_Functions {
 			}
 
 			$wp_check_filetype = wp_check_filetype( $filepath );
-			$post_type = get_post_type_object( MWF_Config::DBDATA . $form_key_post_id );
+			$post_type = get_post_type_object( self::get_contact_data_post_type_from_form_id( $form_id ) );
 			$attachment = array(
 				'post_mime_type' => $wp_check_filetype['type'],
 				'post_title'     => $key,
@@ -306,10 +306,47 @@ class MWF_Functions {
 	 * @return string|null フォーム識別子
 	 */
 	public static function contact_data_post_type_to_form_key( $post_type ) {
-		if ( preg_match( '/^' . MWF_Config::DBDATA . '(\d+)$/', $post_type, $match ) ) {
-			$form_key = MWF_Config::NAME . '-' . $match[1];
-			return $form_key;
+		if ( self::is_contact_data_post_type( $post_type ) ) {
+			if ( preg_match( '/(\d+)$/', $post_type, $match ) ) {
+				$form_key = self::get_form_key_from_form_id( $match[1] );
+				return $form_key;
+			}
 		}
+	}
+
+	/**
+	 * フォームの投稿 ID をフォーム識別子に変換
+	 *
+	 * @param int $form_id
+	 * @return string フォーム識別子
+	 */
+	public static function get_form_key_from_form_id( $form_id ) {
+		$form_key = MWF_Config::NAME . '-' . $form_id;
+		return $form_key;
+	}
+
+	/**
+	 * フォームの投稿 ID を問い合わせデータの投稿タイプに変換
+	 *
+	 * @param int $form_id
+	 * @return string フォーム識別子
+	 */
+	public static function get_contact_data_post_type_from_form_id( $form_id ) {
+		$contact_data_post_type = MWF_Config::DBDATA . $form_id;
+		return $contact_data_post_type;
+	}
+
+	/**
+	 * 問い合わせデータ投稿タイプかどうか
+	 *
+	 * @param string $post_type
+	 * @return bool
+	 */
+	public static function is_contact_data_post_type( $post_type ) {
+		if ( preg_match( '/^' . MWF_Config::DBDATA . '\d+$/', $post_type ) ) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -322,7 +359,7 @@ class MWF_Functions {
 		$mimetype = get_post_mime_type( $value );
 		if ( $mimetype ) {
 			// 画像だったら
-			if ( preg_match( '/^image\/.+?$/', $mimetype ) ) {
+			if ( in_array( $mimetype, array( 'image/jpeg', 'image/gif', 'image/png', 'image/bmp' ) ) ) {
 				$src = wp_get_attachment_image_src( $value, 'thumbnail' );
 				return sprintf(
 					'<img src="%s" alt="" style="width:50px;height:50px" />',
@@ -331,11 +368,11 @@ class MWF_Functions {
 			}
 			// 画像以外
 			else {
-				$src = wp_get_attachment_image_src( $value, 'none', true );
+				$src = wp_mime_type_icon( $mimetype );
 				return sprintf(
-					'<a href="%s" target="_blank"><img src="%s" alt="" style="height:50px" /></a>',
+					'<a href="%s" target="_blank"><img src="%s" alt="" style="height:32px" /></a>',
 					esc_url( wp_get_attachment_url( $value ) ),
-					esc_url( $src[0] )
+					esc_url( $src )
 				);
 			}
 		}

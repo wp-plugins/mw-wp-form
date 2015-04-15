@@ -2,11 +2,11 @@
 /**
  * Name       : MW WP Form Main Controller
  * Description: フロントエンドにおいて、適切な画面にリダイレクトさせる
- * Version    : 1.0.4
+ * Version    : 1.0.5
  * Author     : Takashi Kitajima
  * Author URI : http://2inc.org
  * Created    : December 23, 2014
- * Modified   : March 26, 2015
+ * Modified   : April 15, 2015
  * License    : GPLv2
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -116,7 +116,7 @@ class MW_WP_Form_Main_Controller {
 		$Error = new MW_WP_Form_Error();
 		$this->Validation = new MW_WP_Form_Validation( $Error );
 		$this->Validation->set_validation_rules( $this->validation_rules );
-		$this->Validation->set_rules( $this->Setting, $this->Data );
+		$this->Validation->set_rules( $this->Setting );
 		$this->Validation = apply_filters(
 			'mwform_validation_' . $form_key,
 			$this->Validation,
@@ -174,7 +174,7 @@ class MW_WP_Form_Main_Controller {
 		);
 
 		$Form = new MW_WP_Form_Form();
-		$this->ExecShortcode->add_shortcode( $view_flg, $this->Setting, $Form, $this->Data );
+		$this->ExecShortcode->add_shortcode( $view_flg, $this->Setting, $Form );
 
 		add_action( 'wp_footer'         , array( $this->Data, 'clear_values' ) );
 		add_action( 'wp_enqueue_scripts', array( $this      , 'wp_enqueue_scripts' ) );
@@ -252,7 +252,7 @@ class MW_WP_Form_Main_Controller {
 		$Mail         = new MW_WP_Form_Mail();
 		$form_key     = $this->ExecShortcode->get( 'key' );
 		$attachments  = $this->get_attachments();
-		$Mail_Service = new MW_WP_Form_Mail_Service( $Mail, $this->Data, $form_key, $this->validation_rules, $this->Setting, $attachments );
+		$Mail_Service = new MW_WP_Form_Mail_Service( $Mail, $form_key, $this->Setting, $attachments );
 
 		// 管理画面で作成した場合だけ自動で送信
 		if ( $this->ExecShortcode->is_generated_by_formkey() ) {
