@@ -2,11 +2,11 @@
 /**
  * Name       : MW WP Form Field Checkbox
  * Description: チェックボックスを出力
- * Version    : 1.5.10
+ * Version    : 1.5.11
  * Author     : Takashi Kitajima
  * Author URI : http://2inc.org
  * Created    : December 14, 2012
- * Modified   : April 24, 2015
+ * Modified   : June 23, 2015
  * License    : GPLv2
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -45,7 +45,7 @@ class MW_WP_Form_Field_Checkbox extends MW_WP_Form_Abstract_Form_Field {
 			'vertically' => null,
 			'post_raw'   => 'false',
 			'show_error' => 'true',
-			'separator'  => ', ',
+			'separator'  => ',',
 		);
 	}
 
