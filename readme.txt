@@ -1,10 +1,10 @@
 === MW WP Form ===
-Contributors: inc2734, ryu263
+Contributors: inc2734, ryu263, tomothumb, nanniku
 Donate link: http://www.amazon.co.jp/registry/wishlist/39ANKRNSTNW40
 Tags: plugin, form, confirm, preview, shortcode, mail, chart, graph, html, contact form, form creation, form creator, form manager, form builder, custom form
 Requires at least: 3.7
-Tested up to: 4.1.1
-Stable tag: 2.4.5
+Tested up to: 4.2.2
+Stable tag: 2.4.12
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -47,6 +47,8 @@ Source: https://developers.google.com/chart/
 
 * [Takashi Kitajima](http://2inc.org) ( [inc2734](http://profiles.wordpress.org/inc2734) )
 * [Ryujiro Yamamoto](http://webcre-archive.com) ( [ryu263](http://profiles.wordpress.org/ryu263) )
+* [Tsujimoto Tomoyuki](http://kee-non.com) ( [tomothumb](http://profiles.wordpress.org/tomothumb) )
+* [Naoyuki Ohata] ( [nanniku](http://profiles.wordpress.org/nanniku) )
 
 == Installation ==
 
@@ -70,6 +72,31 @@ Do you have questions or issues with MW WP Form? Use these support channels appr
 5. Supports chart display of saved inquiry data.
 
 == Changelog ==
+
+= 2.4.12
+= Bugfix  : filter hook 'mwform_value_mwf_xxx' does not work when to use radio or checkboxes.
+= Changed : Changed checkbox default separator ', ' to ','.
+
+= 2.4.11
+= Bugfix  : Fixed a bug that attachment file does not displayed in contact data list page.
+= Changed : Trim email address on inputs.
+
+= 2.4.10
+= Bugfix  : Fixed a bug that does not scroll when you return to the input screen.
+
+= 2.4.9 =
+* Bugfix  : Fixes a bug that the value of last checkbox is only posted when multiple same name checkboxes created and those post_raw is true.
+
+= 2.4.8 =
+* Changed : Change the value to save even null when you save the contact data.
+* Changed : Default value of radio and checkbox is null.
+
+= 2.4.7 =
+* Bugfix  : Fixed a bug the custom_mail_tag from To, CC and BCC.
+
+= 2.4.6 =
+* Changed : The custom_mail_tag filter hook applied to To, CC and BCC.
+* Changed : Full size image is displayed when you click the thumbnail of the attached image in saving contact data list.
 
 = 2.4.5 =
 * Refactoring MW_WP_Form_Data Class.

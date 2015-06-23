@@ -2,11 +2,11 @@
 /**
  * Name       : MWF Functions
  * Description: 関数
- * Version    : 1.4.2
+ * Version    : 1.4.4
  * Author     : Takashi Kitajima
  * Author URI : http://2inc.org
  * Created    : May 29, 2013
- * Modified   : April 14, 2015
+ * Modified   : May 26, 2015
  * License    : GPLv2
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -191,6 +191,9 @@ class MWF_Functions {
 
 			$wp_check_filetype = wp_check_filetype( $filepath );
 			$post_type = get_post_type_object( self::get_contact_data_post_type_from_form_id( $form_id ) );
+			if ( empty( $post_type->label ) ) {
+				continue;
+			}
 			$attachment = array(
 				'post_mime_type' => $wp_check_filetype['type'],
 				'post_title'     => $key,
@@ -266,14 +269,20 @@ class MWF_Functions {
 		}
 
 		if ( version_compare( phpversion(), '5.3.0' ) >= 0 ) {
+			if ( !file_exists( $filepath ) ) {
+				return false;
+			}
 			$finfo = new finfo( FILEINFO_MIME_TYPE );
 			$type = $finfo->file( $filepath );
+			if ( $finfo === false ) {
+				return false;
+			}
 			if ( is_array( $wp_check_filetype['type'] ) ) {
-				if ( !( $finfo !== false && in_array( $type, $wp_check_filetype['type'] ) ) ) {
+				if ( !in_array( $type, $wp_check_filetype['type'] ) ) {
 					return false;
 				}
 			} else {
-				if ( !( $finfo !== false && $type === $wp_check_filetype['type'] ) ) {
+				if ( $type !== $wp_check_filetype['type'] ) {
 					return false;
 				}
 			}
@@ -360,10 +369,12 @@ class MWF_Functions {
 		if ( $mimetype ) {
 			// 画像だったら
 			if ( in_array( $mimetype, array( 'image/jpeg', 'image/gif', 'image/png', 'image/bmp' ) ) ) {
-				$src = wp_get_attachment_image_src( $value, 'thumbnail' );
+				$src_thumbnail = wp_get_attachment_image_src( $value, 'thumbnail' );
+				$src_full      = wp_get_attachment_image_src( $value, 'full' );
 				return sprintf(
-					'<img src="%s" alt="" style="width:50px;height:50px" />',
-					esc_url( $src[0] )
+					'<a href="%s" target="_blank"><img src="%s" alt="" style="max-height:50px" /></a>',
+					esc_url( $src_full[0] ),
+					esc_url( $src_thumbnail[0] )
 				);
 			}
 			// 画像以外
@@ -379,6 +390,28 @@ class MWF_Functions {
 		// 添付されているけど、フック等でメタ情報が書き換えられて添付ファイルID以外になってしまった場合
 		else {
 			return esc_html( $value );
+		}
+	}
+
+	/**
+	 * 添付データのIDを返す
+	 * 過去バージョンでの不具合でアップロードファイルを示すメタデータが空になっていることがあるのでその場合の代替処理
+	 *
+	 * @param WP_Post $post
+	 * @param int $meta_key
+	 * @return int
+	 */
+	public static function get_multimedia_id__fallback( $post, $meta_key ) {
+		$Contact_Data_Setting = new MW_WP_Form_Contact_Data_Setting( $post->ID );
+		$key = $Contact_Data_Setting->get_key_in_upload_file_keys( $post, $meta_key );
+		$attachments = get_posts( array(
+			'post_type'      => 'attachment',
+			'post_parent'    => $post->ID,
+			'posts_per_page' => 1,
+			'offset'         => $key,
+		) );
+		if ( isset( $attachments[0] ) ) {
+			return $attachments[0]->ID;
 		}
 	}
 }
