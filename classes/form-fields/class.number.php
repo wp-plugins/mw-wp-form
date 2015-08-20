@@ -1,16 +1,16 @@
 <?php
 /**
- * Name       : MW WP Form Field Datepicker
- * Description: datepickerを出力
- * Version    : 1.5.3
+ * Name       : MW WP Form Field Number
+ * Description: number フィールドを出力
+ * Version    : 1.0.0
  * Author     : Takashi Kitajima
  * Author URI : http://2inc.org
- * Created    : December 14, 2012
- * Modified   : August 12, 2015
+ * Created    : July 21, 2015
+ * Modified   : 
  * License    : GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
-class MW_WP_Form_Field_Datepicker extends MW_WP_Form_Abstract_Form_Field {
+class MW_WP_Form_Field_Number extends MW_WP_Form_Abstract_Form_Field {
 
 	/**
 	 * $type
@@ -26,23 +26,24 @@ class MW_WP_Form_Field_Datepicker extends MW_WP_Form_Abstract_Form_Field {
 	 */
 	protected function set_names() {
 		return array(
-			'shortcode_name' => 'mwform_datepicker',
-			'display_name'   => __( 'Datepicker', MWF_Config::DOMAIN ),
+			'shortcode_name' => 'mwform_number',
+			'display_name'   => __( 'Number', MWF_Config::DOMAIN ),
 		);
 	}
 
 	/**
 	 * set_defaults
 	 * $this->defaultsを設定し返す
-	 * @return array defaults
+	 * @return array
 	 */
 	protected function set_defaults() {
 		return array(
 			'name'        => '',
 			'id'          => null,
-			'size'        => 30,
-			'js'          => '',
 			'value'       => '',
+			'min'         => null,
+			'max'         => null,
+			'step'        => 1,
 			'placeholder' => null,
 			'show_error'  => 'true',
 		);
@@ -51,43 +52,20 @@ class MW_WP_Form_Field_Datepicker extends MW_WP_Form_Abstract_Form_Field {
 	/**
 	 * input_page
 	 * 入力ページでのフォーム項目を返す
-	 * @return string HTML
+	 * @return string html
 	 */
 	protected function input_page() {
-		global $wp_scripts;
-		$ui = $wp_scripts->query( 'jquery-ui-core' );
-		wp_enqueue_style( 'jquery.ui', '//ajax.googleapis.com/ajax/libs/jqueryui/' . $ui->ver . '/themes/smoothness/jquery-ui.min.css', array(), $ui->ver );
-		wp_enqueue_script( 'jquery-ui-datepicker' );
-		// jsの指定がないときはデフォルトで年付き変更機能追加
-		if ( empty( $this->atts['js'] ) ) {
-			$this->atts['js'] = 'showMonthAfterYear: true, changeYear: true, changeMonth: true';
-		}
-		// 日本語の場合は日本語表記に変更
-		if ( get_locale() == 'ja' ) {
-			if ( !empty( $this->atts['js'] ) ) {
-				$this->atts['js'] = $this->atts['js'] . ',';
-			}
-			$this->atts['js'] .= '
-				yearSuffix: "年",
-				dateFormat: "yy年mm月dd日",
-				dayNames: ["日曜日","月曜日","火曜日","水曜日","木曜日","金曜日","土曜日"],
-				dayNamesMin: ["日","月","火","水","木","金","土"],
-				dayNamesShort: ["日曜","月曜","火曜","水曜","木曜","金曜","土曜"],
-				monthNames: ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"],
-				monthNamesShort: ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"]
-			';
-		}
 		$value = $this->Data->get_raw( $this->atts['name'] );
 		if ( is_null( $value ) ) {
 			$value = $this->atts['value'];
 		}
 
-		$_ret  = '';
-		$_ret .= $this->Form->datepicker( $this->atts['name'], array(
+		$_ret = $this->Form->number( $this->atts['name'], array(
 			'id'          => $this->atts['id'],
-			'size'        => $this->atts['size'],
-			'js'          => $this->atts['js'],
 			'value'       => $value,
+			'min'         => $this->atts['min'],
+			'max'         => $this->atts['max'],
+			'step'        => $this->atts['step'],
 			'placeholder' => $this->atts['placeholder'],
 		) );
 		if ( $this->atts['show_error'] !== 'false' ) {
@@ -125,19 +103,19 @@ class MW_WP_Form_Field_Datepicker extends MW_WP_Form_Abstract_Form_Field {
 			<input type="text" name="id" value="<?php echo esc_attr( $id ); ?>" />
 		</p>
 		<p>
-			<strong>size</strong>
-			<?php $size = $this->get_value_for_generator( 'size', $options ); ?>
-			<input type="text" name="size" value="<?php echo esc_attr( $size ); ?>" />
+			<strong>min</strong>
+			<?php $min = $this->get_value_for_generator( 'min', $options ); ?>
+			<input type="text" name="min" value="<?php echo esc_attr( $min ); ?>" />
 		</p>
 		<p>
-			<strong>JavaScript</strong>
-			<?php $js = $this->get_value_for_generator( 'js', $options ); ?>
-			<input type="text" name="js" value="<?php echo esc_attr( $js ); ?>" />
+			<strong>max</strong>
+			<?php $max = $this->get_value_for_generator( 'max', $options ); ?>
+			<input type="text" name="max" value="<?php echo esc_attr( $max ); ?>" />
 		</p>
 		<p>
-			<strong><?php esc_html_e( 'Default value', MWF_Config::DOMAIN ); ?></strong>
-			<?php $value = $this->get_value_for_generator( 'value', $options ); ?>
-			<input type="text" name="value" value="<?php echo esc_attr( $value ); ?>" />
+			<strong>step</strong>
+			<?php $step = $this->get_value_for_generator( 'step', $options ); ?>
+			<input type="text" name="step" value="<?php echo esc_attr( $step ); ?>" />
 		</p>
 		<p>
 			<strong>placeholder</strong>
