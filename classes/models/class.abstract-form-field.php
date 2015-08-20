@@ -2,12 +2,12 @@
 /**
  * Name       : MW WP Form Abstract Form Field
  * Description: フォームフィールドの抽象クラス
- * Version    : 1.7.3
+ * Version    : 1.7.4
  * Author     : Takashi Kitajima
  * Author URI : http://2inc.org
  * Created    : December 14, 2012
- * Modified   : April 15, 2015
- * License    : GPLv2
+ * Modified   : June 23, 2015
+ * License    : GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
 abstract class MW_WP_Form_Abstract_Form_Field {
@@ -160,7 +160,7 @@ abstract class MW_WP_Form_Abstract_Form_Field {
 	 */
 	abstract protected function input_page();
 	public function _input_page( $atts ) {
-		if ( isset( $this->defaults['value'], $atts['name'] ) && !isset( $atts['value'] ) ) {
+		if ( array_key_exists( 'value', $this->defaults ) && isset( $atts['name'] ) && !isset( $atts['value'] ) ) {
 			$atts['value'] = apply_filters(
 				'mwform_value_' . $this->form_key,
 				$this->defaults['value'],
@@ -213,8 +213,8 @@ abstract class MW_WP_Form_Abstract_Form_Field {
 	}
 
 	/**
-	 * get_children
 	 * 選択肢の配列を返す（:が含まれている場合は分割して前をキーに、後ろを表示名にする）
+	 *
 	 * @param string $_children
 	 * @return array $children
 	 */

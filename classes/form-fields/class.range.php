@@ -1,16 +1,16 @@
 <?php
 /**
- * Name       : MW WP Form Field Text
- * Description: テキストフィールドを出力
- * Version    : 1.5.4
+ * Name       : MW WP Form Field Range
+ * Description: range フィールドを出力
+ * Version    : 1.0.0
  * Author     : Takashi Kitajima
  * Author URI : http://2inc.org
- * Created    : December 14, 2012
- * Modified   : July 20, 2015
+ * Created    : July 21, 2015
+ * Modified   : 
  * License    : GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
-class MW_WP_Form_Field_Text extends MW_WP_Form_Abstract_Form_Field {
+class MW_WP_Form_Field_Range extends MW_WP_Form_Abstract_Form_Field {
 
 	/**
 	 * $type
@@ -26,8 +26,8 @@ class MW_WP_Form_Field_Text extends MW_WP_Form_Abstract_Form_Field {
 	 */
 	protected function set_names() {
 		return array(
-			'shortcode_name' => 'mwform_text',
-			'display_name'   => __( 'Text', MWF_Config::DOMAIN ),
+			'shortcode_name' => 'mwform_range',
+			'display_name'   => __( 'Range', MWF_Config::DOMAIN ),
 		);
 	}
 
@@ -38,14 +38,13 @@ class MW_WP_Form_Field_Text extends MW_WP_Form_Abstract_Form_Field {
 	 */
 	protected function set_defaults() {
 		return array(
-			'name'        => '',
-			'id'          => null,
-			'size'        => 60,
-			'maxlength'   => null,
-			'value'       => '',
-			'placeholder' => null,
-			'show_error'  => 'true',
-			'conv_half_alphanumeric' => null,
+			'name'       => '',
+			'id'         => null,
+			'value'      => '',
+			'min'        => 0,
+			'max'        => 100,
+			'step'       => 1,
+			'show_error' => 'true',
 		);
 	}
 
@@ -55,22 +54,17 @@ class MW_WP_Form_Field_Text extends MW_WP_Form_Abstract_Form_Field {
 	 * @return string html
 	 */
 	protected function input_page() {
-		$conv_half_alphanumeric = 'true';
-		if ( $this->atts['conv_half_alphanumeric'] !== 'true' ) {
-			$conv_half_alphanumeric = null;
-		}
 		$value = $this->Data->get_raw( $this->atts['name'] );
 		if ( is_null( $value ) ) {
 			$value = $this->atts['value'];
 		}
 
-		$_ret = $this->Form->text( $this->atts['name'], array(
-			'id'          => $this->atts['id'],
-			'size'        => $this->atts['size'],
-			'maxlength'   => $this->atts['maxlength'],
-			'value'       => $value,
-			'placeholder' => $this->atts['placeholder'],
-			'conv-half-alphanumeric' => $conv_half_alphanumeric,
+		$_ret = $this->Form->range( $this->atts['name'], array(
+			'id'    => $this->atts['id'],
+			'value' => $value,
+			'min'   => $this->atts['min'],
+			'max'   => $this->atts['max'],
+			'step'  => $this->atts['step'],
 		) );
 		if ( $this->atts['show_error'] !== 'false' ) {
 			$_ret .= $this->get_error( $this->atts['name'] );
@@ -107,34 +101,24 @@ class MW_WP_Form_Field_Text extends MW_WP_Form_Abstract_Form_Field {
 			<input type="text" name="id" value="<?php echo esc_attr( $id ); ?>" />
 		</p>
 		<p>
-			<strong>size</strong>
-			<?php $size = $this->get_value_for_generator( 'size', $options ); ?>
-			<input type="text" name="size" value="<?php echo esc_attr( $size ); ?>" />
+			<strong>min</strong>
+			<?php $min = $this->get_value_for_generator( 'min', $options ); ?>
+			<input type="text" name="min" value="<?php echo esc_attr( $min ); ?>" />
 		</p>
 		<p>
-			<strong>maxlength</strong>
-			<?php $maxlength = $this->get_value_for_generator( 'maxlength', $options ); ?>
-			<input type="text" name="maxlength" value="<?php echo esc_attr( $maxlength ); ?>" />
+			<strong>max</strong>
+			<?php $max = $this->get_value_for_generator( 'max', $options ); ?>
+			<input type="text" name="max" value="<?php echo esc_attr( $max ); ?>" />
 		</p>
 		<p>
-			<strong><?php esc_html_e( 'Default value', MWF_Config::DOMAIN ); ?></strong>
-			<?php $value = $this->get_value_for_generator( 'value', $options ); ?>
-			<input type="text" name="value" value="<?php echo esc_attr( $value ); ?>" />
-		</p>
-		<p>
-			<strong>placeholder</strong>
-			<?php $placeholder = $this->get_value_for_generator( 'placeholder', $options ); ?>
-			<input type="text" name="placeholder" value="<?php echo esc_attr( $placeholder ); ?>" />
+			<strong>step</strong>
+			<?php $step = $this->get_value_for_generator( 'step', $options ); ?>
+			<input type="text" name="step" value="<?php echo esc_attr( $step ); ?>" />
 		</p>
 		<p>
 			<strong><?php esc_html_e( 'Dsiplay error', MWF_Config::DOMAIN ); ?></strong>
 			<?php $show_error = $this->get_value_for_generator( 'show_error', $options ); ?>
 			<label><input type="checkbox" name="show_error" value="false" <?php checked( 'false', $show_error ); ?> /> <?php esc_html_e( 'Don\'t display error.', MWF_Config::DOMAIN ); ?></label>
-		</p>
-		<p>
-			<strong><?php esc_html_e( 'Convert half alphanumeric', MWF_Config::DOMAIN ); ?></strong>
-			<?php $conv_half_alphanumeric = $this->get_value_for_generator( 'conv_half_alphanumeric', $options ); ?>
-			<label><input type="checkbox" name="conv_half_alphanumeric" value="true" <?php checked( 'true', $conv_half_alphanumeric ); ?> /> <?php esc_html_e( 'Convert.', MWF_Config::DOMAIN ); ?></label>
 		</p>
 		<?php
 	}

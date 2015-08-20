@@ -2,12 +2,12 @@
 /**
  * Name       : MW WP Form Main Controller
  * Description: フロントエンドにおいて、適切な画面にリダイレクトさせる
- * Version    : 1.0.5
+ * Version    : 1.0.6
  * Author     : Takashi Kitajima
  * Author URI : http://2inc.org
  * Created    : December 23, 2014
- * Modified   : April 15, 2015
- * License    : GPLv2
+ * Modified   : May 11, 2015
+ * License    : GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
 class MW_WP_Form_Main_Controller {
@@ -158,7 +158,7 @@ class MW_WP_Form_Main_Controller {
 
 		// スクロール用スクリプトのロード
 		if ( $this->Setting->get( 'scroll' ) ) {
-			if ( in_array( $view_flg, array( 'confirm', 'complete' ) ) || !$is_valid ) {
+			if ( $post_condition !== 'input' ) {
 				add_action( 'wp_enqueue_scripts', array( $this, 'scroll_script' ) );
 			}
 		}

@@ -2,12 +2,12 @@
 /**
  * Name       : MW WP Form Mail Parser
  * Description: メールパーサー
- * Version    : 1.0.0
+ * Version    : 1.0.4
  * Author     : Takashi Kitajima
  * Author URI : http://2inc.org
  * Created    : April 14, 2015
- * Modified   : 
- * License    : GPLv2
+ * Modified   : May 25, 2015
+ * License    : GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
 class MW_WP_Form_Mail_Parser {
@@ -82,9 +82,15 @@ class MW_WP_Form_Mail_Parser {
 	protected function parse_mail_object( $do_update = false ) {
 		$parsed_Mail_vars = get_object_vars( $this->Mail );
 		foreach ( $parsed_Mail_vars as $key => $value ) {
-			if ( is_array( $value ) || $key == 'to' || $key == 'cc' || $key == 'bcc' ) {
+			if ( is_array( $value ) ) {
 				continue;
 			}
+
+			if ( $key == 'to' || $key == 'cc' || $key == 'bcc' ) {
+				$this->Mail->$key = $this->parse_mail_destination( $value );
+				continue;
+			}
+
 			if ( $key == 'body' && $do_update ) {
 				$value = $this->parse_mail_content( $value, true );
 			} else {
@@ -93,6 +99,32 @@ class MW_WP_Form_Mail_Parser {
 			$this->Mail->$key = $value;
 		}
 		return $this->Mail;
+	}
+
+	/**
+	 * メール送信先用に {name属性} を置換。Data からの取得は行わない
+	 *
+	 * @param string $value
+	 * @return string
+	 */
+	protected function parse_mail_destination( $value ) {
+		return preg_replace_callback(
+			'/{(.+?)}/',
+			array( $this, '_parse_mail_destination' ),
+			$value
+		);
+	}
+	protected function _parse_mail_destination( $matches ) {
+		$match    = $matches[1];
+		$form_id  = $this->Setting->get( 'post_id' );
+		$form_key = MWF_Functions::get_form_key_from_form_id( $form_id );
+		$value    = $this->apply_filters_mwform_custom_mail_tag( $form_key, null, $match );
+
+		// カスタムメールタグが利用されていない = null ときは送信先の初期値である空白を返す
+		if ( !is_null( $value ) ) {
+			return $value;
+		}
+		return '';
 	}
 
 	/**
@@ -140,16 +172,33 @@ class MW_WP_Form_Mail_Parser {
 		} else {
 			$form_key = MWF_Functions::get_form_key_from_form_id( $form_id );
 			$value = $this->Data->get( $match );
-			$value = apply_filters(
-				'mwform_custom_mail_tag_' . $form_key,
-				$value,
-				$match,
-				$this->insert_contact_data_id
-			);
+			$value = $this->apply_filters_mwform_custom_mail_tag( $form_key, $value, $match );
 		}
-		if ( $value !== null && $do_update ) {
-			update_post_meta( $this->insert_contact_data_id, $match, $value );
+
+		// 値が null でも保存（チェッボックス未チェックで直送信でも保存させるため）
+		// ただし、画像の場合はURLが保存されないように調整がはいるため除外が必要
+		if ( $do_update ) {
+			if ( !array_key_exists( $match, $this->Mail->attachments ) ) {
+				update_post_meta( $this->insert_contact_data_id, $match, $value );
+			}
 		}
 		return $value;
+	}
+
+	/**
+	 * フィルターフック mwform_custom_mail_tag を実行
+	 *
+	 * @param string $form_key
+	 * @param string|null $value
+	 * @param string $match
+	 * @return string
+	 */
+	protected function apply_filters_mwform_custom_mail_tag( $form_key, $value, $match ) {
+		return apply_filters(
+			'mwform_custom_mail_tag_' . $form_key,
+			$value,
+			$match,
+			$this->insert_contact_data_id
+		);
 	}
 }
