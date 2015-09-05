@@ -2,12 +2,12 @@
 /**
  * Name       : MW WP Form Form
  * Description: フォームヘルパー
- * Version    : 1.6.2
+ * Version    : 1.7.0
  * Author     : Takashi Kitajima
  * Author URI : http://2inc.org
  * Created    : September 25, 2012
- * Modified   : April 15, 2015
- * License    : GPLv2
+ * Modified   : August 12, 2015
+ * License    : GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
 class MW_WP_Form_Form {
@@ -172,7 +172,7 @@ class MW_WP_Form_Form {
 	 * @return string HTML
 	 */
 	public function children( $key, array $children ) {
-		$name = sprintf( '__children[%s]', $key );
+		$name = sprintf( '__children[%s][]', $key );
 		return $this->hidden( $name, json_encode( $children ) );
 	}
 
@@ -218,7 +218,7 @@ class MW_WP_Form_Form {
 		$defaults = array(
 			'id'          => null,
 			'size'        => 60,
-			'maxlength'   => 255,
+			'maxlength'   => null,
 			'value'       => '',
 			'placeholder' => null,
 			'conv-half-alphanumeric' => null,
@@ -228,6 +228,109 @@ class MW_WP_Form_Form {
 
 		return sprintf(
 			'<input type="text" name="%s"%s />',
+			esc_attr( $name ),
+			$attributes
+		);
+	}
+
+	/**
+	 * input[type=email]タグ生成
+	 *
+	 * @param string $name name属性
+	 * @param array
+	 * @return string html
+	 */
+	public function email( $name, $options = array() ) {
+		$defaults = array(
+			'id'          => null,
+			'size'        => 60,
+			'maxlength'   => null,
+			'value'       => '',
+			'placeholder' => null,
+			'conv-half-alphanumeric' => null,
+		);
+		$options = array_merge( $defaults, $options );
+		$attributes = $this->generate_attributes( $options );
+
+		return sprintf(
+			'<input type="email" name="%s"%s />',
+			esc_attr( $name ),
+			$attributes
+		);
+	}
+
+	/**
+	 * input[type=url]タグ生成
+	 *
+	 * @param string $name name属性
+	 * @param array
+	 * @return string html
+	 */
+	public function url( $name, $options = array() ) {
+		$defaults = array(
+			'id'          => null,
+			'size'        => 60,
+			'maxlength'   => null,
+			'value'       => '',
+			'placeholder' => null,
+			'conv-half-alphanumeric' => null,
+		);
+		$options = array_merge( $defaults, $options );
+		$attributes = $this->generate_attributes( $options );
+
+		return sprintf(
+			'<input type="url" name="%s"%s />',
+			esc_attr( $name ),
+			$attributes
+		);
+	}
+
+	/**
+	 * input[type=range]タグ生成
+	 *
+	 * @param string $name name属性
+	 * @param array
+	 * @return string html
+	 */
+	public function range( $name, $options = array() ) {
+		$defaults = array(
+			'id'    => null,
+			'value' => '',
+			'min'   => 0,
+			'max'   => 100,
+			'step'  => 1,
+		);
+		$options = array_merge( $defaults, $options );
+		$attributes = $this->generate_attributes( $options );
+
+		return sprintf(
+			'<input type="range" name="%s"%s />',
+			esc_attr( $name ),
+			$attributes
+		);
+	}
+
+	/**
+	 * input[type=number]タグ生成
+	 *
+	 * @param string $name name属性
+	 * @param array
+	 * @return string html
+	 */
+	public function number( $name, $options = array() ) {
+		$defaults = array(
+			'id'          => null,
+			'value'       => '',
+			'min'         => null,
+			'max'         => null,
+			'step'        => 1,
+			'placeholder' => null,
+		);
+		$options = array_merge( $defaults, $options );
+		$attributes = $this->generate_attributes( $options );
+
+		return sprintf(
+			'<input type="number" name="%s"%s />',
 			esc_attr( $name ),
 			$attributes
 		);
@@ -259,7 +362,7 @@ class MW_WP_Form_Form {
 		$defaults = array(
 			'id'          => null,
 			'size'        => 60,
-			'maxlength'   => 255,
+			'maxlength'   => null,
 			'value'       => '',
 			'placeholder' => null,
 		);
@@ -571,10 +674,11 @@ class MW_WP_Form_Form {
 	 */
 	public function datepicker( $name, $options = array() ) {
 		$defaults = array(
-			'id'    => null,
-			'size'  => 30,
-			'js'    => '',
-			'value' => '',
+			'id'          => null,
+			'size'        => 30,
+			'js'          => '',
+			'value'       => '',
+			'placeholder' => null,
 		);
 		$options = array_merge( $defaults, $options );
 		$_options = $options;

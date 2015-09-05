@@ -2,12 +2,12 @@
 /**
  * Name       : MW WP Form Main Controller
  * Description: フロントエンドにおいて、適切な画面にリダイレクトさせる
- * Version    : 1.0.5
+ * Version    : 1.1.0
  * Author     : Takashi Kitajima
  * Author URI : http://2inc.org
  * Created    : December 23, 2014
- * Modified   : April 15, 2015
- * License    : GPLv2
+ * Modified   : September 1, 2015
+ * License    : GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
 class MW_WP_Form_Main_Controller {
@@ -147,6 +147,8 @@ class MW_WP_Form_Main_Controller {
 		if ( $view_flg === 'complete' ) {
 			if ( !$this->is_complete_twice() ) {
 				$this->send();
+
+				do_action( 'mwform_after_send_' . $form_key );
 			}
 			// 手動フォームの場合は完了画面に ExecShortcode が無く footer の clear_values が
 			// 効かないためここで消す
@@ -158,7 +160,7 @@ class MW_WP_Form_Main_Controller {
 
 		// スクロール用スクリプトのロード
 		if ( $this->Setting->get( 'scroll' ) ) {
-			if ( in_array( $view_flg, array( 'confirm', 'complete' ) ) || !$is_valid ) {
+			if ( $post_condition !== 'input' ) {
 				add_action( 'wp_enqueue_scripts', array( $this, 'scroll_script' ) );
 			}
 		}
@@ -213,6 +215,8 @@ class MW_WP_Form_Main_Controller {
 			$css = $styles[$style];
 			wp_enqueue_style( MWF_Config::NAME . '_style', $css );
 		}
+
+		do_action( 'mwform_enqueue_scripts_' . $this->ExecShortcode->get( 'key' ) );
 		wp_enqueue_script( MWF_Config::NAME, $url . '../../js/form.js', array( 'jquery' ), false, true );
 	}
 
@@ -233,7 +237,7 @@ class MW_WP_Form_Main_Controller {
 		) );
 		wp_enqueue_script( MWF_Config::NAME . '-scroll' );
 	}
-	
+
 	/**
 	 * Nginx Cache Controller 用に header をカスタマイズ
 	 *

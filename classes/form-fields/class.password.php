@@ -2,12 +2,12 @@
 /**
  * Name       : MW WP Form Password
  * Description: パスワードフィールドを出力
- * Version    : 1.5.2
+ * Version    : 1.5.3
  * Author     : Takashi Kitajima
  * Author URI : http://2inc.org
  * Created    : December 14, 2012
- * Modified   : April 1, 2015
- * License    : GPLv2
+ * Modified   : July 20, 2015
+ * License    : GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
 class MW_WP_Form_Field_Password extends MW_WP_Form_Abstract_Form_Field {
@@ -41,7 +41,7 @@ class MW_WP_Form_Field_Password extends MW_WP_Form_Abstract_Form_Field {
 			'name'        => '',
 			'id'          => null,
 			'size'        => 60,
-			'maxlength'   => 255,
+			'maxlength'   => null,
 			'value'       => '',
 			'placeholder' => null,
 			'show_error'  => 'true',
