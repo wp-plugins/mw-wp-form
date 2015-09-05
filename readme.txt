@@ -1,10 +1,10 @@
 === MW WP Form ===
-Contributors: inc2734, ryu263, tomothumb, nanniku, mt8.biz, NExt-Season, kuck1u
+Contributors: inc2734, ryu263, tomothumb, nanniku, mt8.biz, NExt-Season, kuck1u, mypacecreator
 Donate link: http://www.amazon.co.jp/registry/wishlist/39ANKRNSTNW40
 Tags: plugin, form, confirm, preview, shortcode, mail, chart, graph, html, contact form, form creation, form creator, form manager, form builder, custom form
 Requires at least: 3.7
 Tested up to: 4.3
-Stable tag: 2.5.1
+Stable tag: 2.5.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -40,7 +40,7 @@ https://github.com/inc2734/mw-wp-form
 
 = The following third-party resources =
 
-Google Charts 
+Google Charts
 Source: https://developers.google.com/chart/
 
 = Contributors =
@@ -52,6 +52,7 @@ Source: https://developers.google.com/chart/
 * [Kazuto Takeshita](http://mt8.biz/) ( [moto hachi](https://profiles.wordpress.org/mt8biz/) )
 * [Atsushi Ando](http://www.next-season.net/) ( [NExt-Season](https://profiles.wordpress.org/next-season/) )
 * [Kazuki Tomiyasu](http://visualive.jp/) ( [KUCKLU](https://profiles.wordpress.org/kuck1u/) )
+* [Key Nomura](http://mypacecreator.net/) ( [mypacecreator](https://profiles.wordpress.org/mypacecreator/) )
 
 == Installation ==
 
@@ -75,6 +76,13 @@ Do you have questions or issues with MW WP Form? Use these support channels appr
 5. Supports chart display of saved inquiry data.
 
 == Changelog ==
+
+= 2.5.2 =
+* Added   : Add new validation rule japanese kana.
+* Added   : Add action hook mwform_before_send_admin_mail_mw-wp-form-xxx.
+* Added   : Add action hook mwform_before_send_reply_mail_mw-wp-form-xxx.
+* Added   : Add action hook mwform_after_send_mw-wp-form-xxx.
+* Added   : Add action hook mwform_enqueue_scripts_mw-wp-form-xxx.
 
 = 2.5.1 =
 * Update readme.txt
