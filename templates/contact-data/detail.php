@@ -20,6 +20,10 @@
 		<td>
 			<?php
 			if ( $Contact_Data_Setting->is_upload_file_key( $post, $key ) ) {
+				// 過去バージョンでの不具合でメタデータが空になっていることがあるのでその場合は代替処理
+				if ( $value === '' ) {
+					$value = MWF_Functions::get_multimedia_id__fallback( $post, $key );
+				}
 				echo MWF_Functions::get_multimedia_data( $value );
 			} else {
 				echo nl2br( esc_html( $value ) );
@@ -29,7 +33,7 @@
 	</tr>
 	<?php endforeach; ?>
 	<tr>
-		<th><?php esc_html_e( 'Response Status', MWF_Config::DOMAIN ); ?></th>
+		<th><?php esc_html_e( 'Response Status', 'mw-wp-form' ); ?></th>
 		<td>
 			<select name="<?php echo esc_attr( MWF_Config::CONTACT_DATA_NAME ); ?>[response_status]">
 				<?php foreach ( $Contact_Data_Setting->get_response_statuses() as $key => $value ) : ?>
@@ -41,7 +45,7 @@
 		</td>
 	</tr>
 	<tr>
-		<th><?php esc_html_e( 'Memo', MWF_Config::DOMAIN ); ?></th>
+		<th><?php esc_html_e( 'Memo', 'mw-wp-form' ); ?></th>
 		<td><textarea name="<?php echo esc_attr( MWF_Config::CONTACT_DATA_NAME ); ?>[memo]" cols="50" rows="5"><?php echo $Contact_Data_Setting->get( 'memo' ); ?></textarea></td>
 	</tr>
 </table>

@@ -6,7 +6,7 @@
  * Author URI : http://2inc.org
  * Created    : December 31, 2014
  * Modified   : March 27, 2015
- * License    : GPLv2
+ * License    : GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
 class MW_WP_Form_Contact_Data_Controller extends MW_WP_Form_Controller {
@@ -67,7 +67,7 @@ class MW_WP_Form_Contact_Data_Controller extends MW_WP_Form_Controller {
 		$post_type = get_post_type();
 		add_meta_box(
 			substr( MWF_Config::CONTACT_DATA_NAME, 1 ) . '_custom_fields',
-			__( 'Custom Fields', MWF_Config::DOMAIN ),
+			__( 'Custom Fields', 'mw-wp-form' ),
 			array( $this, 'detail' ),
 			$post_type
 		);

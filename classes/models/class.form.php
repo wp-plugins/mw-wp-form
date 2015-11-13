@@ -2,12 +2,12 @@
 /**
  * Name       : MW WP Form Form
  * Description: フォームヘルパー
- * Version    : 1.6.2
+ * Version    : 1.8.0
  * Author     : Takashi Kitajima
  * Author URI : http://2inc.org
  * Created    : September 25, 2012
- * Modified   : April 15, 2015
- * License    : GPLv2
+ * Modified   : November 13, 2015
+ * License    : GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
 class MW_WP_Form_Form {
@@ -172,7 +172,7 @@ class MW_WP_Form_Form {
 	 * @return string HTML
 	 */
 	public function children( $key, array $children ) {
-		$name = sprintf( '__children[%s]', $key );
+		$name = sprintf( '__children[%s][]', $key );
 		return $this->hidden( $name, json_encode( $children ) );
 	}
 
@@ -217,8 +217,9 @@ class MW_WP_Form_Form {
 	public function text( $name, $options = array() ) {
 		$defaults = array(
 			'id'          => null,
+			'class'       => null,
 			'size'        => 60,
-			'maxlength'   => 255,
+			'maxlength'   => null,
 			'value'       => '',
 			'placeholder' => null,
 			'conv-half-alphanumeric' => null,
@@ -228,6 +229,113 @@ class MW_WP_Form_Form {
 
 		return sprintf(
 			'<input type="text" name="%s"%s />',
+			esc_attr( $name ),
+			$attributes
+		);
+	}
+
+	/**
+	 * input[type=email]タグ生成
+	 *
+	 * @param string $name name属性
+	 * @param array
+	 * @return string html
+	 */
+	public function email( $name, $options = array() ) {
+		$defaults = array(
+			'id'          => null,
+			'class'       => null,
+			'size'        => 60,
+			'maxlength'   => null,
+			'value'       => '',
+			'placeholder' => null,
+			'conv-half-alphanumeric' => null,
+		);
+		$options = array_merge( $defaults, $options );
+		$attributes = $this->generate_attributes( $options );
+
+		return sprintf(
+			'<input type="email" name="%s"%s />',
+			esc_attr( $name ),
+			$attributes
+		);
+	}
+
+	/**
+	 * input[type=url]タグ生成
+	 *
+	 * @param string $name name属性
+	 * @param array
+	 * @return string html
+	 */
+	public function url( $name, $options = array() ) {
+		$defaults = array(
+			'id'          => null,
+			'class'       => null,
+			'size'        => 60,
+			'maxlength'   => null,
+			'value'       => '',
+			'placeholder' => null,
+			'conv-half-alphanumeric' => null,
+		);
+		$options = array_merge( $defaults, $options );
+		$attributes = $this->generate_attributes( $options );
+
+		return sprintf(
+			'<input type="url" name="%s"%s />',
+			esc_attr( $name ),
+			$attributes
+		);
+	}
+
+	/**
+	 * input[type=range]タグ生成
+	 *
+	 * @param string $name name属性
+	 * @param array
+	 * @return string html
+	 */
+	public function range( $name, $options = array() ) {
+		$defaults = array(
+			'id'    => null,
+			'class' => null,
+			'value' => '',
+			'min'   => 0,
+			'max'   => 100,
+			'step'  => 1,
+		);
+		$options = array_merge( $defaults, $options );
+		$attributes = $this->generate_attributes( $options );
+
+		return sprintf(
+			'<input type="range" name="%s"%s />',
+			esc_attr( $name ),
+			$attributes
+		);
+	}
+
+	/**
+	 * input[type=number]タグ生成
+	 *
+	 * @param string $name name属性
+	 * @param array
+	 * @return string html
+	 */
+	public function number( $name, $options = array() ) {
+		$defaults = array(
+			'id'          => null,
+			'class'       => null,
+			'value'       => '',
+			'min'         => null,
+			'max'         => null,
+			'step'        => 1,
+			'placeholder' => null,
+		);
+		$options = array_merge( $defaults, $options );
+		$attributes = $this->generate_attributes( $options );
+
+		return sprintf(
+			'<input type="number" name="%s"%s />',
 			esc_attr( $name ),
 			$attributes
 		);
@@ -258,8 +366,9 @@ class MW_WP_Form_Form {
 	public function password( $name, $options = array() ) {
 		$defaults = array(
 			'id'          => null,
+			'class'       => null,
 			'size'        => 60,
-			'maxlength'   => 255,
+			'maxlength'   => null,
 			'value'       => '',
 			'placeholder' => null,
 		);
@@ -282,6 +391,7 @@ class MW_WP_Form_Form {
 	 */
 	public function zip( $name, $options = array() ) {
 		$defaults = array(
+			'class' => null,
 			'conv-half-alphanumeric' => null,
 			'value' => '',
 		);
@@ -306,6 +416,7 @@ class MW_WP_Form_Form {
 		$_ret  = '<span class="mwform-zip-field">';
 		$_ret .= '〒';
 		$_ret .= $this->text( $name . '[data][0]', array(
+			'class'     => $options['class'],
 			'size'      => 4,
 			'maxlength' => 3,
 			'value'     => $values[0],
@@ -313,6 +424,7 @@ class MW_WP_Form_Form {
 		) );
 		$_ret .= ' ' . $separator . ' ';
 		$_ret .= $this->text( $name . '[data][1]', array(
+			'class'     => $options['class'],
 			'size'      => 5,
 			'maxlength' => 4,
 			'value'     => $values[1],
@@ -332,6 +444,7 @@ class MW_WP_Form_Form {
 	 */
 	public function tel( $name, $options = array() ) {
 		$defaults = array(
+			'class' => null,
 			'conv-half-alphanumeric' => null,
 			'value' => '',
 		);
@@ -355,6 +468,7 @@ class MW_WP_Form_Form {
 
 		$_ret  = '<span class="mwform-tel-field">';
 		$_ret .= $this->text( $name . '[data][0]', array(
+			'class'     => $options['class'],
 			'size'      => 6,
 			'maxlength' => 5,
 			'value'     => $values[0],
@@ -362,6 +476,7 @@ class MW_WP_Form_Form {
 		) );
 		$_ret .= ' ' . $separator . ' ';
 		$_ret .= $this->text( $name . '[data][1]', array(
+			'class'     => $options['class'],
 			'size'      => 5,
 			'maxlength' => 4,
 			'value'     => $values[1],
@@ -369,6 +484,7 @@ class MW_WP_Form_Form {
 		) );
 		$_ret .= ' ' . $separator . ' ';
 		$_ret .= $this->text( $name . '[data][2]', array(
+			'class'     => $options['class'],
 			'size'      => 5,
 			'maxlength' => 4,
 			'value'     => $values[2],
@@ -389,6 +505,7 @@ class MW_WP_Form_Form {
 	public function textarea( $name, $options = array() ) {
 		$defaults = array(
 			'id'          => null,
+			'class'       => null,
 			'cols'        => 50,
 			'rows'        => 5,
 			'value'       => '',
@@ -417,14 +534,15 @@ class MW_WP_Form_Form {
 	 */
 	public function select( $name, $children = array(), $options = array() ) {
 		$defaults = array(
+			'class' => null,
 			'id'    => null,
 			'value' => '',
 		);
 		$options = array_merge( $defaults, $options );
-
-		$attributes = $this->generate_attributes( array(
-			'id' => $options['id'],
-		) );
+		
+		$_options = $options;
+		unset( $_options['value'] );
+		$attributes = $this->generate_attributes( $_options );
 		$_ret = sprintf(
 			'<select name="%s"%s>',
 			esc_attr( $name ),
@@ -453,6 +571,7 @@ class MW_WP_Form_Form {
 	 */
 	public function radio( $name, $children = array(), $options = array() ) {
 		$defaults = array(
+			'class'      => null,
 			'id'         => '',
 			'value'      => '',
 			'vertically' => null,
@@ -463,7 +582,7 @@ class MW_WP_Form_Form {
 		$_ret = '';
 		foreach ( $children as $key => $_value ) {
 			$i ++;
-			$vertically = ( $options['vertically'] === 'true' ) ? 'vertical-item' : '';
+			$vertically = ( $options['vertically'] === 'true' ) ? 'vertical-item' : 'horizontal-item';
 			$attributes_for_label = $this->generate_attributes( array(
 				'for' => $this->get_attr_id( $options['id'], $i ),
 			) );
@@ -471,7 +590,7 @@ class MW_WP_Form_Form {
 				'id' => $this->get_attr_id( $options['id'], $i ),
 			) );
 			$_ret .= sprintf(
-				'<span class="%s"><label%s><input type="radio" name="%s" value="%s"%s %s />%s</label></span>',
+				'<span class="mwform-radio-field %s"><label%s><input type="radio" name="%s" value="%s"%s %s />%s</label></span>',
 				$vertically,
 				$attributes_for_label,
 				esc_attr( $name ),
@@ -495,7 +614,8 @@ class MW_WP_Form_Form {
 	 */
 	public function checkbox( $name, $children = array(), $options = array(), $separator = ',' ) {
 		$defaults = array(
-			'id'         => '',
+			'id'         => null,
+			'class'      => null,
 			'value'      => '',
 			'vertically' => null,
 		);
@@ -510,15 +630,16 @@ class MW_WP_Form_Form {
 		$_ret = '';
 		foreach ( $children as $key => $_value ) {
 			$i ++;
-			$vertically = ( $options['vertically'] === 'true' ) ? 'vertical-item' : '';
+			$vertically = ( $options['vertically'] === 'true' ) ? 'vertical-item' : 'horizontal-item';
 			$attributes_for_label = $this->generate_attributes( array(
 				'for' => $this->get_attr_id( $options['id'], $i ),
 			) );
 			$attributes = $this->generate_attributes( array(
-				'id' => $this->get_attr_id( $options['id'], $i ),
+				'id'    => $this->get_attr_id( $options['id'], $i ),
+				'class' => $options['class'],
 			) );
 			$_ret .= sprintf(
-				'<span class="%s"><label%s><input type="checkbox" name="%s" value="%s"%s %s />%s</label></span>',
+				'<span class="mwform-checkbox-field %s"><label%s><input type="checkbox" name="%s" value="%s"%s %s />%s</label></span>',
 				$vertically,
 				$attributes_for_label,
 				esc_attr( $name . '[data][]' ),
@@ -537,13 +658,20 @@ class MW_WP_Form_Form {
 	 *
 	 * @param string $name name属性
 	 * @param string $value value属性
+	 * @param array $options
 	 * @return string submitボタン
 	 */
-	public function submit( $name, $value ) {
+	public function submit( $name, $value, $options = array() ) {
+		$defaults = array(
+			'class' => null,
+		);
+		$options = array_merge( $defaults, $options );
+		$attributes = $this->generate_attributes( $options );
 		return sprintf(
-			'<input type="submit" name="%s" value="%s" />',
+			'<input type="submit" name="%s" value="%s"%s />',
 			esc_attr( $name ),
-			esc_attr( $value )
+			esc_attr( $value ),
+			$attributes
 		);
 	}
 
@@ -552,13 +680,20 @@ class MW_WP_Form_Form {
 	 *
 	 * @param string $name name属性
 	 * @param string $value value属性
+	 * @param array $options
 	 * @return string ボタン
 	 */
-	public function button( $name, $value ) {
+	public function button( $name, $value, $options = array() ) {
+		$defaults = array(
+			'class' => null,
+		);
+		$options = array_merge( $defaults, $options );
+		$attributes = $this->generate_attributes( $options );
 		return sprintf(
-			'<input type="button" name="%s" value="%s" />',
+			'<input type="button" name="%s" value="%s"%s />',
 			esc_attr( $name ),
-			esc_attr( $value )
+			esc_attr( $value ),
+			$attributes
 		);
 	}
 
@@ -571,10 +706,12 @@ class MW_WP_Form_Form {
 	 */
 	public function datepicker( $name, $options = array() ) {
 		$defaults = array(
-			'id'    => null,
-			'size'  => 30,
-			'js'    => '',
-			'value' => '',
+			'id'          => null,
+			'class'       => null,
+			'size'        => 30,
+			'js'          => '',
+			'value'       => '',
+			'placeholder' => null,
 		);
 		$options = array_merge( $defaults, $options );
 		$_options = $options;
@@ -603,7 +740,8 @@ class MW_WP_Form_Form {
 	 */
 	public function file( $name, $options = array() ) {
 		$defaults = array(
-			'id' => '',
+			'id'    => null,
+			'class' => null,
 		);
 		$options = array_merge( $defaults, $options );
 		$attributes = $this->generate_attributes( $options );

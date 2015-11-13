@@ -1,12 +1,12 @@
 <?php
 /**
  * Name       : MW WP Form CSV
- * Version    : 1.0.1
+ * Version    : 1.0.2
  * Author     : Takashi Kitajima
  * Author URI : http://2inc.org
  * Created    : April 3, 2015
- * Modified   : April 5, 2015
- * License    : GPLv2
+ * Modified   : May 26, 2015
+ * License    : GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
 class MW_WP_Form_CSV {
@@ -119,7 +119,7 @@ class MW_WP_Form_CSV {
 	protected function get_csv_headings( array $posts ) {
 		$default_headings = array(
 			'ID',
-			__( 'Response Status', MWF_Config::DOMAIN ),
+			__( 'Response Status', 'mw-wp-form' ),
 			'post_date',
 			'post_modified',
 			'post_title'
@@ -145,7 +145,7 @@ class MW_WP_Form_CSV {
 		}
 		ksort( $columns );
 		$rows[0] = array_merge( $rows[0], $columns );
-		$rows[0] = array_merge( $rows[0], array( __( 'Memo', MWF_Config::DOMAIN ) ) );
+		$rows[0] = array_merge( $rows[0], array( __( 'Memo', 'mw-wp-form' ) ) );
 		return $rows[0];
 	}
 
@@ -166,16 +166,20 @@ class MW_WP_Form_CSV {
 				$Contact_Data_Setting = new MW_WP_Form_Contact_Data_Setting( $post->ID );
 				$response_statuses    = $Contact_Data_Setting->get_response_statuses();
 				$column = '';
-				if ( $value === __( 'Response Status', MWF_Config::DOMAIN ) ) {
+				if ( $value === __( 'Response Status', 'mw-wp-form' ) ) {
 					$response_status = $Contact_Data_Setting->get( 'response_status' );
 					$column = $response_statuses[$response_status];
-				} elseif ( $value === __( 'Memo', MWF_Config::DOMAIN ) ) {
+				} elseif ( $value === __( 'Memo', 'mw-wp-form' ) ) {
 					$column = $Contact_Data_Setting->get( 'memo' );
 				} elseif ( $value === MWF_Functions::get_tracking_number_title( $this->post_type ) ) {
 					$column = get_post_meta( get_the_ID(), MWF_Config::TRACKINGNUMBER, true );
 				} elseif ( isset( $post->$value ) ) {
 					$post_meta = $post->$value;
 					if ( $Contact_Data_Setting->is_upload_file_key( $post, $value ) ) {
+						// 過去バージョンでの不具合でメタデータが空になっていることがあるのでその場合は代替処理
+						if ( $post_meta === '' ) {
+							$post_meta = MWF_Functions::get_multimedia_id__fallback( $post, $value );
+						}
 						$column = wp_get_attachment_url( $post_meta );
 					} else {
 						$column = ( $post_meta ) ? $post_meta : '';

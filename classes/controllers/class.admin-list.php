@@ -6,7 +6,7 @@
  * Author URI : http://2inc.org
  * Created    : January 1, 2015
  * Modified   : March 27, 2015
- * License    : GPLv2
+ * License    : GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
 class MW_WP_Form_Admin_List_Controller extends MW_WP_Form_Controller {
@@ -31,9 +31,9 @@ class MW_WP_Form_Admin_List_Controller extends MW_WP_Form_Controller {
 		$donation = array(
 			'donation' =>
 				'<div class="donation"><p>' .
-				__( 'Your contribution is needed for making this plugin better.', MWF_Config::DOMAIN ) .
+				__( 'Your contribution is needed for making this plugin better.', 'mw-wp-form' ) .
 				' <a href="http://www.amazon.co.jp/registry/wishlist/39ANKRNSTNW40" class="button">' .
-				__( 'Donate', MWF_Config::DOMAIN ) . '</a></p></div>'
+				__( 'Donate', 'mw-wp-form' ) . '</a></p></div>'
 		);
 		$views = array_merge( $donation, $views );
 		return $views;
@@ -63,7 +63,7 @@ class MW_WP_Form_Admin_List_Controller extends MW_WP_Form_Controller {
 	public function manage_posts_columns( $columns ) {
 		$date = $columns['date'];
 		unset( $columns['date'] );
-		$columns['mwform_form_key'] = __( 'Form Key', MWF_Config::DOMAIN );
+		$columns['mwform_form_key'] = __( 'Form Key', 'mw-wp-form' );
 		$columns['date'] = $date;
 		return $columns;
 	}

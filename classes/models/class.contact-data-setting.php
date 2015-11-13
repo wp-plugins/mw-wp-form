@@ -2,12 +2,12 @@
 /**
  * Name       : MW WP Form Contact Data Setting
  * Description: 管理画面クラス
- * Version    : 1.0.2
+ * Version    : 1.0.3
  * Author     : Takashi Kitajima
  * Author URI : http://2inc.org
  * Created    : January 1, 2015
- * Modified   : April 15, 2015
- * License    : GPLv2
+ * Modified   : May 26, 2015
+ * License    : GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
 class MW_WP_Form_Contact_Data_Setting {
@@ -57,9 +57,9 @@ class MW_WP_Form_Contact_Data_Setting {
 		if ( MWF_Functions::is_contact_data_post_type( get_post_type( $post_id ) ) ) {
 			$this->post_id = $post_id;
 			$this->response_statuses = array(
-				'not-supported' => esc_html__( 'Not supported', MWF_Config::DOMAIN ),
-				'reservation'   => esc_html__( 'Reservation', MWF_Config::DOMAIN ),
-				'supported'     => esc_html__( 'Supported', MWF_Config::DOMAIN ),
+				'not-supported' => esc_html__( 'Not supported', 'mw-wp-form' ),
+				'reservation'   => esc_html__( 'Reservation', 'mw-wp-form' ),
+				'supported'     => esc_html__( 'Supported', 'mw-wp-form' ),
 			);
 
 			$post_custom = get_post_custom( $post_id );
@@ -226,6 +226,21 @@ class MW_WP_Form_Contact_Data_Setting {
 		$upload_file_keys = $this->get_upload_file_keys( $post );
 		if ( is_array( $upload_file_keys ) && in_array( $meta_key, $upload_file_keys ) ) {
 			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * $meta_key が upload_file_key に含まれている場合にキーを返す
+	 *
+	 * @param WP_Post $post
+	 * @param string $meta_key
+	 * @return int|false
+	 */
+	public function get_key_in_upload_file_keys( $post, $meta_key ) {
+		$upload_file_keys = $this->get_upload_file_keys( $post );
+		if ( is_array( $upload_file_keys ) ) {
+			return array_search( $meta_key, $upload_file_keys );
 		}
 		return false;
 	}

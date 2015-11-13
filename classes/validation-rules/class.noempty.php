@@ -7,7 +7,7 @@
  * Author URI : http://2inc.org
  * Created    : July 21, 2014
  * Modified   : April 1, 2015
- * License    : GPLv2
+ * License    : GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
 class MW_WP_Form_Validation_Rule_noEmpty extends MW_WP_Form_Abstract_Validation_Rule {
@@ -29,7 +29,7 @@ class MW_WP_Form_Validation_Rule_noEmpty extends MW_WP_Form_Abstract_Validation_
 		$value = $this->Data->get( $key );
 		if ( !is_null( $value ) && MWF_Functions::is_empty( $value ) ) {
 			$defaults = array(
-				'message' => __( 'Please enter.', MWF_Config::DOMAIN )
+				'message' => __( 'Please enter.', 'mw-wp-form' )
 			);
 			$options = array_merge( $defaults, $options );
 			return $options['message'];
@@ -44,7 +44,7 @@ class MW_WP_Form_Validation_Rule_noEmpty extends MW_WP_Form_Abstract_Validation_
 	 */
 	public function admin( $key, $value ) {
 		?>
-		<label><input type="checkbox" <?php checked( $value[$this->getName()], 1 ); ?> name="<?php echo MWF_Config::NAME; ?>[validation][<?php echo $key; ?>][<?php echo esc_attr( $this->getName() ); ?>]" value="1" /><?php esc_html_e( 'No empty', MWF_Config::DOMAIN ); ?></label>
+		<label><input type="checkbox" <?php checked( $value[$this->getName()], 1 ); ?> name="<?php echo MWF_Config::NAME; ?>[validation][<?php echo $key; ?>][<?php echo esc_attr( $this->getName() ); ?>]" value="1" /><?php esc_html_e( 'No empty', 'mw-wp-form' ); ?></label>
 		<?php
 	}
 }

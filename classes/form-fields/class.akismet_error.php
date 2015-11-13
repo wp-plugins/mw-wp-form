@@ -7,7 +7,7 @@
  * Author URI : http://2inc.org
  * Created    : June 21, 2013
  * Modified   : January 2, 2015
- * License    : GPLv2
+ * License    : GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
 class MW_WP_Form_Field_Akismet_Error extends MW_WP_Form_Abstract_Form_Field {
@@ -27,7 +27,7 @@ class MW_WP_Form_Field_Akismet_Error extends MW_WP_Form_Abstract_Form_Field {
 	protected function set_names() {
 		return array(
 			'shortcode_name' => 'mwform_akismet_error',
-			'display_name'   => __( 'Akismet Error', MWF_Config::DOMAIN ),
+			'display_name'   => __( 'Akismet Error', 'mw-wp-form' ),
 		);
 	}
 

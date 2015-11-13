@@ -1,12 +1,12 @@
 <?php
 /**
  * Name       : MW WP Form Contact Data List Controller
- * Version    : 1.1.0
+ * Version    : 1.1.1
  * Author     : Takashi Kitajima
  * Author URI : http://2inc.org
  * Created    : January 1, 2015
- * Modified   : March 27, 2015
- * License    : GPLv2
+ * Modified   : May 26, 2015
+ * License    : GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
 class MW_WP_Form_Contact_Data_List_Controller extends MW_WP_Form_Controller {
@@ -114,8 +114,8 @@ class MW_WP_Form_Contact_Data_List_Controller extends MW_WP_Form_Controller {
 	public function add_form_columns_name( $columns ) {
 		global $posts;
 		unset( $columns['date'] );
-		$columns['post_date']       = __( 'Registed Date', MWF_Config::DOMAIN );
-		$columns['response_status'] = __( 'Response Status', MWF_Config::DOMAIN );
+		$columns['post_date']       = __( 'Registed Date', 'mw-wp-form' );
+		$columns['response_status'] = __( 'Response Status', 'mw-wp-form' );
 		$_columns = array();
 		foreach ( $posts as $post ) {
 			$post_custom_keys = get_post_custom_keys( $post->ID );
@@ -157,6 +157,10 @@ class MW_WP_Form_Contact_Data_List_Controller extends MW_WP_Form_Controller {
 		} elseif ( is_array( $post_custom_keys ) && in_array( $column, $post_custom_keys ) ) {
 			$post_meta = get_post_meta( $post_id, $column, true );
 			if ( $Contact_Data_Setting->is_upload_file_key( $post, $column ) ) {
+				// 過去バージョンでの不具合でメタデータが空になっていることがあるのでその場合は代替処理
+				if ( $post_meta === '' ) {
+					$post_meta = MWF_Functions::get_multimedia_id__fallback( $post, $column );
+				}
 				$value = MWF_Functions::get_multimedia_data( $post_meta );
 			} elseif ( $post_meta ) {
 				$value = esc_html( $post_meta );
