@@ -2,11 +2,11 @@
 /**
  * Name       : MW WP Form Field Tel
  * Description: 電話番号フィールドを出力
- * Version    : 1.5.2
+ * Version    : 1.6.0
  * Author     : Takashi Kitajima
  * Author URI : http://2inc.org
  * Created    : December 14, 2012
- * Modified   : April 10, 2015
+ * Modified   : November 14, 2015
  * License    : GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -27,7 +27,7 @@ class MW_WP_Form_Field_Tel extends MW_WP_Form_Abstract_Form_Field {
 	protected function set_names() {
 		return array(
 			'shortcode_name' => 'mwform_tel',
-			'display_name'   => __( 'Tel', MWF_Config::DOMAIN ),
+			'display_name'   => __( 'Tel', 'mw-wp-form' ),
 		);
 	}
 
@@ -39,6 +39,7 @@ class MW_WP_Form_Field_Tel extends MW_WP_Form_Abstract_Form_Field {
 	protected function set_defaults() {
 		return array(
 			'name'       => '',
+			'class'      => null,
 			'value'      => '',
 			'show_error' => 'true',
 			'conv_half_alphanumeric' => 'true',
@@ -64,6 +65,7 @@ class MW_WP_Form_Field_Tel extends MW_WP_Form_Abstract_Form_Field {
 		}
 
 		$_ret = $this->Form->tel( $this->atts['name'], array(
+			'class' => $this->atts['class'],
 			'conv-half-alphanumeric' => $conv_half_alphanumeric,
 			'value' => $value,
 		) );
@@ -99,14 +101,19 @@ class MW_WP_Form_Field_Tel extends MW_WP_Form_Abstract_Form_Field {
 			<input type="text" name="name" value="<?php echo esc_attr( $name ); ?>" />
 		</p>
 		<p>
-			<strong><?php esc_html_e( 'Dsiplay error', MWF_Config::DOMAIN ); ?></strong>
-			<?php $show_error = $this->get_value_for_generator( 'show_error', $options ); ?>
-			<label><input type="checkbox" name="show_error" value="false" <?php checked( 'false', $show_error ); ?> /> <?php esc_html_e( 'Don\'t display error.', MWF_Config::DOMAIN ); ?></label>
+			<strong>class</strong>
+			<?php $class = $this->get_value_for_generator( 'class', $options ); ?>
+			<input type="text" name="class" value="<?php echo esc_attr( $class ); ?>" />
 		</p>
 		<p>
-			<strong><?php esc_html_e( 'Convert half alphanumeric', MWF_Config::DOMAIN ); ?></strong>
+			<strong><?php esc_html_e( 'Dsiplay error', 'mw-wp-form' ); ?></strong>
+			<?php $show_error = $this->get_value_for_generator( 'show_error', $options ); ?>
+			<label><input type="checkbox" name="show_error" value="false" <?php checked( 'false', $show_error ); ?> /> <?php esc_html_e( 'Don\'t display error.', 'mw-wp-form' ); ?></label>
+		</p>
+		<p>
+			<strong><?php esc_html_e( 'Convert half alphanumeric', 'mw-wp-form' ); ?></strong>
 			<?php $conv_half_alphanumeric = $this->get_value_for_generator( 'conv_half_alphanumeric', $options ); ?>
-			<label><input type="checkbox" name="conv_half_alphanumeric" value="false" <?php checked( 'false', $conv_half_alphanumeric ); ?> /> <?php esc_html_e( 'Don\'t Convert.', MWF_Config::DOMAIN ); ?></label>
+			<label><input type="checkbox" name="conv_half_alphanumeric" value="false" <?php checked( 'false', $conv_half_alphanumeric ); ?> /> <?php esc_html_e( 'Don\'t Convert.', 'mw-wp-form' ); ?></label>
 		</p>
 		<?php
 	}

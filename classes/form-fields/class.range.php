@@ -2,11 +2,11 @@
 /**
  * Name       : MW WP Form Field Range
  * Description: range フィールドを出力
- * Version    : 1.0.0
+ * Version    : 1.1.0
  * Author     : Takashi Kitajima
  * Author URI : http://2inc.org
  * Created    : July 21, 2015
- * Modified   : 
+ * Modified   : November 14, 2015
  * License    : GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -27,7 +27,7 @@ class MW_WP_Form_Field_Range extends MW_WP_Form_Abstract_Form_Field {
 	protected function set_names() {
 		return array(
 			'shortcode_name' => 'mwform_range',
-			'display_name'   => __( 'Range', MWF_Config::DOMAIN ),
+			'display_name'   => __( 'Range', 'mw-wp-form' ),
 		);
 	}
 
@@ -40,6 +40,7 @@ class MW_WP_Form_Field_Range extends MW_WP_Form_Abstract_Form_Field {
 		return array(
 			'name'       => '',
 			'id'         => null,
+			'class'      => null,
 			'value'      => '',
 			'min'        => 0,
 			'max'        => 100,
@@ -61,6 +62,7 @@ class MW_WP_Form_Field_Range extends MW_WP_Form_Abstract_Form_Field {
 
 		$_ret = $this->Form->range( $this->atts['name'], array(
 			'id'    => $this->atts['id'],
+			'class' => $this->atts['class'],
 			'value' => $value,
 			'min'   => $this->atts['min'],
 			'max'   => $this->atts['max'],
@@ -101,6 +103,11 @@ class MW_WP_Form_Field_Range extends MW_WP_Form_Abstract_Form_Field {
 			<input type="text" name="id" value="<?php echo esc_attr( $id ); ?>" />
 		</p>
 		<p>
+			<strong>class</strong>
+			<?php $class = $this->get_value_for_generator( 'class', $options ); ?>
+			<input type="text" name="class" value="<?php echo esc_attr( $class ); ?>" />
+		</p>
+		<p>
 			<strong>min</strong>
 			<?php $min = $this->get_value_for_generator( 'min', $options ); ?>
 			<input type="text" name="min" value="<?php echo esc_attr( $min ); ?>" />
@@ -116,9 +123,9 @@ class MW_WP_Form_Field_Range extends MW_WP_Form_Abstract_Form_Field {
 			<input type="text" name="step" value="<?php echo esc_attr( $step ); ?>" />
 		</p>
 		<p>
-			<strong><?php esc_html_e( 'Dsiplay error', MWF_Config::DOMAIN ); ?></strong>
+			<strong><?php esc_html_e( 'Dsiplay error', 'mw-wp-form' ); ?></strong>
 			<?php $show_error = $this->get_value_for_generator( 'show_error', $options ); ?>
-			<label><input type="checkbox" name="show_error" value="false" <?php checked( 'false', $show_error ); ?> /> <?php esc_html_e( 'Don\'t display error.', MWF_Config::DOMAIN ); ?></label>
+			<label><input type="checkbox" name="show_error" value="false" <?php checked( 'false', $show_error ); ?> /> <?php esc_html_e( 'Don\'t display error.', 'mw-wp-form' ); ?></label>
 		</p>
 		<?php
 	}

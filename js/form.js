@@ -33,6 +33,10 @@ jQuery( function( $ ) {
 
 	var mw_wp_form_button_no_click = true;
 	$( '.mw_wp_form input[type="submit"]' ).click( function() {
+		var formElement = $( this ).closest( 'form' )[0];
+		if ( formElement && formElement.checkValidity && !formElement.checkValidity() ) {
+			return;
+		}
 		if ( mw_wp_form_button_no_click ) {
 			mw_wp_form_button_no_click = false;
 		} else {
@@ -40,4 +44,3 @@ jQuery( function( $ ) {
 		}
 	} );
 } );
-

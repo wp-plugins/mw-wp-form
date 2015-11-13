@@ -1,10 +1,10 @@
 === MW WP Form ===
-Contributors: inc2734, ryu263, tomothumb, nanniku, mt8.biz, NExt-Season, kuck1u, mypacecreator
+Contributors: inc2734, ryu263, tomothumb, nanniku, mt8.biz, NExt-Season, kuck1u, mypacecreator, mh35
 Donate link: http://www.amazon.co.jp/registry/wishlist/39ANKRNSTNW40
 Tags: plugin, form, confirm, preview, shortcode, mail, chart, graph, html, contact form, form creation, form creator, form manager, form builder, custom form
-Requires at least: 3.7
-Tested up to: 4.3
-Stable tag: 2.5.2
+Requires at least: 4.0
+Tested up to: 4.3.1
+Stable tag: 2.6.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -53,6 +53,7 @@ Source: https://developers.google.com/chart/
 * [Atsushi Ando](http://www.next-season.net/) ( [NExt-Season](https://profiles.wordpress.org/next-season/) )
 * [Kazuki Tomiyasu](http://visualive.jp/) ( [KUCKLU](https://profiles.wordpress.org/kuck1u/) )
 * [Key Nomura](http://mypacecreator.net/) ( [mypacecreator](https://profiles.wordpress.org/mypacecreator/) )
+* [mh35](https://profiles.wordpress.org/mh35)
 
 == Installation ==
 
@@ -76,6 +77,16 @@ Do you have questions or issues with MW WP Form? Use these support channels appr
 5. Supports chart display of saved inquiry data.
 
 == Changelog ==
+
+= 2.6.0 =
+* Bugfix  : JavaScript bug fix on validation.
+* Changed : Multilingual support. Changed domain.
+* Changed : Changed radio and checkbox style.
+* Added   : Added the class attribute setting.
+
+= 2.5.3 =
+* Added   : Japanese zip code validation allows the format of the form 0000000.
+* Bugfix  : Fixed a date validation bug.
 
 = 2.5.2 =
 * Added   : Add new validation rule japanese kana.

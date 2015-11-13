@@ -2,11 +2,11 @@
 /**
  * Name       : MW WP Form Field Email
  * Description: email フィールドを出力
- * Version    : 1.0.0
+ * Version    : 1.1.0
  * Author     : Takashi Kitajima
  * Author URI : http://2inc.org
  * Created    : July 20, 2015
- * Modified   : 
+ * Modified   : November 14, 2015
  * License    : GPLv2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -27,7 +27,7 @@ class MW_WP_Form_Field_Email extends MW_WP_Form_Abstract_Form_Field {
 	protected function set_names() {
 		return array(
 			'shortcode_name' => 'mwform_email',
-			'display_name'   => __( 'Email', MWF_Config::DOMAIN ),
+			'display_name'   => __( 'Email', 'mw-wp-form' ),
 		);
 	}
 
@@ -40,6 +40,7 @@ class MW_WP_Form_Field_Email extends MW_WP_Form_Abstract_Form_Field {
 		return array(
 			'name'        => '',
 			'id'          => null,
+			'class'       => null,
 			'size'        => 60,
 			'maxlength'   => null,
 			'value'       => '',
@@ -66,6 +67,7 @@ class MW_WP_Form_Field_Email extends MW_WP_Form_Abstract_Form_Field {
 
 		$_ret = $this->Form->email( $this->atts['name'], array(
 			'id'          => $this->atts['id'],
+			'class'       => $this->atts['class'],
 			'size'        => $this->atts['size'],
 			'maxlength'   => $this->atts['maxlength'],
 			'value'       => $value,
@@ -107,6 +109,11 @@ class MW_WP_Form_Field_Email extends MW_WP_Form_Abstract_Form_Field {
 			<input type="text" name="id" value="<?php echo esc_attr( $id ); ?>" />
 		</p>
 		<p>
+			<strong>class</strong>
+			<?php $class = $this->get_value_for_generator( 'class', $options ); ?>
+			<input type="text" name="class" value="<?php echo esc_attr( $class ); ?>" />
+		</p>
+		<p>
 			<strong>size</strong>
 			<?php $size = $this->get_value_for_generator( 'size', $options ); ?>
 			<input type="text" name="size" value="<?php echo esc_attr( $size ); ?>" />
@@ -117,7 +124,7 @@ class MW_WP_Form_Field_Email extends MW_WP_Form_Abstract_Form_Field {
 			<input type="text" name="maxlength" value="<?php echo esc_attr( $maxlength ); ?>" />
 		</p>
 		<p>
-			<strong><?php esc_html_e( 'Default value', MWF_Config::DOMAIN ); ?></strong>
+			<strong><?php esc_html_e( 'Default value', 'mw-wp-form' ); ?></strong>
 			<?php $value = $this->get_value_for_generator( 'value', $options ); ?>
 			<input type="text" name="value" value="<?php echo esc_attr( $value ); ?>" />
 		</p>
@@ -127,14 +134,14 @@ class MW_WP_Form_Field_Email extends MW_WP_Form_Abstract_Form_Field {
 			<input type="text" name="placeholder" value="<?php echo esc_attr( $placeholder ); ?>" />
 		</p>
 		<p>
-			<strong><?php esc_html_e( 'Dsiplay error', MWF_Config::DOMAIN ); ?></strong>
+			<strong><?php esc_html_e( 'Dsiplay error', 'mw-wp-form' ); ?></strong>
 			<?php $show_error = $this->get_value_for_generator( 'show_error', $options ); ?>
-			<label><input type="checkbox" name="show_error" value="false" <?php checked( 'false', $show_error ); ?> /> <?php esc_html_e( 'Don\'t display error.', MWF_Config::DOMAIN ); ?></label>
+			<label><input type="checkbox" name="show_error" value="false" <?php checked( 'false', $show_error ); ?> /> <?php esc_html_e( 'Don\'t display error.', 'mw-wp-form' ); ?></label>
 		</p>
 		<p>
-			<strong><?php esc_html_e( 'Convert half alphanumeric', MWF_Config::DOMAIN ); ?></strong>
+			<strong><?php esc_html_e( 'Convert half alphanumeric', 'mw-wp-form' ); ?></strong>
 			<?php $conv_half_alphanumeric = $this->get_value_for_generator( 'conv_half_alphanumeric', $options ); ?>
-			<label><input type="checkbox" name="conv_half_alphanumeric" value="false" <?php checked( 'false', $conv_half_alphanumeric ); ?> /> <?php esc_html_e( 'Don\'t Convert.', MWF_Config::DOMAIN ); ?></label>
+			<label><input type="checkbox" name="conv_half_alphanumeric" value="false" <?php checked( 'false', $conv_half_alphanumeric ); ?> /> <?php esc_html_e( 'Don\'t Convert.', 'mw-wp-form' ); ?></label>
 		</p>
 		<?php
 	}
